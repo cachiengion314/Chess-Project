@@ -1,0 +1,64 @@
+/* setup all  */
+
+* {
+    box-sizing: border-box;
+    font-size: 17px;
+    z-index: 1;
+}
+
+.font_size_big {
+    font-size: 23px;
+}
+
+.font_size_very_big {
+    font-size: 29px;
+}
+
+
+/* things important  */
+
+.chess_board {
+    margin: 5% auto;
+    width: 416px;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /* item tự động xuống dòng nếu thấy cần thiết  */
+    flex-wrap: wrap;
+}
+
+.chess_block {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border: 1px gray solid;
+    background-color: #dddddd;
+    text-align: center;
+    font-size: 33px;
+    line-height: 50px;
+}
+
+.chess_block:hover {
+    background-color: aqua;
+}
+
+.margin_a_s {
+    margin: 3px;
+}
+
+.margin_l_s {
+    margin-left: 3px;
+}
+
+.margin_r_s {
+    margin-right: 3px;
+}
+
+.margin_t_s {
+    margin-top: 3px;
+}
+
+.margin_b_s {
+    margin-bottom: 3px;
+}
