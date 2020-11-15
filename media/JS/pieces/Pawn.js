@@ -6,11 +6,11 @@ export default class Pawn extends Piece {
     constructor(color, currentPos) {
         super(color, currentPos);
         if (this.color == AssignedVar.BLACK) {
-            this.image = AssignedVar.PAWN_B;
+            this.name = AssignedVar.PAWN_B;
         } else {
-            this.image = AssignedVar.PAWN_W;
+            this.name = AssignedVar.PAWN_W;
         }
-        this.id = `${this.image}_${currentPos.convertToId()}`;
+        this.id = `${this.name}_${currentPos.convertToId()}`;
         this.has2Steps = false;
         let moveDirection = -1;
         if (this.color == AssignedVar.BLACK) {
@@ -21,7 +21,7 @@ export default class Pawn extends Piece {
         ];
     }
     getId() {
-        return `${this.image}_${this.currentPos.convertToId()}`;
+        return `${this.name}_${this.currentPos.convertToId()}`;
     }
     getAllPossibleMoves() {
         let allMovesPossibleArr = [];

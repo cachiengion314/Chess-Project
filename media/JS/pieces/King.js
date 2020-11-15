@@ -6,18 +6,18 @@ export default class King extends Piece {
     constructor(color, currentPos) {
         super(color, currentPos);
         if (this.color == AssignedVar.BLACK) {
-            this.image = AssignedVar.KING_B;
+            this.name = AssignedVar.KING_B;
         } else {
-            this.image = AssignedVar.KING_W;
+            this.name = AssignedVar.KING_W;
         }
-        this.id = `${this.image}_${currentPos.convertToId()}`;
+        this.id = `${this.name}_${currentPos.convertToId()}`;
         this.directions = [
             new Vector(1, 0), new Vector(0, -1), new Vector(-1, 0), new Vector(0, 1),
             new Vector(1, 1), new Vector(1, -1), new Vector(-1, -1), new Vector(-1, 1),
         ];
     }
     getId() {
-        return `${this.image}_${this.currentPos.convertToId()}`;
+        return `${this.name}_${this.currentPos.convertToId()}`;
     }
     getAllPossibleMoves() {
         let allMovesPossibleArr = [];

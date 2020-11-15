@@ -6,17 +6,17 @@ export default class Bishop extends Piece {
     constructor(color, currentPos) {
         super(color, currentPos);
         if (this.color == AssignedVar.BLACK) {
-            this.image = AssignedVar.BISHOP_B;
+            this.name = AssignedVar.BISHOP_B;
         } else {
-            this.image = AssignedVar.BISHOP_W;
+            this.name = AssignedVar.BISHOP_W;
         }
-        this.id = `${this.image}_${currentPos.convertToId()}`;
+        this.id = `${this.name}_${currentPos.convertToId()}`;
         this.directions = [
             new Vector(1, 1), new Vector(1, -1), new Vector(-1, -1), new Vector(-1, 1)
         ];
     }
     getId() {
-        return `${this.image}_${this.currentPos.convertToId()}`;
+        return `${this.name}_${this.currentPos.convertToId()}`;
     }
     getAllPossibleMoves() {
         let allMovesPossibleArr = [];

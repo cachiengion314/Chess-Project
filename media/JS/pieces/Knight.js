@@ -6,11 +6,11 @@ export default class Knight extends Piece {
     constructor(color, currentPos) {
         super(color, currentPos);
         if (this.color == AssignedVar.BLACK) {
-            this.image = AssignedVar.KNIGHT_B;
+            this.name = AssignedVar.KNIGHT_B;
         } else {
-            this.image = AssignedVar.KNIGHT_W;
+            this.name = AssignedVar.KNIGHT_W;
         }
-        this.id = `${this.image}_${currentPos.convertToId()}`;
+        this.id = `${this.name}_${currentPos.convertToId()}`;
         this.directions = [
             new Vector(2, 1), new Vector(1, 2),
             new Vector(-1, 2), new Vector(-2, 1), new Vector(-2, -1),
@@ -18,7 +18,7 @@ export default class Knight extends Piece {
         ];
     }
     getId() {
-        return `${this.image}_${this.currentPos.convertToId()}`;
+        return `${this.name}_${this.currentPos.convertToId()}`;
     }
     getAllPossibleMoves() {
         let allMovesPossibleArr = [];

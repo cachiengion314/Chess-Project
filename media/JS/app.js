@@ -121,7 +121,7 @@ function visualizedChessBlockImageAt(pos) {
 
 function visualizePieceImageAt(pos) {
     let $chessPiece = createChessComponent(AssignedVar.CHESS_PIECE);
-    $chessPiece.imgname = AssignedVar.chessBoard[pos.x][pos.y].image;
+    $chessPiece.name = AssignedVar.chessBoard[pos.x][pos.y].name;
     $chessPiece.id = AssignedVar.chessBoard[pos.x][pos.y].getId();
     setChessComponentPositionAt(pos, $chessPiece);
 }
@@ -142,8 +142,7 @@ function moveLogicPieceTo(nextPos) {
     AssignedVar.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
     AssignedVar.chessBoard[nextPos.x][nextPos.y] = AssignedVar.selectedPiece;
     AssignedVar.chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
-    AssignedVar.$selectedPiece.id = AssignedVar.$selectedPiece.imgname + "_" + nextPos.convertToId();
-
+    AssignedVar.$selectedPiece.id = AssignedVar.selectedPiece.getId();
     visualizeMovePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
     return currentPos;
 }
