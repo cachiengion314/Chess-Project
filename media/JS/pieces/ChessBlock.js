@@ -3,7 +3,7 @@ import AssignedVar from "../AssignedVar.js";
 export default class ChessBlock {
     type;
     currentPos;
-    name;
+    id;
     constructor(currentPos) {
         this.currentPos = currentPos;
     }

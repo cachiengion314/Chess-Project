@@ -1,64 +1,88 @@
-/* setup all  */
-
-* {
-    box-sizing: border-box;
-    font-size: 17px;
-    z-index: 1;
+.chess-board {
+    margin: auto;
+    background-image: url("../Image/1024px-Chess_Board.png");
+    background-size: 100%;
+    width: 400px;
+    height: 400px;
+    position: relative;
 }
 
-.font_size_big {
-    font-size: 23px;
+.king-w {
+    background-image: url("../Image/king-w.png");
 }
 
-.font_size_very_big {
-    font-size: 29px;
+.queen-w {
+    background-image: url("../Image/queen-w.png");
 }
 
-
-/* things important  */
-
-.chess_board {
-    margin: 5% auto;
-    width: 416px;
-    height: fit-content;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    /* item tự động xuống dòng nếu thấy cần thiết  */
-    flex-wrap: wrap;
+.bishop-w {
+    background-image: url("../Image/bishop-w.png");
 }
 
-.chess_block {
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    border: 1px gray solid;
-    background-color: #dddddd;
-    text-align: center;
-    font-size: 33px;
-    line-height: 50px;
+.knight-w {
+    background-image: url("../Image/knight-w.png");
 }
 
-.chess_block:hover {
+.rook-w {
+    background-image: url("../Image/rook-w.png");
+}
+
+.pawn-w {
+    background-image: url("../Image/pawn-w.png");
+}
+
+.king-b {
+    background-image: url("../Image/king-b.png");
+}
+
+.queen-b {
+    background-image: url("../Image/queen-b.png");
+}
+
+.bishop-b {
+    background-image: url("../Image/bishop-b.png");
+}
+
+.knight-b {
+    background-image: url("../Image/knight-b.png");
+}
+
+.rook-b {
+    background-image: url("../Image/rook-b.png");
+}
+
+.pawn-b {
+    background-image: url("../Image/pawn-b.png");
+}
+
+.chess-piece {
+    background-size: 100%;
+    width: 12.5%;
+    height: 12.5%;
+    position: absolute;
+    z-index: 3;
+}
+
+.special-block {
+    display: block;
+    width: 12.5%;
+    height: 12.5%;
+    position: absolute;
+    z-index: 2;
+}
+
+.visualize-block-even {
+    background-color: darkcyan;
+}
+
+.visualize-block-odd {
+    background-color: wheat;
+}
+
+.position-block {
+    background-color: chartreuse;
+}
+
+.highlight-block {
     background-color: aqua;
-}
-
-.margin_a_s {
-    margin: 3px;
-}
-
-.margin_l_s {
-    margin-left: 3px;
-}
-
-.margin_r_s {
-    margin-right: 3px;
-}
-
-.margin_t_s {
-    margin-top: 3px;
-}
-
-.margin_b_s {
-    margin-bottom: 3px;
 }

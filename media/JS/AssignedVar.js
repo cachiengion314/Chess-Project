@@ -1,35 +1,41 @@
 export default class AssignedVar {
     static selectedPiece = null;
+    static $selectedPiece = null;
+    static selectedPieceSpecialBlocks = [];
     static legalMovesOfSelectedPiece = [];
     static chessBoard = [];
 
-    static boringColor = `#dddddd`;
+    static WHITE = `white`;
+    static BLACK = `black`;
+    static EMPTY = `empty`;
+    static PIECE = `piece`;
+    static CHESS_PIECE = `chess-piece`;
+    static SPECIAL_BLOCK = `special-block`;
+    static POSITION_BLOCK = `position-block`;
+    static HIGHLIGHT_BLOCK = `highlight-block`;
+    static VISUALIZE_BLOCK_EVEN = `visualize-block-even`;
+    static VISUALIZE_BLOCK_ODD = `visualize-block-odd`;
 
-    static whiteStr = `white`;
-    static blackStr = `black`;
-    static emptyStr = `empty`;
-    static pieceStr = `piece`;
+    static KING_W = `king-w`;
+    static QUEEN_W = `queen-w`;
+    static BISHOP_W = `bishop-w`;
+    static KNIGHT_W = `knight-w`;
+    static ROOK_W = `rook-w`;
+    static PAWN_W = `pawn-w`;
 
-    static whiteKingImg = `&#9812;`;
-    static whiteQueenImg = `&#9813;`;
-    static whiteBishopImg = `&#9815;`;
-    static whiteKnightImg = `&#9816;`;
-    static whiteRookImg = `&#9814;`;
-    static whitePawnImg = `&#9817;`;
+    static KING_B = `king-b`;
+    static QUEEN_B = `queen-b`;
+    static BISHOP_B = `bishop-b`;
+    static KNIGHT_B = `knight-b`;
+    static ROOK_B = `rook-b`;
+    static PAWN_B = `pawn-b`;
 
-    static blackKingImg = `&#9818;`;
-    static blackQueenImg = `&#9819;`;
-    static blackBishopImg = `&#9821;`;
-    static blackKnightImg = `&#9822;`;
-    static blackRookImg = `&#9820;`;
-    static blackPawnImg = `&#9823;`;
-
-    static rookStr = `rook`;
-    static bishopStr = `bishop`;
-    static kingStr = `king`;
-    static queenStr = `queen`;
-    static knightStr = `kinght`;
-    static pawnnStr = `pawn`;
+    static ROOK = `rook`;
+    static BISHOP = `bishop`;
+    static KING = `king`;
+    static QUEEN = `queen`;
+    static KNIGHT = `knight`;
+    static PAWN = `pawn`;
 
     static currentPlayer = null;
     static blackPlayer = null;

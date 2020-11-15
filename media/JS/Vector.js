@@ -1,41 +1,58 @@
 import AssignedVar from "./AssignedVar.js";
 
 export default class Vector {
-    constructor(xPos = 0, yPos = 0) {
-        this.xPos = xPos;
-        this.yPos = yPos;
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
     }
     plusVector(vector2) {
-        return new Vector(this.xPos + vector2.xPos, this.yPos + vector2.yPos);
+        return new Vector(this.x + vector2.x, this.y + vector2.y);
     }
     multipliByNumber(num) {
-        return new Vector(this.xPos * num, this.yPos * num);
+        return new Vector(this.x * num, this.y * num);
     }
     isEqualTo(vector) {
-        if (this.xPos == vector.xPos && this.yPos == vector.yPos) {
+        if (this.x == vector.x && this.y == vector.y) {
             return true
         } else {
             return false;
         }
     }
-    convertToId() {
-        return `${this.xPos}_${this.yPos}`;
+    isXYUniform() {
+        if (this.x % 2 == 0 && this.y % 2 == 0 || this.x % 2 != 0 && this.y % 2 != 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    static convertIdToVector(strId) {
-        let arr = strId.split(`_`);
-        return new Vector(arr[0], arr[1]);
+    convertToId() {
+        return `${this.x}_${this.y}`;
+    }
+    convertToPercentPosition() {
+        let positionObject = {
+            left: `${this.x * 12.5}%`,
+            top: `${this.y * 12.5}%`,
+        };
+        return positionObject;
+    }
+    static convertIdToVector(id) {
+        let numbers = id.split(`_`);
+        numbers = numbers.map(item => {
+            return Number(item);
+        });
+        return new Vector(numbers[numbers.length - 2], numbers[numbers.length - 1]);
     }
     static isPositionOnTheBoard(vector) {
-        if (vector.xPos < 0 || vector.yPos < 0 ||
-            vector.xPos > 7 || vector.yPos > 7) {
+        if (vector.x < 0 || vector.y < 0 ||
+            vector.x > 7 || vector.y > 7) {
             return false;
         } else
             return true;
     }
     static isPositionHasPiece(vector) {
         if (Vector.isPositionOnTheBoard(vector)) {
-            let piece = AssignedVar.chessBoard[vector.xPos][vector.yPos];
-            if (piece.type == AssignedVar.pieceStr) {
+            let piece = AssignedVar.chessBoard[vector.x][vector.y];
+            if (piece.type == AssignedVar.PIECE) {
                 return true;
             } else {
                 return false;
@@ -47,7 +64,7 @@ export default class Vector {
     static isPositionCanAttack(vector) {
         if (!AssignedVar.currentPlayer || !Vector.isPositionOnTheBoard(vector)) return false;
         if (Vector.isPositionHasPiece(vector)) {
-            let piece = AssignedVar.chessBoard[vector.xPos][vector.yPos];
+            let piece = AssignedVar.chessBoard[vector.x][vector.y];
             if (piece.controlByPlayer.id == AssignedVar.currentPlayer.id) {
                 return false;
             } else {
