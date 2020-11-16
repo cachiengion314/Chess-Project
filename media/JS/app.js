@@ -21,8 +21,6 @@ function initGameBoard() {
     initLogicPlayer();
     initLogicPieces();
     initLogicBoard();
-    console.log(`black player:`, AssignedVar.blackPlayer);
-    console.log(`white player:`, AssignedVar.whitePlayer);
     console.log(`board:`, AssignedVar.chessBoard);
 }
 
@@ -88,7 +86,7 @@ function initVisualizeBoard() {
         for (let y = 0; y < 8; ++y) {
             let pos = new Vector(x, y);
             if (AssignedVar.chessBoard[pos.x][pos.y].type == AssignedVar.PIECE) {
-                visualizePieceImageAt(pos);
+                visualizeChessPieceImageAt(pos);
             }
         }
     }
@@ -96,9 +94,9 @@ function initVisualizeBoard() {
         for (let y = 0; y < 8; ++y) {
             let pos = new Vector(x, y);
             visualizedChessBlockImageAt(pos);
-            selectedChessPieceAt(pos);
+            onclickSelectedEmptyAt(pos);
             if (AssignedVar.chessBoard[pos.x][pos.y].type == AssignedVar.PIECE) {
-                selectHidedBlockAt(pos);
+                onclickSelectedChessPieceAt(pos);
             }
         }
     }
@@ -112,17 +110,17 @@ function visualizedChessBlockImageAt(pos) {
         $specialBlock.blocktype = AssignedVar.VISUALIZE_BLOCK_ODD;
     }
     if (AssignedVar.chessBoard[pos.x][pos.y].type != AssignedVar.PIECE) {
-        $specialBlock.id = AssignedVar.chessBoard[pos.x][pos.y].getId();
+        $specialBlock.id = AssignedVar.chessBoard[pos.x][pos.y].id;
     } else {
         $specialBlock.id = AssignedVar.EMPTY + "_" + pos.convertToId();
     }
     setChessComponentPositionAt(pos, $specialBlock);
 }
 
-function visualizePieceImageAt(pos) {
+function visualizeChessPieceImageAt(pos) {
     let $chessPiece = createChessComponent(AssignedVar.CHESS_PIECE);
     $chessPiece.name = AssignedVar.chessBoard[pos.x][pos.y].name;
-    $chessPiece.id = AssignedVar.chessBoard[pos.x][pos.y].getId();
+    $chessPiece.id = AssignedVar.chessBoard[pos.x][pos.y].id;
     setChessComponentPositionAt(pos, $chessPiece);
 }
 
@@ -137,35 +135,55 @@ function createChessComponent(componentName) {
     return $cComponent;
 }
 
+function changePlayerTurn() {
+    if (AssignedVar.currentPlayer.id == 0) {
+        AssignedVar.currentPlayer = AssignedVar.blackPlayer;
+    } else {
+        AssignedVar.currentPlayer = AssignedVar.whitePlayer;
+    }
+}
+
 function moveLogicPieceTo(nextPos) {
     let currentPos = AssignedVar.selectedPiece.currentPos;
     AssignedVar.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
     AssignedVar.chessBoard[nextPos.x][nextPos.y] = AssignedVar.selectedPiece;
     AssignedVar.chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
-    AssignedVar.$selectedPiece.id = AssignedVar.selectedPiece.getId();
-    visualizeMovePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
-    return currentPos;
+    AssignedVar.chessBoard[nextPos.x][nextPos.y].id = AssignedVar.selectedPiece.getId();
+    AssignedVar.$selectedPiece.id = AssignedVar.chessBoard[nextPos.x][nextPos.y].id;
+
+    visualizeMovePiece(AssignedVar.$selectedPiece, nextPos);
+
+    changePlayerTurn();
 }
 
-function visualizeMovePiece($selectedPiece, currentPos, nextPos) {
+function visualizeMovePiece($selectedPiece, nextPos) {
     $(`#${$selectedPiece.id}`).animate({
         left: nextPos.convertToPercentPosition().left,
         top: nextPos.convertToPercentPosition().top,
     }, `slow`);
 }
 
-function selectHidedBlockAt(fixedPosition) {
+function onclickSelectedEmptyAt(fixedPosition) {
     let $emptyBlock = $(`#${AssignedVar.EMPTY}_${fixedPosition.convertToId()}`);
-    $emptyBlock.on(`click`, () => { blockOnClickCallback($emptyBlock); });
+    $emptyBlock.on(`click`, () => {
+        let pos = Vector.convertIdToVector($emptyBlock[0].id)
+        setupOnClickCallbackAt(pos);
+    });
 }
 
-function selectedChessPieceAt(fixedPosition) {
-    let $chessPiece = $(`#${AssignedVar.chessBoard[fixedPosition.x][fixedPosition.y].getId()}`);
-    $chessPiece.on(`click`, () => { blockOnClickCallback($chessPiece); });
+function onclickSelectedChessPieceAt(fixedPosition) {
+    let $chessPiece = $(`#${AssignedVar.chessBoard[fixedPosition.x][fixedPosition.y].id}`);
+    $chessPiece.on(`click`, () => {
+        if (AssignedVar.currentPlayer.id == $chessPiece[0].controlbyplayerid) {
+            let pos = Vector.convertIdToVector($chessPiece[0].id);
+            setupOnClickCallbackAt(pos);
+        } else {
+            console.log(`Its not your turn yet!`);
+        }
+    });
 }
 
-function blockOnClickCallback($block) {
-    let pos = Vector.convertIdToVector($block[0].id);
+function setupOnClickCallbackAt(pos) {
     if (Vector.isPositionHasPiece(pos)) {
         if (AssignedVar.selectedPiece) {
             if (AssignedVar.selectedPiece.currentPos.isEqualTo(pos)) {
@@ -207,7 +225,7 @@ function subscribeSelectedPieceAt(pos) {
 
 function logicSubscribeSelectedPieceAt(pos) {
     AssignedVar.selectedPiece = AssignedVar.chessBoard[pos.x][pos.y];
-    AssignedVar.$selectedPiece = $(`#${AssignedVar.chessBoard[pos.x][pos.y].getId()}`)[0];
+    AssignedVar.$selectedPiece = $(`#${AssignedVar.chessBoard[pos.x][pos.y].id}`)[0];
     AssignedVar.legalMovesOfSelectedPiece = AssignedVar.selectedPiece.getAllPossibleMoves();
 }
 
