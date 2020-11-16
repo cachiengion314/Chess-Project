@@ -1,4 +1,4 @@
-import AssignedVar from "./AssignedVar.js";
+import AssignedVar from "./utility/AssignedVar.js";
 
 export default class Player {
     constructor(color) {

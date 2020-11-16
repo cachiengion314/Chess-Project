@@ -1,6 +1,6 @@
 import Piece from "./Piece.js";
-import Vector from "../Vector.js";
-import AssignedVar from "../AssignedVar.js";
+import Vector from "../utility/Vector.js";
+import AssignedVar from "../utility/AssignedVar.js";
 
 export default class Pawn extends Piece {
     constructor(color, currentPos) {
@@ -19,6 +19,10 @@ export default class Pawn extends Piece {
         this.directions = [
             new Vector(0, moveDirection),
         ];
+        this.specialAttackDirections = [
+            new Vector(-1, 0).plusVector(new Vector(0, moveDirection)),
+            new Vector(1, 0).plusVector(new Vector(0, moveDirection)),
+        ];
     }
     getId() {
         return `${this.name}_${this.currentPos.convertToId()}`;
@@ -27,12 +31,18 @@ export default class Pawn extends Piece {
         let allMovesPossibleArr = [];
         for (let vector of this.directions) {
             for (let i = 1; i < 2; ++i) {
-                let newMovePos = this.currentPos.plusVector(new Vector(vector.x, vector.y).multipliByNumber(i));
+                let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
                 if (!Vector.isPositionHasPiece(newMovePos)) {
                     allMovesPossibleArr.push(newMovePos);
                 }
             }
         }
+        this.specialAttackDirections.forEach(pos => {
+            let atkPos = this.currentPos.plusVector(pos);
+            if (Vector.isPositionHasPiece(atkPos) && Vector.isPositionCanAttack(atkPos)) {
+                allMovesPossibleArr.push(atkPos);
+            }
+        });
         return allMovesPossibleArr;
     }
 }

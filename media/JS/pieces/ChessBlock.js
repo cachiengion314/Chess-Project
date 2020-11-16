@@ -1,5 +1,3 @@
-import AssignedVar from "../AssignedVar.js";
-
 export default class ChessBlock {
     type;
     currentPos;

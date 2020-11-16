@@ -25,6 +25,15 @@ export default class Vector {
             return false;
         }
     }
+    isPositionInLegalMoves() {
+        let isPosInLegalMovess = AssignedVar.legalMovesOfSelectedPiece.filter((vector) => {
+            return vector.isEqualTo(this);
+        });
+        if (isPosInLegalMovess.length > 0) {
+            return true;
+        }
+        return false;
+    }
     convertToId() {
         return `${this.x}_${this.y}`;
     }
@@ -34,6 +43,14 @@ export default class Vector {
             top: `${this.y * 12.5}%`,
         };
         return positionObject;
+    }
+    static createRandomDirection() {
+        let rX = Math.floor(Math.random() * 3) - 1;
+        let rY = Math.floor(Math.random() * 3) - 1;
+        if (rX == 0 && rY == 0) {
+            return Vector.createRandomDirection();
+        }
+        return new Vector(rX, rY);
     }
     static convertIdToVector(id) {
         let numbers = id.split(`_`);
@@ -65,7 +82,7 @@ export default class Vector {
         if (!AssignedVar.currentPlayer || !Vector.isPositionOnTheBoard(vector)) return false;
         if (Vector.isPositionHasPiece(vector)) {
             let piece = AssignedVar.chessBoard[vector.x][vector.y];
-            if (piece.controlByPlayer.id == AssignedVar.currentPlayer.id) {
+            if (piece.controlByPlayerId == AssignedVar.currentPlayer.id) {
                 return false;
             } else {
                 return true;
