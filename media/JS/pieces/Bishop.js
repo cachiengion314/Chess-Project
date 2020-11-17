@@ -23,10 +23,10 @@ export default class Bishop extends Piece {
         for (let vector of this.directions) {
             for (let i = 1; i < 8; ++i) {
                 let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
-                if (Vector.isPositionCanAttack(newMovePos)) {
+                if (newMovePos.isPositionCanAttack()) {
                     allMovesPossibleArr.push(newMovePos);
                 }
-                if (Vector.isPositionHasPiece(newMovePos)) {
+                if (newMovePos.isPositionHasPiece()) {
                     break;
                 }
             }

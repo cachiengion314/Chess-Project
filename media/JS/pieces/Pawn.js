@@ -11,7 +11,7 @@ export default class Pawn extends Piece {
             this.name = AssignedVar.PAWN_W;
         }
         this.id = `${this.name}_${currentPos.convertToId()}`;
-        this.has2Steps = false;
+        this.hasMoved = false;
         let moveDirection = -1;
         if (this.color == AssignedVar.BLACK) {
             moveDirection = 1;
@@ -25,21 +25,26 @@ export default class Pawn extends Piece {
         ];
     }
     getId() {
+        this.hasMoved = true;
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
     getAllPossibleMoves() {
         let allMovesPossibleArr = [];
+        let maxStep = 2;
+        if (this.hasMoved) {
+            maxStep = 1;
+        }
         for (let vector of this.directions) {
-            for (let i = 1; i < 2; ++i) {
+            for (let i = 1; i <= maxStep; ++i) {
                 let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
-                if (!Vector.isPositionHasPiece(newMovePos)) {
+                if (!newMovePos.isPositionHasPiece()) {
                     allMovesPossibleArr.push(newMovePos);
                 }
             }
         }
         this.specialAttackDirections.forEach(pos => {
             let atkPos = this.currentPos.plusVector(pos);
-            if (Vector.isPositionHasPiece(atkPos) && Vector.isPositionCanAttack(atkPos)) {
+            if (atkPos.isPositionHasPiece() && atkPos.isPositionCanAttack()) {
                 allMovesPossibleArr.push(atkPos);
             }
         });

@@ -1,4 +1,5 @@
 import AssignedVar from "./AssignedVar.js";
+import Visualize from "./Visualize.js";
 
 export default class Vector {
     constructor(x = 0, y = 0) {
@@ -44,9 +45,61 @@ export default class Vector {
         };
         return positionObject;
     }
+    convertToDirection() {
+        let a = Math.abs(this.x);
+        let b = Math.abs(this.y);
+        let slot1 = a / b;
+        let slot2 = 1;
+        if (a > b) {
+            slot1 = 1;
+            slot2 = b / a;
+        } else {
+            slot1 = a / b;
+            slot2 = 1;
+        }
+        if (this.x < 0) {
+            slot1 = -slot1;
+        }
+        if (this.y < 0) {
+            slot2 = -slot2;
+        }
+        return new Vector(slot1, slot2);
+    }
+    isPositionOnTheBoard() {
+        if (this.x < 0 || this.y < 0 ||
+            this.x > 7 || this.y > 7) {
+            return false;
+        } else
+            return true;
+    }
+    isPositionHasPiece() {
+        if (this.isPositionOnTheBoard()) {
+            let piece = AssignedVar.chessBoard[this.x][this.y];
+            if (piece.type == AssignedVar.PIECE) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    isPositionCanAttack() {
+        if (!AssignedVar.currentPlayer || !this.isPositionOnTheBoard()) return false;
+        if (this.isPositionHasPiece()) {
+            let piece = AssignedVar.chessBoard[this.x][this.y];
+            if (piece.controlByPlayerId == AssignedVar.currentPlayer.id) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
     static createRandomDirection() {
-        let rX = Math.floor(Math.random() * 3) - 1;
-        let rY = Math.floor(Math.random() * 3) - 1;
+        let rX = Visualize.randomNumberFromAToMax(-1, 2);
+        let rY = Visualize.randomNumberFromAToMax(-1, 2);
         if (rX == 0 && rY == 0) {
             return Vector.createRandomDirection();
         }
@@ -58,37 +111,5 @@ export default class Vector {
             return Number(item);
         });
         return new Vector(numbers[numbers.length - 2], numbers[numbers.length - 1]);
-    }
-    static isPositionOnTheBoard(vector) {
-        if (vector.x < 0 || vector.y < 0 ||
-            vector.x > 7 || vector.y > 7) {
-            return false;
-        } else
-            return true;
-    }
-    static isPositionHasPiece(vector) {
-        if (Vector.isPositionOnTheBoard(vector)) {
-            let piece = AssignedVar.chessBoard[vector.x][vector.y];
-            if (piece.type == AssignedVar.PIECE) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-    static isPositionCanAttack(vector) {
-        if (!AssignedVar.currentPlayer || !Vector.isPositionOnTheBoard(vector)) return false;
-        if (Vector.isPositionHasPiece(vector)) {
-            let piece = AssignedVar.chessBoard[vector.x][vector.y];
-            if (piece.controlByPlayerId == AssignedVar.currentPlayer.id) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
     }
 }

@@ -26,7 +26,7 @@ export default class Knight extends Piece {
         for (let vector of this.directions) {
             for (let i = 1; i < 2; ++i) {
                 let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
-                if (Vector.isPositionCanAttack(newMovePos)) {
+                if (newMovePos.isPositionCanAttack()) {
                     allMovesPossibleArr.push(newMovePos);
                 }
             }

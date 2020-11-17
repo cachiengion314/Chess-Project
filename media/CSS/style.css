@@ -1,7 +1,6 @@
 .chess-board {
+    background-color: mediumpurple;
     margin: auto;
-    background-image: url("../Image/1024px-Chess_Board.png");
-    background-size: 100%;
     width: 400px;
     height: 400px;
     position: relative;
@@ -60,7 +59,8 @@
     width: 12.5%;
     height: 12.5%;
     position: absolute;
-    z-index: 3;
+    z-index: 4;
+    opacity: 1;
 }
 
 .special-block {
@@ -69,14 +69,17 @@
     height: 12.5%;
     position: absolute;
     z-index: 2;
+    border-radius: 9px;
+    border: 1px solid darkblue;
+    opacity: .7;
 }
 
 .visualize-block-even {
-    background-color: darkcyan;
+    background-color: mediumspringgreen;
 }
 
 .visualize-block-odd {
-    background-color: wheat;
+    background-color: gold;
 }
 
 .position-block {
