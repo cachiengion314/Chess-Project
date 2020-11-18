@@ -1,5 +1,4 @@
 .chess-board {
-    background-color: mediumpurple;
     margin: auto;
     width: 400px;
     height: 400px;
@@ -63,7 +62,7 @@
     opacity: 1;
 }
 
-.special-block {
+.chess-block {
     display: block;
     width: 12.5%;
     height: 12.5%;
@@ -72,20 +71,5 @@
     border-radius: 9px;
     border: 1px solid darkblue;
     opacity: .7;
-}
-
-.visualize-block-even {
-    background-color: mediumspringgreen;
-}
-
-.visualize-block-odd {
-    background-color: gold;
-}
-
-.position-block {
-    background-color: chartreuse;
-}
-
-.highlight-block {
-    background-color: aqua;
+    color: lightsteelblue;
 }

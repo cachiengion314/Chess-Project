@@ -10,7 +10,7 @@ import Queen from "./pieces/Queen.js";
 import Pawn from "./pieces/Pawn.js";
 import Visualize from "./utility/Visualize.js";
 import "./web-component/ChessPiece.js";
-import "./web-component/SpecialBlock.js";
+import "./web-component/ChessBlock.js";
 
 export function initGameBoard() {
     initLogicPlayer();
@@ -99,6 +99,8 @@ function initVisualizeBoard() {
             }
         }
     }
+    Visualize.setThemeAt(0);
+    onclickChangeThemeButton();
 }
 
 function onclickSelectedEmptyAt(fixedPosition) {
@@ -181,7 +183,7 @@ function logicMovePieceTo(nextPos) {
     AssignedVar.$selectedPiece.id = AssignedVar.chessBoard[nextPos.x][nextPos.y].id;
 
     Visualize.logInfo();
-    Visualize.movePiece(AssignedVar.$selectedPiece, nextPos);
+    Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }
 
 function changePlayerTurn() {
@@ -213,4 +215,14 @@ function logicUnSubscribeSelectedPiece() {
     AssignedVar.selectedPiece = null;
     AssignedVar.$selectedPiece = null;
     AssignedVar.legalMovesOfSelectedPiece = [];
+}
+
+function onclickChangeThemeButton() {
+    $(`#change-theme-btn`).on(`click`, () => {
+        Visualize.currentThemeIndex++;
+        if (Visualize.currentThemeIndex == Visualize.themes.length) {
+            Visualize.currentThemeIndex = 0;
+        }
+        Visualize.setThemeAt(Visualize.currentThemeIndex);
+    });
 }

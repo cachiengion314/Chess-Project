@@ -24,12 +24,11 @@ export default class Visualize {
         "height": `19%`,
     }
     static smallAnimate = {
-        "width": `12%`,
-        "height": `12%`,
+        "width": `11%`,
+        "height": `11%`,
     }
     static hideAnimate = {
-        "width": `hide`,
-        "height": `hide`,
+        "opacity": `0`,
     }
     static normalBorderRadiusAnimate = {
         "border-radius": "9px",
@@ -37,6 +36,32 @@ export default class Visualize {
     static bigBorderRadiusAnimate = {
         "border-radius": "18px",
     }
+    static currentThemeIndex = 0;
+    static themes = [{
+            "chessboard-bg-color": "mediumpurple",
+            "position-block": `chartreuse`,
+            "highlight-block": `aqua`,
+            "attack-block": `tomato`,
+            "dark-block": `mediumspringgreen`,
+            "light-block": `gold`,
+        },
+        {
+            "chessboard-bg-color": "rosybrown",
+            "position-block": "hotpink",
+            "highlight-block": "khaki",
+            "attack-block": "lime",
+            "dark-block": "lightsalmon",
+            "light-block": "orangered",
+        },
+        {
+            "chessboard-bg-color": "darkblue",
+            "position-block": "lightyellow",
+            "highlight-block": "lightskyblue",
+            "attack-block": "lightsalmon",
+            "dark-block": "lightyellow",
+            "light-block": "wheat",
+        },
+    ]
     static logInfo() {
         console.log(`------------------------------`);
         let str = ``;
@@ -75,24 +100,26 @@ export default class Visualize {
         $chessComponent.style.top = pos.convertToPercentPosition().top;
     }
     static chessBlockImageAt(pos) {
-        let $specialBlock = Visualize.createChessComponent(AssignedVar.SPECIAL_BLOCK);
-        if (pos.isXYUniform()) {
-            $specialBlock.blocktype = AssignedVar.VISUALIZE_BLOCK_EVEN;
-        } else {
-            $specialBlock.blocktype = AssignedVar.VISUALIZE_BLOCK_ODD;
-        }
+        let $chessBlock = Visualize.createChessComponent(AssignedVar.CHESS_BLOCK);
+        Visualize.setNormalColorForBlock($chessBlock, pos);
         if (AssignedVar.chessBoard[pos.x][pos.y].type != AssignedVar.PIECE) {
-            $specialBlock.id = AssignedVar.chessBoard[pos.x][pos.y].id;
+            $chessBlock.id = AssignedVar.chessBoard[pos.x][pos.y].id;
         } else {
-            $specialBlock.id = AssignedVar.EMPTY + "_" + pos.convertToId();
+            $chessBlock.id = AssignedVar.EMPTY + "_" + pos.convertToId();
         }
-        Visualize.setChessComponentPositionAt(pos, $specialBlock);
+        Visualize.setChessComponentPositionAt(pos, $chessBlock);
     }
-    static movePiece($selectedPiece, nextPos) {
+    static movePiece($selectedPiece, currentPos, nextPos) {
+        let pushDir = nextPos.plusVector(currentPos.multipliByNumber(-1)).convertToDirection();
+        let pushPos = nextPos.plusVector(pushDir.multipliByNumber(.3));
+        $(`#${$selectedPiece.id}`).animate({
+            "left": pushPos.convertToPercentPosition().left,
+            "top": pushPos.convertToPercentPosition().top,
+        }, 200);
         $(`#${$selectedPiece.id}`).animate({
             "left": nextPos.convertToPercentPosition().left,
             "top": nextPos.convertToPercentPosition().top,
-        }, `fast`);
+        }, 100);
     }
     static destroyEnemyPiece($enemyPiece) {
         let currentPos = Vector.convertIdToVector($enemyPiece.id);
@@ -100,8 +127,7 @@ export default class Visualize {
         let pushDirection = currentPos.plusVector(attackerPos.multipliByNumber(-1)).convertToDirection();
         let pushPos = currentPos.plusVector(pushDirection);
         let pushAnimate = {
-            width: `15%`,
-            height: `15%`,
+            ...Visualize.bigAnimate,
             left: pushPos.convertToPercentPosition().left,
             top: pushPos.convertToPercentPosition().top,
         };
@@ -118,13 +144,17 @@ export default class Visualize {
     }
     static selectedPieceEffectAt(pos) {
         let $positionBlock = $(`#${AssignedVar.EMPTY + "_" + pos.convertToId()}`)[0];
-        $positionBlock.blocktype = AssignedVar.POSITION_BLOCK;
+        $positionBlock.style.backgroundColor = Visualize.themes[Visualize.currentThemeIndex][AssignedVar.POSITION_BLOCK];
         $($positionBlock).animate(Visualize.normalOpacityAnimate, `fast`);
 
         AssignedVar.selectedPieceSpecialBlocks.push($positionBlock);
         for (let legalMovesPos of AssignedVar.legalMovesOfSelectedPiece) {
             let $highlightBlock = $(`#${AssignedVar.EMPTY + "_" + legalMovesPos.convertToId()}`)[0];
-            $highlightBlock.blocktype = AssignedVar.HIGHLIGHT_BLOCK;
+            if (legalMovesPos.isPositionCanAttack() && legalMovesPos.isPositionHasPiece()) {
+                $highlightBlock.style.backgroundColor = Visualize.themes[Visualize.currentThemeIndex][AssignedVar.ATTACK_BLOCK];
+            } else {
+                $highlightBlock.style.backgroundColor = Visualize.themes[Visualize.currentThemeIndex][AssignedVar.HIGHLIGHT_BLOCK];
+            }
             $($highlightBlock).animate(Visualize.normalOpacityAnimate, `fast`);
 
             AssignedVar.selectedPieceSpecialBlocks.push($highlightBlock);
@@ -134,11 +164,7 @@ export default class Visualize {
         for (let block of AssignedVar.selectedPieceSpecialBlocks) {
             $(block).animate(Visualize.paleOpacityAnimate, `fast`);
             let pos = Vector.convertIdToVector(block.id);
-            if (pos.isXYUniform()) {
-                block.blocktype = AssignedVar.VISUALIZE_BLOCK_EVEN;
-            } else {
-                block.blocktype = AssignedVar.VISUALIZE_BLOCK_ODD;
-            }
+            Visualize.setNormalColorForBlock(block, pos);
         }
         AssignedVar.selectedPieceSpecialBlocks.splice(0);
     }
@@ -191,5 +217,27 @@ export default class Visualize {
             };
             $($piece).animate(normalEffectAnimate, 100);
         });
+    }
+    static setNormalColorForBlock($chessBlock, pos) {
+        if (pos.isXYUniform()) {
+            $chessBlock.style.backgroundColor = Visualize.themes[Visualize.currentThemeIndex][AssignedVar.DARK_BLOCK];
+        } else {
+            $chessBlock.style.backgroundColor = Visualize.themes[Visualize.currentThemeIndex][AssignedVar.LIGHT_BLOCK];
+        }
+    }
+
+    static setThemeAt(index) {
+        Visualize.currentThemeIndex = index;
+        $(`.chess-board`)[0].style.backgroundColor = Visualize.themes[index][AssignedVar.CHESSBOARD_BG_COLOR];
+        AssignedVar.positionBlock = Visualize.themes[index][AssignedVar.POSITION_BLOCK];
+        AssignedVar.highlightBlock = Visualize.themes[index][AssignedVar.HIGHLIGHT_BLOCK];
+        AssignedVar.attackBlock = Visualize.themes[index][AssignedVar.ATTACK_BLOCK];
+        AssignedVar.darkBlock = Visualize.themes[index][AssignedVar.DARK_BLOCK];
+        AssignedVar.lightBlock = Visualize.themes[index][AssignedVar.LIGHT_BLOCK];
+        let $chessBlock = $(AssignedVar.CHESS_BLOCK);
+        for (let i = 0; i < $chessBlock.length; ++i) {
+            let pos = Vector.convertIdToVector($chessBlock[i].id);
+            Visualize.setNormalColorForBlock($chessBlock[i], pos);
+        }
     }
 }

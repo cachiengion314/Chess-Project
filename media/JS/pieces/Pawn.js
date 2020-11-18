@@ -39,6 +39,8 @@ export default class Pawn extends Piece {
                 let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
                 if (!newMovePos.isPositionHasPiece()) {
                     allMovesPossibleArr.push(newMovePos);
+                } else {
+                    break;
                 }
             }
         }

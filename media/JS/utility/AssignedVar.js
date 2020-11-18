@@ -10,11 +10,14 @@ export default class AssignedVar {
     static EMPTY = `empty`;
     static PIECE = `piece`;
     static CHESS_PIECE = `chess-piece`;
-    static SPECIAL_BLOCK = `special-block`;
-    static POSITION_BLOCK = `position-block`;
-    static HIGHLIGHT_BLOCK = `highlight-block`;
-    static VISUALIZE_BLOCK_EVEN = `visualize-block-even`;
-    static VISUALIZE_BLOCK_ODD = `visualize-block-odd`;
+
+    static CHESSBOARD_BG_COLOR = `chessboard-bg-color`;
+    static CHESS_BLOCK = `chess-block`;
+    static POSITION_BLOCK = "position-block";
+    static HIGHLIGHT_BLOCK = "highlight-block";
+    static ATTACK_BLOCK = "attack-block";
+    static DARK_BLOCK = "dark-block";
+    static LIGHT_BLOCK = "light-block";
 
     static KING_W = `king-w`;
     static QUEEN_W = `queen-w`;
