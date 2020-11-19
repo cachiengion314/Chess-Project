@@ -1,8 +1,33 @@
-.chess-board {
-    margin: auto;
-    width: 400px;
-    height: 400px;
+body {
+    background-color: darkgray !important;
+}
+
+chess-board {
+    display: block;
+    width: 600px;
+    height: 600px;
     position: relative;
+}
+
+chess-piece {
+    background-size: 100%;
+    width: 12.5%;
+    height: 12.5%;
+    position: absolute;
+    z-index: 4;
+    opacity: 1;
+}
+
+chess-block {
+    display: block;
+    width: 12.5%;
+    height: 12.5%;
+    position: absolute;
+    z-index: 2;
+    border-radius: 9px;
+    border: 1px solid darkblue;
+    opacity: .7;
+    color: lightyellow;
 }
 
 .king-w {
@@ -53,23 +78,27 @@
     background-image: url("../Image/pawn-b.png");
 }
 
-.chess-piece {
-    background-size: 100%;
-    width: 12.5%;
-    height: 12.5%;
-    position: absolute;
-    z-index: 4;
-    opacity: 1;
+.no-padding {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
 }
 
-.chess-block {
-    display: block;
-    width: 12.5%;
+.no-margin {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+
+.avatar {
+    width: 55px;
+    height: 55px;
+    background-color: darkcyan;
+}
+
+.coordinates-number {
     height: 12.5%;
-    position: absolute;
-    z-index: 2;
-    border-radius: 9px;
-    border: 1px solid darkblue;
-    opacity: .7;
-    color: lightsteelblue;
+    width: fit-content;
+}
+
+.font-size-big {
+    font-size: 23px;
 }

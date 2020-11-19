@@ -25,9 +25,6 @@ class ChessPiece extends HTMLElement {
     static get observedAttributes() {
         return [`name`, `controlbyplayerid`];
     }
-    connectedCallback() {
-        this.setAttribute(`class`, `chess-piece`);
-    }
     attributeChangedCallback(attrName, oldVal, newVal) {
         switch (attrName) {
             case `name`:

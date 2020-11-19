@@ -3,6 +3,7 @@ export default class AssignedVar {
     static $selectedPiece = null;
     static selectedPieceSpecialBlocks = [];
     static legalMovesOfSelectedPiece = [];
+    static coordinatesBlocks = [];
     static chessBoard = [];
 
     static WHITE = `white`;
@@ -18,6 +19,7 @@ export default class AssignedVar {
     static ATTACK_BLOCK = "attack-block";
     static DARK_BLOCK = "dark-block";
     static LIGHT_BLOCK = "light-block";
+    static COORDINATES_COLOR = "coordinates-color";
 
     static KING_W = `king-w`;
     static QUEEN_W = `queen-w`;

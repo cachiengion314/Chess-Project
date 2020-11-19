@@ -5,6 +5,8 @@ export default class Visualize {
     static randomNumberFromAToMax(a, max) {
         return Math.floor(Math.random() * (max - a)) + a;
     }
+    static coordinatesNumbers = [8, 7, 6, 5, 4, 3, 2, 1];
+    static coordinatesNames = ["a", "b", "c", "d", "e", "f", "g", "h"]
     static paleOpacityAnimate = {
         "opacity": `.7`,
     }
@@ -44,6 +46,7 @@ export default class Visualize {
             "attack-block": `tomato`,
             "dark-block": `mediumspringgreen`,
             "light-block": `gold`,
+            "coordinates-color": "blue",
         },
         {
             "chessboard-bg-color": "rosybrown",
@@ -52,6 +55,7 @@ export default class Visualize {
             "attack-block": "lime",
             "dark-block": "lightsalmon",
             "light-block": "orangered",
+            "coordinates-color": "greenyellow",
         },
         {
             "chessboard-bg-color": "darkblue",
@@ -60,6 +64,7 @@ export default class Visualize {
             "attack-block": "lightsalmon",
             "dark-block": "lightyellow",
             "light-block": "wheat",
+            "coordinates-color": "darkslateblue",
         },
     ]
     static logInfo() {
@@ -84,6 +89,7 @@ export default class Visualize {
         console.log(`blackPlayer:`, AssignedVar.blackPlayer);
         console.log(`whitePlayer:`, AssignedVar.whitePlayer);
     }
+
     static chessPieceImageAt(pos) {
         let $chessPiece = Visualize.createChessComponent(AssignedVar.CHESS_PIECE);
         $chessPiece.name = AssignedVar.chessBoard[pos.x][pos.y].name;
@@ -92,7 +98,7 @@ export default class Visualize {
     }
     static createChessComponent(componentName) {
         let $cComponent = document.createElement(componentName);
-        $(`.chess-board`).append($cComponent);
+        $(`chess-board`).append($cComponent);
         return $cComponent;
     }
     static setChessComponentPositionAt(pos, $chessComponent) {
@@ -108,6 +114,35 @@ export default class Visualize {
             $chessBlock.id = AssignedVar.EMPTY + "_" + pos.convertToId();
         }
         Visualize.setChessComponentPositionAt(pos, $chessBlock);
+    }
+    static queryEmptyBlockAt(pos) {
+        return $(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0];
+    }
+    static initCoordinatedNumber() {
+        for (let y = 0; y < 8; ++y) {
+            let pos = new Vector(0, y);
+            let $block = Visualize.queryEmptyBlockAt(pos);
+            $block.textContent = Visualize.coordinatesNumbers[y];
+            $block.classList.add("font-size-big");
+            $block.style.color = Visualize.themes[Visualize.currentThemeIndex][AssignedVar.COORDINATES_COLOR];
+            AssignedVar.coordinatesBlocks.push($block);
+        }
+        for (let x = 0; x < 8; ++x) {
+            let pos = new Vector(x, 7);
+            let $block = Visualize.queryEmptyBlockAt(pos);
+            $block.classList.add("font-size-big");
+            $($block).css({
+                "display": "flex",
+                "justify-content": "flex-end",
+                "align-items": "flex-end",
+                "color": Visualize.themes[Visualize.currentThemeIndex][AssignedVar.COORDINATES_COLOR],
+            });
+            if (x == 0) {
+                $block.textContent = `1` + `\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0` + `${Visualize.coordinatesNames[x]}`;
+            } else
+                $block.textContent = Visualize.coordinatesNames[x];
+            AssignedVar.coordinatesBlocks.push($block);
+        }
     }
     static movePiece($selectedPiece, currentPos, nextPos) {
         let pushDir = nextPos.plusVector(currentPos.multipliByNumber(-1)).convertToDirection();
@@ -228,7 +263,7 @@ export default class Visualize {
 
     static setThemeAt(index) {
         Visualize.currentThemeIndex = index;
-        $(`.chess-board`)[0].style.backgroundColor = Visualize.themes[index][AssignedVar.CHESSBOARD_BG_COLOR];
+        $(`chess-board`)[0].style.backgroundColor = Visualize.themes[index][AssignedVar.CHESSBOARD_BG_COLOR];
         AssignedVar.positionBlock = Visualize.themes[index][AssignedVar.POSITION_BLOCK];
         AssignedVar.highlightBlock = Visualize.themes[index][AssignedVar.HIGHLIGHT_BLOCK];
         AssignedVar.attackBlock = Visualize.themes[index][AssignedVar.ATTACK_BLOCK];
@@ -238,6 +273,9 @@ export default class Visualize {
         for (let i = 0; i < $chessBlock.length; ++i) {
             let pos = Vector.convertIdToVector($chessBlock[i].id);
             Visualize.setNormalColorForBlock($chessBlock[i], pos);
+        }
+        for (let i = 0; i < AssignedVar.coordinatesBlocks.length; ++i) {
+            AssignedVar.coordinatesBlocks[i].style.color = Visualize.themes[index][AssignedVar.COORDINATES_COLOR];
         }
     }
 }

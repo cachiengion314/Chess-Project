@@ -18,13 +18,58 @@
 </head>
 
 <body>
-    <div class="main-container">
-        <button id="change-theme-btn">change theme</button>
-        <div class="chess-board ">
-            <!-- all chess pieces are placed here -->
+    <div class="container-fluid">
+        <div class="row bg-light">
+            <!-- 1. sign in/out col  -->
+            <div class="col-sm-2 bg-secondary">
+                <!-- all sign in/out elements are placed in here  -->
+            </div>
+            <!-- 2. main gameplay col  -->
+            <div class="col-sm-6 bg-light">
+                <div class="row bg-warning">Table 2</div>
+                <!-- player row  -->
+                <div class="row bg-info">
+                    <div class="col-sm-2">
+                        <div class="avatar"></div>
+                    </div>
+                    <div class="col-sm-10">title Player 1</div>
+                </div>
 
+                <div class="row">
+                    <div class="col no-padding bg-primary">
+
+                    </div>
+                    <div class="col no-padding">
+                        <chess-board>
+                            <!-- all the chess piece are placed here -->
+                        </chess-board>
+                    </div>
+                    <div class="col no-padding bg-primary">
+
+                    </div>
+                </div>
+
+                <!-- player row  -->
+                <div class="row bg-info">
+                    <div class="col-sm-2">
+                        <div class="avatar"></div>
+                    </div>
+                    <div class="col-sm-10">title Player 2</div>
+                </div>
+
+            </div>
+            <!-- 3. functions col  -->
+            <div class="col-sm-4 bg-secondary">
+                <!-- all function of the game are placed in here  -->
+                <button id="change-theme-btn">change theme</button>
+            </div>
         </div>
     </div>
+
+
+
+
+
 </body>
 
 <script src="./media/JS/app.js" type="module" crossorigin="use-credentials"></script>

@@ -11,6 +11,8 @@ import Pawn from "./pieces/Pawn.js";
 import Visualize from "./utility/Visualize.js";
 import "./web-component/ChessPiece.js";
 import "./web-component/ChessBlock.js";
+import "./web-component/ChessBoard.js";
+
 
 export function initGameBoard() {
     initLogicPlayer();
@@ -99,6 +101,7 @@ function initVisualizeBoard() {
             }
         }
     }
+    Visualize.initCoordinatedNumber();
     Visualize.setThemeAt(0);
     onclickChangeThemeButton();
 }
