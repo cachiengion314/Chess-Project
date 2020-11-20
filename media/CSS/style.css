@@ -78,6 +78,19 @@ chess-block {
     background-image: url("../Image/pawn-b.png");
 }
 
+.pos-relative {
+    position: relative;
+}
+
+.height-100-vh {
+    height: 100vh;
+}
+
+.space-vertical {
+    height: 50px;
+    width: 100%;
+}
+
 .no-padding {
     padding-left: 0px !important;
     padding-right: 0px !important;
@@ -88,9 +101,20 @@ chess-block {
     margin-left: 0px !important;
 }
 
-.avatar {
-    width: 55px;
-    height: 55px;
+.logo {
+    width: 60px;
+    height: 60px;
+}
+
+.avatar-sm {
+    width: 60px;
+    height: 60px;
+    background-color: darkcyan;
+}
+
+.avatar-big {
+    width: 100px;
+    height: 100px;
     background-color: darkcyan;
 }
 
@@ -101,4 +125,34 @@ chess-block {
 
 .font-size-big {
     font-size: 23px;
+}
+
+.txt-logo {
+    line-height: 21px;
+    margin-bottom: 0px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-style: italic;
+}
+
+.no-margin-vertical {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.custom-btn-sm {
+    width: 100% !important;
+    height: 50px;
+}
+
+.custom-btn {
+    width: 100%;
+    height: 70px;
+}
+
+.card-header,
+.card-body {
+    padding: 10px 10px !important;
 }

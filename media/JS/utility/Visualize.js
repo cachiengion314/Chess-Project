@@ -137,10 +137,7 @@ export default class Visualize {
                 "align-items": "flex-end",
                 "color": Visualize.themes[Visualize.currentThemeIndex][AssignedVar.COORDINATES_COLOR],
             });
-            if (x == 0) {
-                $block.textContent = `1` + `\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0` + `${Visualize.coordinatesNames[x]}`;
-            } else
-                $block.textContent = Visualize.coordinatesNames[x];
+            $block.textContent = Visualize.coordinatesNames[x];
             AssignedVar.coordinatesBlocks.push($block);
         }
     }
