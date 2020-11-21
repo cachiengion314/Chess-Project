@@ -4,13 +4,35 @@ body {
 
 chess-board {
     display: block;
-    width: 600px;
-    height: 600px;
+    width: 40vw;
+    height: 40vw;
     position: relative;
+}
+
+@media screen and (max-width:576px) {
+    chess-board {
+        width: 64vh;
+        height: 64vh;
+    }
+}
+
+@media screen and (max-height:700px) {
+    chess-board {
+        width: 64vh;
+        height: 64vh;
+    }
+}
+
+.board-package {
+    background-color: darkgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 chess-piece {
     background-size: 100%;
+    background-repeat: no-repeat;
     width: 12.5%;
     height: 12.5%;
     position: absolute;
@@ -82,12 +104,17 @@ chess-block {
     position: relative;
 }
 
-.height-100-vh {
+.height-100vh {
     height: 100vh;
 }
 
 .space-vertical {
-    height: 50px;
+    height: 3%;
+    width: 100%;
+}
+
+.space-vertical-big {
+    height: 7%;
     width: 100%;
 }
 
@@ -107,24 +134,39 @@ chess-block {
 }
 
 .avatar-sm {
-    width: 60px;
-    height: 60px;
-    background-color: darkcyan;
+    width: 8vh;
+    height: 8vh;
+}
+
+.card-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 .avatar-big {
-    width: 100px;
-    height: 100px;
-    background-color: darkcyan;
+    width: 12vh;
+    height: 12vh;
 }
 
-.coordinates-number {
-    height: 12.5%;
-    width: fit-content;
+.info-card {
+    height: 37%;
 }
 
-.font-size-big {
-    font-size: 23px;
+.info-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 7px 7px !important;
+}
+
+.info-card-body-flex-txt {
+    display: flex;
+    width: 100%;
+}
+
+.width-50 {
+    width: 50%;
 }
 
 .txt-logo {
@@ -142,17 +184,34 @@ chess-block {
     margin-bottom: 0px;
 }
 
-.custom-btn-sm {
-    width: 100% !important;
-    height: 50px;
+.func-card {
+    height: 60%;
+}
+
+.func-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sign-group {
+    height: 15%;
+    width: 100%;
+}
+
+.utility-group {
+    height: 20%;
+    width: 100%;
 }
 
 .custom-btn {
     width: 100%;
-    height: 70px;
+    background-color: gainsboro;
+    margin-bottom: 3px;
+    border-radius: 12px;
+    outline: none;
 }
 
-.card-header,
-.card-body {
-    padding: 10px 10px !important;
+.overflow-hidden {
+    overflow: hidden;
 }

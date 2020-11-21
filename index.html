@@ -22,34 +22,25 @@
     <div class="modal" id="myModal">
         <div class="modal-dialog">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">Modal Heading Lorem ipsum dolor sit amet, consectetur adipisicin!</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body">
                     <img src="./media/Image/sad.png" class="card-img-top" style="width: 50%;" alt="">
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
-
             </div>
         </div>
     </div>
-    <!--  -->
-
-
     <div class="container-fluid">
-        <div class="row bg-light">
-            <!-- 1. sign in/out col  -->
-            <div class="col-sm-2 pos-relative bg-dark">
-                <!-- all sign in/out elements are placed in here  -->
+        <div class="row bg-light" style="width: 100vw;">
+            <div class="col-sm-2 pos-relative height-100vh bg-dark">
                 <div class="row bg-primary">
                     <div class="col-sm-3 no-padding">
                         <img src="./media/Image/knight-w.png" class="logo img-fluid"></img>
@@ -58,95 +49,109 @@
                         <h3 class="txt-logo">Chess Club Online</h3>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <img src="./media/Image/avatar_4.png" class="card-img-top" style="width: 100px;" alt="">
-                    </div>
-                    <div class="card-body">
-                        <h4>unknow player</h4>
-                        <ul class="list-group">
-                            <li class="list-group-item">Elo ratting: 1000 pts</li>
-                            <li class="list-group-item">Win/Draw/Lose: 12/2/32</li>
-                            <li class="list-group-item">Advand player title</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="btn-group-vertical" style="width: 100%;">
-                    <button class=" btn btn-light btn-lg" type="button" data-toggle="modal" data-target="#myModal">
-                        Sign In
-                    </button>
-                    <button class=" btn btn-light btn-lg">
-                        Sign Up
-                    </button>
-                </div>
-
                 <div class="space-vertical"></div>
-                <button id="change-theme-btn" style="position: absolute; bottom: 0px;">change theme</button>
-            </div>
-            <!-- 2. main gameplay col  -->
-            <div class="col-sm-6 bg-light">
-                <div class="">Table 2</div>
-                <!-- player 1 row  -->
-                <div class="row bg-info">
-                    <div class="col-sm-2">
-                        <img src="./media/Image/time.png" class="img-fluid avatar-sm"></img>
-                    </div>
-                    <div class="col-sm-10">title Player 1</div>
+
+                <div class="sign-group btn-group-vertical">
+                    <button class="custom-btn btn-light" type="button" data-toggle="modal" data-target="#myModal" style="height: 40%;">
+                                Sign In
+                    </button>
+                    <button class="custom-btn btn-light" type="button" data-toggle="modal" data-target="fun" style="height: 40%;">
+                                Sign Up
+                    </button>
                 </div>
 
-                <div class="row">
-                    <div class="col no-padding bg-primary">
-                        <!-- some side stuffs are placed in here  -->
+                <div class=" space-vertical "></div>
+                <div class=" card info-card ">
+                    <div class=" card-header ">
+                        <img src=" ./media/Image/avatar_4.png " class=" avatar-big " alt=" ">
                     </div>
-                    <div class="col no-padding">
-                        <chess-board>
-                            <!-- all the chess piece are placed here -->
-                        </chess-board>
+                    <div class=" card-body info-card-body ">
+                        <h4 class=" overflow-hidden ">unknow player</h4>
+                        <div class=" info-card-body-flex-txt ">
+                            <div class=" overflow-hidden width-50 ">Elo</div>
+                            <div class=" over-flow-hidden width-50 ">1000 <small>pts</small></div>
+                        </div>
+                        <div class=" info-card-body-flex-txt ">
+                            <div class=" overflow-hidden width-50 ">Wins</div>
+                            <div class=" over-flow-hidden width-50 ">10 <small>mathes</small></div>
+                        </div>
+                        <div class=" info-card-body-flex-txt ">
+                            <div class=" overflow-hidden width-50 ">Loses</div>
+                            <div class=" over-flow-hidden width-50 ">21 <small>matches</small></div>
+                        </div>
+                        <div class=" info-card-body-flex-txt ">
+                            <div class=" overflow-hidden width-50 ">Draw</div>
+                            <div class=" over-flow-hidden width-50 ">78 <small>matches</small></div>
+                        </div>
+
                     </div>
-                    <div class="col no-padding bg-primary">
-                        <!-- some side stuffs are placed in here  -->
+                </div>
+
+                <div class=" space-vertical "></div>
+                <div class=" utility-group btn-group-vertical ">
+                    <button id=" change-theme-btn " class=" custom-btn " style=" height: 25%; ">change theme</button>
+                    <button id=" top-player-btn " class=" custom-btn " style=" height: 25%; ">top player</button>
+                    <button id=" how-to-play-btn " class=" custom-btn " style=" height: 25%; ">how to play</button>
+                    <button id=" about-us-btn " class=" custom-btn " style=" height: 25%; ">about us</button>
+                </div>
+
+
+            </div>
+
+
+            <!-- 2. main gameplay col  -->
+            <div class=" col-sm-6 height-100vh no-padding bg-light ">
+                <div class=" bg-secondary " style=" height: 4%; ">Table 2</div>
+                <!-- player 1 row  -->
+                <div class=" d-flex bg-info " style=" height: 8%; ">
+                    <div>
+                        <img src=" ./media/Image/avatar_6.png " class=" avatar-sm "></img>
                     </div>
+                    <div>title Player 1</div>
+                </div>
+
+                <div class=" board-package " style=" height:80%; ">
+                    <chess-board></chess-board>
                 </div>
 
                 <!-- player 2 row  -->
-                <div class="row bg-info">
-                    <div class="col-sm-2">
-                        <img src="./media/Image/time.png" class="img-fluid avatar-sm"></img>
+                <div class=" d-flex bg-info " style=" height: 8%; ">
+                    <div>
+                        <img src=" ./media/Image/avatar_2.png " class=" avatar-sm "></img>
                     </div>
-                    <div class="col-sm-10">title Player 2</div>
+                    <div>title Player 2</div>
                 </div>
 
             </div>
+
             <!-- 3. functions col  -->
-            <div class="col-sm-4 pos-relative bg-secondary">
+            <div class=" col-sm-4 pos-relative height-100vh bg-secondary ">
                 <!-- all function of the game are placed in here  -->
-                <div class="card">
-                    <div class="card-header">
+                <div class=" card func-card ">
+                    <div class=" card-header ">
                         <h4>Wellcome to chess club online game</h4>
                     </div>
-                    <div class="card-body">
-                        <button class="custom-btn">Create a table</button>
-                        <button class="custom-btn">Join a table</button>
-                        <button class="custom-btn">Play solo game</button>
-                        <button class="custom-btn">Top Player</button>
+                    <div class=" card-body func-card-body ">
+                        <button id=" create-table-btn " class=" custom-btn " style=" height: 25%; ">Create a table</button>
+                        <button id=" back " class=" custom-btn " style=" height: 25%; ">Back to the lobby</button>
+                        <button id=" play " class=" custom-btn " style=" height: 25%; ">Play solo game</button>
                     </div>
-                    <div class="card-footer">
+                    <div class=" card-footer ">
 
                     </div>
                 </div>
 
-                <div class="space-vertical"></div>
-
-                <div class="card" style="position: absolute; bottom: 0px; width: 80%;">
-                    <div class="card-header">Chat Box</div>
-                    <div class="card-body">
+                <div class=" card ">
+                    <div class=" card-header ">Chat Box</div>
+                    <div class=" card-body ">
                         <!-- chat text box in here -->
                     </div>
-                    <div class="card-footer">
+                    <div class=" card-footer ">
                         <button>Send</button>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -154,8 +159,11 @@
 
 
 
+
 </body>
 
-<script src="./media/JS/app.js" type="module" crossorigin="use-credentials"></script>
+<script type="module">
+    import { initGameBoard } from "./media/JS/InitGameBoard.js "; $(document).ready(readyCallback); function readyCallback() { initGameBoard(); }
+</script>
 
 </html>
