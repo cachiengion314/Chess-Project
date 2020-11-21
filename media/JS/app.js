@@ -4,5 +4,4 @@ $(document).ready(readyCallback);
 
 function readyCallback() {
     initGameBoard();
-    console.log(`hi appjs`)
 }
