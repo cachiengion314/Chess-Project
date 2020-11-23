@@ -1,4 +1,5 @@
 export default class AssignedVar {
+    static games = [];
     static selectedPiece = null;
     static $selectedPiece = null;
     static selectedPieceSpecialBlocks = [];

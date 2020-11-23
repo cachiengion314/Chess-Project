@@ -33,10 +33,10 @@ export default class Visualize {
         "opacity": `0`,
     }
     static normalBorderRadiusAnimate = {
-        "border-radius": "9px",
+        "border-radius": "12%",
     }
     static bigBorderRadiusAnimate = {
-        "border-radius": "18px",
+        "border-radius": "18%",
     }
     static currentThemeIndex = 0;
     static themes = [{
@@ -86,17 +86,15 @@ export default class Visualize {
             }
         }
         console.log(str);
-        console.log(`blackPlayer:`, AssignedVar.blackPlayer);
-        console.log(`whitePlayer:`, AssignedVar.whitePlayer);
     }
 
     static chessPieceImageAt(pos) {
-        let $chessPiece = Visualize.createChessComponent(AssignedVar.CHESS_PIECE);
+        let $chessPiece = Visualize.createWebComponent(AssignedVar.CHESS_PIECE);
         $chessPiece.name = AssignedVar.chessBoard[pos.x][pos.y].name;
         $chessPiece.id = AssignedVar.chessBoard[pos.x][pos.y].id;
         Visualize.setChessComponentPositionAt(pos, $chessPiece);
     }
-    static createChessComponent(componentName) {
+    static createWebComponent(componentName) {
         let $cComponent = document.createElement(componentName);
         $(`chess-board`).append($cComponent);
         return $cComponent;
@@ -106,7 +104,7 @@ export default class Visualize {
         $chessComponent.style.top = pos.convertToPercentPosition().top;
     }
     static chessBlockImageAt(pos) {
-        let $chessBlock = Visualize.createChessComponent(AssignedVar.CHESS_BLOCK);
+        let $chessBlock = Visualize.createWebComponent(AssignedVar.CHESS_BLOCK);
         Visualize.setNormalColorForBlock($chessBlock, pos);
         if (AssignedVar.chessBoard[pos.x][pos.y].type != AssignedVar.PIECE) {
             $chessBlock.id = AssignedVar.chessBoard[pos.x][pos.y].id;
@@ -203,7 +201,7 @@ export default class Visualize {
     static onBlockMouseEnterOf($block) {
         $($block).mouseenter(function() {
             let currentPos = Vector.convertIdToVector($block.id);
-            let upPos = currentPos.plusVector(new Vector(0, -1).multipliByNumber(.07));
+            let upPos = currentPos.plusVector(new Vector(0, -1).multipliByNumber(.05));
             let effectAnimate = {
                 ...Visualize.normalOpacityAnimate,
                 ...Visualize.bigBorderRadiusAnimate,
@@ -257,7 +255,6 @@ export default class Visualize {
             $chessBlock.style.backgroundColor = Visualize.themes[Visualize.currentThemeIndex][AssignedVar.LIGHT_BLOCK];
         }
     }
-
     static setThemeAt(index) {
         Visualize.currentThemeIndex = index;
         $(`chess-board`)[0].style.backgroundColor = Visualize.themes[index][AssignedVar.CHESSBOARD_BG_COLOR];

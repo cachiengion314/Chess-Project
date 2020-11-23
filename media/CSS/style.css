@@ -1,3 +1,7 @@
+* {
+    line-height: 1.3;
+}
+
 body {
     background-color: darkgray !important;
 }
@@ -14,6 +18,12 @@ chess-board {
         width: 64vh;
         height: 64vh;
     }
+    .font-size-vw {
+        font-size: 13px !important;
+    }
+    .custom-btn {
+        font-size: 15px !important;
+    }
 }
 
 @media screen and (max-height:700px) {
@@ -21,13 +31,6 @@ chess-board {
         width: 64vh;
         height: 64vh;
     }
-}
-
-.board-package {
-    background-color: darkgray;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 chess-piece {
@@ -46,7 +49,7 @@ chess-block {
     height: 12.5%;
     position: absolute;
     z-index: 2;
-    border-radius: 9px;
+    border-radius: 12%;
     border: 1px solid darkblue;
     opacity: .7;
     color: lightyellow;
@@ -104,10 +107,6 @@ chess-block {
     position: relative;
 }
 
-.height-100vh {
-    height: 100vh;
-}
-
 .space-vertical {
     height: 3%;
     width: 100%;
@@ -128,55 +127,27 @@ chess-block {
     margin-left: 0px !important;
 }
 
-.logo {
-    width: 60px;
-    height: 60px;
-}
-
 .avatar-sm {
-    width: 8vh;
-    height: 8vh;
+    display: block;
 }
 
 .card-header {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    padding: .3rem 1rem !important;
 }
 
-.avatar-big {
-    width: 12vh;
-    height: 12vh;
+.txt-align-center {
+    text-align: center;
 }
 
-.info-card {
-    height: 37%;
-}
-
-.info-card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 7px 7px !important;
+.font-size-vw {
+    font-size: 1.3vw;
 }
 
 .info-card-body-flex-txt {
     display: flex;
-    width: 100%;
-}
-
-.width-50 {
-    width: 50%;
-}
-
-.txt-logo {
-    line-height: 21px;
-    margin-bottom: 0px;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    font-style: italic;
 }
 
 .no-margin-vertical {
@@ -184,34 +155,116 @@ chess-block {
     margin-bottom: 0px;
 }
 
-.func-card {
-    height: 60%;
+.custom-btn {
+    width: 100%;
+    background-color: lightgray;
+    margin-bottom: 3px;
+    border-radius: 12px;
+    outline: none !important;
+    font-size: 1.5vw;
 }
 
-.func-card-body {
+.custom-btn:hover {
+    background-color: linen;
+}
+
+.overflow-hidden {
+    overflow: hidden !important;
+}
+
+.function-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: lightgrey;
+}
+
+.sign-col {
+    background-color: lightgrey;
+}
+
+.main-col {
+    background-color: lightgrey;
+}
+
+#chat-box-footer {
+    display: flex;
+}
+
+#chat-box-input {
+    color: red;
+}
+
+#chat-box-send-btn {
+    color: black;
+}
+
+#func-card-body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.sign-group {
-    height: 15%;
-    width: 100%;
+#sign-group {
+    display: block;
 }
 
-.utility-group {
-    height: 20%;
-    width: 100%;
+#utility-group {
+    display: block;
 }
 
-.custom-btn {
-    width: 100%;
-    background-color: gainsboro;
-    margin-bottom: 3px;
-    border-radius: 12px;
-    outline: none;
+#chat-box {
+    color: black;
 }
 
-.overflow-hidden {
-    overflow: hidden;
+#avatar-big {
+    display: block;
+}
+
+#info-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6px 7px !important;
+}
+
+#info-card {
+    display: block;
+}
+
+#logo {
+    display: block;
+}
+
+#txt-logo {
+    line-height: 23px;
+    margin-bottom: 0px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-style: italic;
+    color: white;
+}
+
+#txt-welcome {
+    color: black;
+}
+
+#tables {
+    display: flex;
+}
+
+#waiting-tables {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow: scroll;
+}
+
+#board-package {
+    display: none !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

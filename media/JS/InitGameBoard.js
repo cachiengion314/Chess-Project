@@ -1,4 +1,5 @@
-import Player from "./Player.js";
+import Player from "./gameplay/Player.js";
+import Game from "./gameplay/Game.js";
 import AssignedVar from "./utility/AssignedVar.js";
 import Vector from "./utility/Vector.js";
 import Rook from "./pieces/Rook.js";
@@ -9,17 +10,20 @@ import King from "./pieces/King.js";
 import Queen from "./pieces/Queen.js";
 import Pawn from "./pieces/Pawn.js";
 import Visualize from "./utility/Visualize.js";
+
 import "./web-component/ChessPiece.js";
 import "./web-component/ChessBlock.js";
 import "./web-component/ChessBoard.js";
 
-
-export function initGameBoard() {
+export default function initGameBoard() {
+    initGame();
     initLogicPlayer();
     initLogicPieces();
     initLogicBoard();
 }
-
+function initGame() {
+    AssignedVar.games.push(new Game(1));
+}
 function initLogicPlayer() {
     AssignedVar.blackPlayer = new Player(AssignedVar.BLACK);
     AssignedVar.whitePlayer = new Player(AssignedVar.WHITE);
@@ -90,14 +94,14 @@ function initVisualizeBoard() {
         for (let y = 0; y < 8; ++y) {
             let pos = new Vector(x, y);
             Visualize.chessBlockImageAt(pos);
-            Visualize.onBlockMouseEnterOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
-            Visualize.onBlockMouseLeaveOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
+            // Visualize.onBlockMouseEnterOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
+            // Visualize.onBlockMouseLeaveOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
 
-            onclickSelectedEmptyAt(pos);
+            // onclickSelectedEmptyAt(pos);
             if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
-                Visualize.onPieceMouseEnterOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
-                Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
-                onclickSelectedChessPieceAt(pos);
+                // Visualize.onPieceMouseEnterOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
+                // Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
+                // onclickSelectedChessPieceAt(pos);
             }
         }
     }
