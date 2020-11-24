@@ -94,14 +94,14 @@ function initVisualizeBoard() {
         for (let y = 0; y < 8; ++y) {
             let pos = new Vector(x, y);
             Visualize.chessBlockImageAt(pos);
-            // Visualize.onBlockMouseEnterOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
-            // Visualize.onBlockMouseLeaveOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
+            Visualize.onBlockMouseEnterOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
+            Visualize.onBlockMouseLeaveOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
+            onclickSelectedEmptyAt(pos);
 
-            // onclickSelectedEmptyAt(pos);
             if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
-                // Visualize.onPieceMouseEnterOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
-                // Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
-                // onclickSelectedChessPieceAt(pos);
+                Visualize.onPieceMouseEnterOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
+                Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
+                onclickSelectedChessPieceAt(pos);
             }
         }
     }

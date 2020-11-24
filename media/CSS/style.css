@@ -8,15 +8,15 @@ body {
 
 chess-board {
     display: block;
-    width: 40vw;
-    height: 40vw;
+    width: 75vh;
+    height: 75vh;
     position: relative;
 }
 
 @media screen and (max-width:576px) {
     chess-board {
-        width: 64vh;
-        height: 64vh;
+        width: 98vw !important;
+        height: 98vw !important;
     }
     .font-size-vw {
         font-size: 13px !important;
@@ -24,12 +24,15 @@ chess-board {
     .custom-btn {
         font-size: 15px !important;
     }
-}
-
-@media screen and (max-height:700px) {
-    chess-board {
-        width: 64vh;
-        height: 64vh;
+    .all-contents {
+        display: block !important;
+    }
+    #function-col {
+        width: 100% !important;
+        height: 80vh !important;
+    }
+    #main-col {
+        width: 100% !important;
     }
 }
 
@@ -102,7 +105,9 @@ chess-block {
 .pawn-b {
     background-image: url("../Image/pawn-b.png");
 }
-
+.all-contents{
+    display: flex;
+}
 .pos-relative {
     position: relative;
 }
@@ -138,15 +143,11 @@ chess-block {
     padding: .3rem 1rem !important;
 }
 
-.txt-align-center {
-    text-align: center;
-}
-
 .font-size-vw {
     font-size: 1.3vw;
 }
 
-.info-card-body-flex-txt {
+.card-body-flex-txt {
     display: flex;
 }
 
@@ -172,19 +173,14 @@ chess-block {
     overflow: hidden !important;
 }
 
-.function-col {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background-color: lightgrey;
+.box-header {
+    text-align: center;
+    background-color: lightcyan;
 }
 
-.sign-col {
-    background-color: lightgrey;
-}
-
-.main-col {
-    background-color: lightgrey;
+.box-body {
+    display: block;
+    background-color: lightcyan;
 }
 
 #chat-box-footer {
@@ -267,4 +263,61 @@ chess-block {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#sign-col-content {
+    width: 100%;
+    padding-left: 1%;
+    padding-right: 1%;
+    background-color: lemonchiffon;
+}
+
+#main-col {
+    width: 65%;
+    background-color: lightblue;
+}
+
+#function-col {
+    width: 20%;
+    padding-left: 1%;
+    padding-right: 1%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: lightgrey;
+}
+
+#table-txt {
+    display: block;
+}
+
+#sign-col-btn {
+    display: none;
+    height: 100%;
+}
+
+#back-to-lobby-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 100%;
+}
+
+@media screen and (max-width: 850px) {
+    /* #sign-col {
+        display: none;
+    } */
+    #sign-col-content {
+        width: 0%;
+    }
+    #main-col {
+        width: 65%;
+    }
+    #function-col {
+        width: 35%;
+    }
+    #sign-col-btn {
+        display: block;
+        float: left;
+    }
 }

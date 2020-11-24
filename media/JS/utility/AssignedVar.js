@@ -7,6 +7,9 @@ export default class AssignedVar {
     static coordinatesBlocks = [];
     static chessBoard = [];
 
+    static LEFT_ARROW = "&#9664;";
+    static RIGHT_ARROW = "&#9658;";
+    static CIRCLE = "&#9673;";
     static WHITE = `white`;
     static BLACK = `black`;
     static EMPTY = `empty`;
