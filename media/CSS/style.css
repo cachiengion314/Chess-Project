@@ -105,9 +105,11 @@ chess-block {
 .pawn-b {
     background-image: url("../Image/pawn-b.png");
 }
-.all-contents{
+
+.all-contents {
     display: flex;
 }
+
 .pos-relative {
     position: relative;
 }
@@ -143,8 +145,24 @@ chess-block {
     padding: .3rem 1rem !important;
 }
 
-.font-size-vw {
+.font-size-vw-sm {
     font-size: 1.3vw;
+}
+
+.font-size-vw-big {
+    font-size: 1.5vw;
+}
+
+.font-size-vh-ssm {
+    font-size: 1.9vh;
+}
+
+.font-size-vh-sm {
+    font-size: 2.3vh;
+}
+
+.font-size-vh-big {
+    font-size: 2.5vh;
 }
 
 .card-body-flex-txt {
@@ -156,13 +174,20 @@ chess-block {
     margin-bottom: 0px;
 }
 
+.custom-btn-sm {
+    width: 115px;
+    height: 3.7vh;
+    background-color: blanchedalmond;
+    border-radius: 12px;
+    outline: none !important;
+}
+
 .custom-btn {
     width: 100%;
     background-color: lightgray;
     margin-bottom: 3px;
     border-radius: 12px;
     outline: none !important;
-    font-size: 1.5vw;
 }
 
 .custom-btn:hover {
@@ -183,6 +208,12 @@ chess-block {
     background-color: lightcyan;
 }
 
+.align-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #chat-box-footer {
     display: flex;
 }
@@ -201,7 +232,7 @@ chess-block {
     justify-content: space-between;
 }
 
-#sign-group {
+#sign-group-btn {
     display: block;
 }
 
@@ -255,7 +286,7 @@ chess-block {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 #board-package {
@@ -267,13 +298,17 @@ chess-block {
 
 #sign-col-content {
     width: 100%;
-    padding-left: 1%;
-    padding-right: 1%;
-    background-color: lemonchiffon;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: lightgrey;
+}
+
+#sign-col {
+    width: 18%;
 }
 
 #main-col {
-    width: 65%;
+    width: 62%;
     background-color: lightblue;
 }
 
@@ -303,10 +338,7 @@ chess-block {
     height: 100%;
 }
 
-@media screen and (max-width: 850px) {
-    /* #sign-col {
-        display: none;
-    } */
+@media screen and (max-width: 950px) {
     #sign-col-content {
         width: 0%;
     }

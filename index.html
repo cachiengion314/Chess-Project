@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <!-- The Modal -->
+    <!-- notification modal -->
     <div class="modal" id="notification-modal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <!-- The Modal -->
+    <!-- sign modal -->
     <div class="modal" id="sign-modal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -62,9 +62,30 @@
         </div>
     </div>
 
+    <!-- option modal -->
+    <div class="modal" id="option-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">This is option</h4>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <button id="change-theme-btn" class="custom-btn " style=" height: 25%; ">change theme</button>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Sign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="all-contents bg-light">
         <!-- 1. sign col -->
-        <div id="sign-col" class="pos-relative " style="width:15%; height:100vh">
+        <div id="sign-col" class="pos-relative " style="height:100vh">
             <div id="sign-col-content" style="height:100%;">
                 <div class="row no-margin bg-primary">
                     <div class="col-sm-3 no-padding">
@@ -76,9 +97,12 @@
                     </div>
                 </div>
 
-                <div class="space-vertical"></div>
+                <h4 id="txt-welcome" class="text-center font-size-vw-big">
+                    Wellcome to chess club online! Please log in!
+                </h4>
 
-                <div id="sign-group" class="btn-group-vertical " style="height: 15%; width: 100%;">
+
+                <div id="sign-group-btn" class="btn-group-vertical " style="height: 15%; width: 100%;">
                     <button id="sign-in-btn" class="custom-btn " type="button" data-toggle="modal"
                         data-target="#sign-modal" style="height: 40%;">
                         Sign In
@@ -97,41 +121,45 @@
                             style="height: 12vh;width: 12vh;">
                     </div>
                     <div id="info-card-body" class="card-body ">
-                        <h5 class="font-size-vw overflow-hidden text-center">unknow player</h5>
+                        <h5 class="font-size-vw-sm overflow-hidden text-center">unknow player</h5>
                         <div class="card-body-flex-txt " style="width: 100%;">
-                            <div class="font-size-vw overflow-hidden " style="width: 40%;">Elo:</div>
-                            <div class="font-size-vw over-flow-hidden " style="width: 60%;">1000 <small
-                                    class="font-size-vw">pts</small></div>
+                            <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Elo:</div>
+                            <div class="font-size-vw-sm over-flow-hidden " style="width: 60%;">
+                                1000
+                                <small class="font-size-vw-sm">pts</small></div>
                         </div>
                         <div class="card-body-flex-txt ">
-                            <div class="font-size-vw overflow-hidden " style="width: 40%;">Wins:</div>
-                            <div class="font-size-vw over-flow-hidden " style="width: 60%;">10 <small
-                                    class="font-size-vw">matches</small></div>
+                            <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Wins:</div>
+                            <div class="font-size-vw-sm over-flow-hidden " style="width: 60%;">
+                                10
+                                <small class="font-size-vw-sm">matches</small>
+                            </div>
                         </div>
                         <div class="card-body-flex-txt ">
-                            <div class="font-size-vw overflow-hidden " style="width: 40%;">Loses:</div>
-                            <div class="font-size-vw over-flow-hidden " style="width: 60%;">21 <small
-                                    class="font-size-vw">matches</small></div>
+                            <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Loses:</div>
+                            <div class="font-size-vw-sm over-flow-hidden " style="width: 60%;">
+                                21
+                                <small class="font-size-vw-sm">matches</small>
+                            </div>
                         </div>
                         <div class="card-body-flex-txt ">
-                            <div class="font-size-vw overflow-hidden " style="width: 40%;">Draw:</div>
-                            <div class="font-size-vw over-flow-hidden " style="width: 60%;">78 <small
-                                    class="font-size-vw">matches</small></div>
+                            <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Draw:</div>
+                            <div class="font-size-vw-sm over-flow-hidden " style="width: 60%;">
+                                78
+                                <small class="font-size-vw-sm">matches</small>
+                            </div>
                         </div>
-
                     </div>
                 </div>
 
                 <div class="space-vertical "></div>
 
                 <div id="utility-group" class="btn-group-vertical " style="height: 20%; width: 100%;">
-                    <button id="change-theme-btn" class="custom-btn " style=" height: 25%; ">change theme</button>
-                    <button id="top-player-btn" class="custom-btn " style=" height: 25%; ">top player</button>
-                    <button id="how-to-play-btn" class="custom-btn" style=" height: 25%; ">how to play</button>
-                    <button id="about-us-btn" class="custom-btn" style=" height: 25%; ">about us</button>
+                    <button id="top-player-btn" class="custom-btn font-size-vw-big" style=" height: 25%; ">top player</button>
+                    <button id="how-to-play-btn" class="custom-btn font-size-vw-big" style=" height: 25%; ">how to play</button>
+                    <button id="about-us-btn" class="custom-btn font-size-vw-big" style=" height: 25%; ">about us</button>
                 </div>
 
-                <!-- <div id="sign-col-opacity" class=" bg-dark"></div> -->
             </div>
 
         </div>
@@ -139,18 +167,21 @@
         <!-- 2. main gameplay col  -->
         <div id="main-col" class="no-padding " style="height:100vh">
             <div class="d-flex bg-warning position-relative" style="height: 4%;">
-                <button id="sign-col-btn" class="font-size-vw">&#9776;</button>
-                <div id="table-txt" class="text-primary">Table 2</div>
-                <button id="back-to-lobby-btn" class="font-size-vw btn-success">&#9673;</button>
+                <button id="sign-col-btn" class="font-size-vw-sm">&#9776;</button>
+                <div id="table-txt" class="text-primary ml-2">Table 2</div>
+                <button id="back-to-lobby-btn" class="font-size-vw-sm btn-success">&#9673;</button>
             </div>
             <!-- player 1 row  -->
-            <div id="player-1-block" class="d-flex bg-info " style="height: 8%;">
-                <div>
-                    <img src=" ./media/Image/avatar_6.png " class="avatar-sm " style="width: 8vh; height:8vh;"></img>
+            <div id="enemy-block" class="d-flex bg-info " style="height: 8%;">
+                <img src=" ./media/Image/avatar_6.png " class="avatar-sm avatar-sm ml-2 mr-2"
+                    style="width: 8vh; height:8vh;"></img>
+                <div class="d-block bg-danger" style="width: 150px;">
+                    <div class="text-center bg-success font-size-vh-sm w-100 h-50">title enemy</div>
+                    <div class="align-center font-size-vh-sm w-100 h-50">Ready</div>
                 </div>
-                <div>title Player 1</div>
             </div>
 
+            <!-- board row -->
             <div id="waiting-tables" style="height: 80%;">
                 <!-- <waiting-table></waiting-table> -->
             </div>
@@ -160,11 +191,21 @@
             </div>
 
             <!-- player 2 row  -->
-            <div id="player-2-block" class="d-flex bg-info " style="height: 8%;">
-                <div>
-                    <img src=" ./media/Image/avatar_2.png " class="avatar-sm " style="width: 8vh;height:8vh;"></img>
+            <div id="player-block" class="d-flex bg-info " style="height: 8%;">
+
+                <img src=" ./media/Image/avatar_2.png " class="avatar-sm ml-2 mr-2"
+                    style="width: 8vh; height:8vh;"></img>
+
+                <div class="d-block bg-danger" style="width: 150px;">
+                    <div class="text-center text-white bg-success font-size-vh-sm w-100 h-50">Current player</div>
+                    <div class="align-center w-100 h-50">
+                        <div class="font-size-vh-sm">Ready</div>
+                    </div>
                 </div>
-                <div>title Player 2</div>
+                <div class="btn-group-vertical">
+                    <button class="custom-btn-sm overflow-hidden font-size-vh-sm">Offer a draw</button>
+                    <button class="custom-btn-sm font-size-vh-sm">Resigned</button>
+                </div>
             </div>
 
         </div>
@@ -173,20 +214,19 @@
         <div id="function-col" class="pos-relative " style="height:100vh">
 
             <div class="space-vertical"></div>
-            <h4 id="txt-welcome" class="font-size-vw text-center">Wellcome to chess club online! Please log in!
-            </h4>
 
             <div style="height: 30%">
-                <button id="create-table-btn" class="custom-btn " style=" height: 50%; ">
+                <button id="create-table-btn" class="custom-btn font-size-vw-big" style=" height: 50%; ">
                     Create a table
                 </button>
-                <button id="play-solo-btn" class="custom-btn " style=" height: 40%; ">
+                <button id="play-solo-btn" class="custom-btn font-size-vw-big" style=" height: 40%; ">
                     Play solo game
                 </button>
             </div>
 
-            <button id="ready-btn" class="custom-btn " style=" height: 10%; ">
-                Ready!
+            <button id="option-btn" class="custom-btn font-size-vw-big" type="button" data-toggle="modal" data-target="#option-modal"
+                style="height: 10%;">
+                Option
             </button>
 
             <div id="chat-box" class="box " style="height:25%;">

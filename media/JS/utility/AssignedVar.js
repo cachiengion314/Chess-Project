@@ -1,5 +1,8 @@
 export default class AssignedVar {
     static games = [];
+    static haveUsedSignColButton = false;
+    static MAX_SCREEN_WIDTH = 950;
+
     static selectedPiece = null;
     static $selectedPiece = null;
     static selectedPieceSpecialBlocks = [];
@@ -15,7 +18,6 @@ export default class AssignedVar {
     static EMPTY = `empty`;
     static PIECE = `piece`;
     static CHESS_PIECE = `chess-piece`;
-
     static CHESSBOARD_BG_COLOR = `chessboard-bg-color`;
     static CHESS_BLOCK = `chess-block`;
     static POSITION_BLOCK = "position-block";
@@ -59,7 +61,6 @@ export default class AssignedVar {
     static bKnight2;
     static bRook2;
     static bPawns = [];
-
     static wRook;
     static wKnight;
     static wBishop;
