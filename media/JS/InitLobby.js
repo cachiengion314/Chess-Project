@@ -1,6 +1,7 @@
 import Visualize from "./utility/Visualize.js";
 
 export default function initLobby() {
+    $(`#gameplay-group-btn`).hide();
     setTimeout(() => {
         test();
     }, 500);

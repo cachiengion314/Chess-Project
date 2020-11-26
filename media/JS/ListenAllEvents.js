@@ -1,5 +1,7 @@
 import AssignedVar from "./utility/AssignedVar.js";
-import initGameBoard from "./InitGameBoard.js";
+import Vector from "./utility/Vector.js";
+import Visualize from "./utility/Visualize.js";
+import { initGameBoard, onclickSelectedChessPieceAt } from "./InitGameBoard.js";
 
 import "./web-component/WaitingTable.js";
 
@@ -9,6 +11,8 @@ export default function listenAllEvents() {
     onclickPlaySoloBtn();
     onclickBackToLobbyBtn();
     onclickOpenSignColBtn();
+    onclickReadyBtn();
+    onclickChangeThemeBtn();
     listenResizeEvent();
 }
 
@@ -20,7 +24,7 @@ function onclickOpenSignColBtn() {
             "background-color": "rgba(0, 0, 0, 0.7)",
             "width": "100vw",
             "height": "100vh",
-            "z-index": "12",
+            "z-index": AssignedVar.SIGN_COL_ZINDEX,
             "position": "fixed",
             "top": "0",
             "left": "0",
@@ -100,6 +104,14 @@ function onclickPlaySoloBtn() {
     $(`#play-solo-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
             createNewChessBoard();
+
+            $(`#play-group-btn`).hide(`fast`);
+            $(`#gameplay-group-btn`).show(`fast`);
+            let secondBtn = $(`#gameplay-group-btn button`)[1];
+            let thirdBtn = $(`#gameplay-group-btn button`)[2];
+            $(secondBtn).text(`Resigned for player 1`);
+            $(thirdBtn).text(`Resigned for player 2`);
+
             let $backLobbyBtn = $(`#back-to-lobby-btn`);
             $backLobbyBtn.html(AssignedVar.LEFT_ARROW);
         } else {
@@ -111,6 +123,14 @@ function onclickCreateTableBtn() {
     $(`#create-table-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
             createNewChessBoard();
+
+            $(`#play-group-btn`).hide(`fast`);
+            $(`#gameplay-group-btn`).show(`fast`);
+            let secondBtn = $(`#gameplay-group-btn button`)[1];
+            let thirdBtn = $(`#gameplay-group-btn button`)[2];
+            $(secondBtn).text(`Resigned`);
+            $(thirdBtn).hide();
+
             let $backLobbyBtn = $(`#back-to-lobby-btn`);
             $backLobbyBtn.html(AssignedVar.LEFT_ARROW);
         } else {
@@ -145,6 +165,27 @@ function onclickBackToLobbyBtn() {
     // });
 }
 
+function onclickReadyBtn() {
+    $(`#ready-btn`).click(function () {
+        AssignedVar.isPlayerReady = true;
+        $(this).hide("fast");
+
+        if (AssignedVar.isPlayerReady /* && AssignedVar.isEnemyReady) */) {
+            letPlayerControlChessPiece();
+        }
+    });
+}
+
+function onclickChangeThemeBtn() {
+    $(`#change-theme-btn`).on(`click`, () => {
+        Visualize.currentThemeIndex++;
+        if (Visualize.currentThemeIndex == Visualize.themes.length) {
+            Visualize.currentThemeIndex = 0;
+        }
+        Visualize.setThemeAt(Visualize.currentThemeIndex);
+    });
+}
+
 function emptyWaitingTables() {
     $(`#waiting-tables`).empty();
 }
@@ -166,4 +207,15 @@ function hideChessBoardAndShowLobby() {
     $(`#board-package`)[0].setAttribute(`style`, `display: none;`);
     $(`#waiting-tables`).show(`fast`);
     initLobby();
+}
+
+function letPlayerControlChessPiece() {
+    for (let x = 0; x < 8; ++x) {
+        for (let y = 0; y < 8; ++y) {
+            let pos = new Vector(x, y);
+            if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
+                onclickSelectedChessPieceAt(pos);
+            }
+        }
+    }
 }

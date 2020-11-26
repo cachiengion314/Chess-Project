@@ -15,7 +15,7 @@ import "./web-component/ChessPiece.js";
 import "./web-component/ChessBlock.js";
 import "./web-component/ChessBoard.js";
 
-export default function initGameBoard() {
+export function initGameBoard() {
     initGame();
     initLogicPlayer();
     initLogicPieces();
@@ -101,13 +101,13 @@ function initVisualizeBoard() {
             if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
                 Visualize.onPieceMouseEnterOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
                 Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
-                onclickSelectedChessPieceAt(pos);
+        
+                // onclickSelectedChessPieceAt(pos);
             }
         }
     }
     Visualize.initCoordinatedNumber();
     Visualize.setThemeAt(0);
-    onclickChangeThemeButton();
 }
 
 function onclickSelectedEmptyAt(fixedPosition) {
@@ -118,7 +118,7 @@ function onclickSelectedEmptyAt(fixedPosition) {
     });
 }
 
-function onclickSelectedChessPieceAt(fixedPosition) {
+export function onclickSelectedChessPieceAt(fixedPosition) {
     let $chessPiece = $(`#${AssignedVar.chessBoard[fixedPosition.x][fixedPosition.y].id}`);
     $chessPiece.on(`click`, () => {
         let pos = Vector.convertIdToVector($chessPiece[0].id);
@@ -222,14 +222,4 @@ function logicUnSubscribeSelectedPiece() {
     AssignedVar.selectedPiece = null;
     AssignedVar.$selectedPiece = null;
     AssignedVar.legalMovesOfSelectedPiece = [];
-}
-
-function onclickChangeThemeButton() {
-    $(`#change-theme-btn`).on(`click`, () => {
-        Visualize.currentThemeIndex++;
-        if (Visualize.currentThemeIndex == Visualize.themes.length) {
-            Visualize.currentThemeIndex = 0;
-        }
-        Visualize.setThemeAt(Visualize.currentThemeIndex);
-    });
 }

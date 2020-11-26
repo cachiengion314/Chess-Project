@@ -207,7 +207,7 @@ export default class Visualize {
                 ...Visualize.bigBorderRadiusAnimate,
                 "left": upPos.convertToPercentPosition().left,
                 "top": upPos.convertToPercentPosition().top,
-                "z-index": `3`,
+                "z-index": AssignedVar.MAX_BLOCK_ZINDEX,
             };
             $($block).animate(effectAnimate, `fast`);
         });
@@ -220,7 +220,7 @@ export default class Visualize {
                 ...Visualize.normalBorderRadiusAnimate,
                 "left": currentPos.convertToPercentPosition().left,
                 "top": currentPos.convertToPercentPosition().top,
-                "z-index": "2",
+                "z-index": AssignedVar.MIN_BLOCK_ZINDEX,
             };
             $($block).animate(normalEffectAnimate, `fast`);
         });

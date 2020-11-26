@@ -1,8 +1,16 @@
 export default class AssignedVar {
     static games = [];
     static haveUsedSignColButton = false;
-    static MAX_SCREEN_WIDTH = 950;
+    static isPlayerReady = false;
+    static isEnemyReady = false;
 
+    static MAX_SCREEN_WIDTH = 950;
+    static SIGN_COL_ZINDEX = "12";
+    static READY_BTN_ZINDEX = "5";
+    static CHESS_PIECE_ZINDEX = "4";
+    static MAX_BLOCK_ZINDEX = "3";
+    static MIN_BLOCK_ZINDEX = "2";
+    
     static selectedPiece = null;
     static $selectedPiece = null;
     static selectedPieceSpecialBlocks = [];
