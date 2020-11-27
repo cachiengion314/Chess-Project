@@ -83,6 +83,7 @@ function listenResizeEvent() {
 }
 
 function responsiveSignColEventInvoke() {
+    alert(`fldsfjldsjflsdjfldsjflsdjf`);
     let $signCol = $(`#sign-col`);
     if (window.innerWidth < AssignedVar.MAX_SCREEN_WIDTH) {
         $signCol.css({
