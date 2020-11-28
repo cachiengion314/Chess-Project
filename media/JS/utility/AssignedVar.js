@@ -4,6 +4,8 @@ export default class AssignedVar {
     static currentGame = null;
     static games = [];
     static haveUsedSignColButton = false;
+    static OFFLINE = "ofline";
+    static ONLINE = "online";
 
     static MAX_SCREEN_WIDTH = 950;
     static SIGN_COL_ZINDEX = "12";

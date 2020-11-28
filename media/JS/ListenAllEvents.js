@@ -17,6 +17,7 @@ export default function listenAllEvents() {
     onclickOpenSignColBtn();
     onclickReadyBtn();
     onclickResignedBtn();
+    onclickOfferADrawBtn();
     onclickChangeThemeBtn();
     listenResizeEvent();
 }
@@ -108,7 +109,7 @@ function responsiveSignColEventInvoke() {
 function onclickPlaySoloBtn() {
     $(`#play-solo-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
-            AssignedVar.currentGame = new Game(0);
+            AssignedVar.currentGame = new Game(0, AssignedVar.OFFLINE);
 
             $(`#play-group-btn`).hide(`fast`);
             $(`#gameplay-group-btn`).show(`fast`);
@@ -127,7 +128,7 @@ function onclickPlaySoloBtn() {
 function onclickCreateTableBtn() {
     $(`#create-table-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
-            AssignedVar.currentGame = new Game(0);
+            AssignedVar.currentGame = new Game(0, AssignedVar.ONLINE);
 
             $(`#play-group-btn`).hide(`fast`);
             $(`#gameplay-group-btn`).show(`fast`);
@@ -187,15 +188,34 @@ function onclickResignedBtn() {
     let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
     $($resignedBtn).click(() => {
         if (AssignedVar.currentGame.isGamePlaying) {
-            PopUp.show(`User "${AssignedVar.thisUser.name}" have lost the game`, PopUp.sadImgUrl);
-            AssignedVar.enemyUser.tempWins++;
-            let $winsTxt = $(`#enemy-block .align-end div`)[0];
-            $winsTxt.textContent = `Wins: ${AssignedVar.enemyUser.tempWins}`;
-            AssignedVar.currentGame.resetGameBoard();
+            PopUp.showYesNo(`Are you sure want to resign?`, PopUp.sadImgUrl,
+                () => {
+                    loseGameResult();
+                    PopUp.show(`You are crazey!!!`);
+                }
+            );
         } else {
             PopUp.show(`The game have to in playing stage in order to resign the enemy!`, PopUp.sadImgUrl);
         }
     })
+}
+function onclickOfferADrawBtn() {
+    let $drawBtn = $(`#function-col #gameplay-group-btn button`)[0];
+    $($drawBtn).click(() => {
+        switch (AssignedVar.currentGame.gameMode) {
+            case AssignedVar.ONLINE:
+                if (AssignedVar.currentGame.isGamePlaying) {
+                    PopUp.show(`you have send a draw request to the enemy!`);
+
+                } else {
+                    PopUp.show(`The game have to in playing stage in order to send a draw request to the enemy!`, PopUp.sadImgUrl);
+                }
+                break;
+            case AssignedVar.OFFLINE:
+                PopUp.show(`Hey its not fare!`);
+                break;
+        }
+    });
 }
 
 function onclickChangeThemeBtn() {
@@ -206,4 +226,12 @@ function onclickChangeThemeBtn() {
         }
         Visualize.setThemeAt(Visualize.currentThemeIndex);
     });
+}
+
+function loseGameResult() {
+    PopUp.show(`User "${AssignedVar.thisUser.name}" have lost the game`, PopUp.sadImgUrl);
+    AssignedVar.enemyUser.tempWins++;
+    let $winsTxt = $(`#enemy-block .align-end div`)[0];
+    $winsTxt.textContent = `Wins: ${AssignedVar.enemyUser.tempWins}`;
+    AssignedVar.currentGame.resetGameBoard();
 }

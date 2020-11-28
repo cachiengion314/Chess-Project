@@ -5,11 +5,12 @@ import initLobby from "../initLobby.js";
 import { initGameBoard, onclickSelectedChessPieceAt } from "../initGameBoard.js";
 
 export default class Game {
-    constructor(id) {
+    constructor(id, gameMode) {
         this.id = id;
         this.isUserReady = false;
         this.isEnemyReady = true;
         this.isGamePlaying = false;
+        this.gameMode = gameMode;
 
         this.initLogicPlayer();
         this.createNewChessBoard();

@@ -6,27 +6,69 @@ export default class PopUp {
     static normalModalWidth = "65%";
     static bigModalWidth = "55%";
     static userNameTxtColor = "red";
+    static $noBtn = null;
+    static $yesBtn = null;
+    static $okBtn = null;
+    static yesCallback;
+    static noCallback;
 
     static onclickCloseModalBtn() {
-        $(`.custom-modal-footer .close-btn`).click(() => {
-            $(`.custom-modal h4`).css({
-                "display": "none",
+        PopUp.$okBtn = $(`.custom-modal-footer .close-btn`)[0];
+        PopUp.$noBtn = $(`.custom-modal-footer .close-btn`)[1];
+        PopUp.$yesBtn = $(`.custom-modal-footer .close-btn`)[2];
+
+        $(PopUp.$okBtn).on("click", () => {
+            PopUp.closeModal();
+        });
+        $(PopUp.$noBtn).on("click", () => {
+            PopUp.closeModal(() => {
+                PopUp.noCallback();
             });
-            $(`.custom-modal .custom-modal-content`).animate({
-                "width": "0%",
-            }, "fast", () => {
-                $(`.custom-modal`).css({
-                    "display": "none",
-                });
+        });
+        $(PopUp.$yesBtn).on("click", () => {
+            PopUp.closeModal(() => {
+                PopUp.yesCallback();
             });
         });
     }
-    static show(content, imgUrl = PopUp.successImgUrl) {
+    static showYesNo(content = "yes or no", imgUrl = PopUp.sadImgUrl, yesCallback = () => { }, noCallback = () => { }) {
+        $(PopUp.$yesBtn).show();
+        $(PopUp.$noBtn).show();
+        $(PopUp.$okBtn).hide();
         PopUp.calculateModalWidth();
         content = PopUp.highlightContent(content);
         $(`#notification-modal h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
 
+        PopUp.noCallback = noCallback;
+        PopUp.yesCallback = yesCallback;
+        PopUp.openNotificationModal(imgUrl);
+    }
+    static show(content = "notify", imgUrl = PopUp.successImgUrl) {
+        $(PopUp.$yesBtn).hide();
+        $(PopUp.$noBtn).hide();
+        $(PopUp.$okBtn).show();
+        PopUp.calculateModalWidth();
+        content = PopUp.highlightContent(content);
+        $(`#notification-modal h4`).html(content);
+        $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
+
+        PopUp.openNotificationModal(imgUrl);
+    }
+    static closeModal(callback = () => { }) {
+        $(`.custom-modal h4`).css({
+            "display": "none",
+        });
+        $(`.custom-modal .custom-modal-content`).animate({
+            "width": "0%",
+        }, "fast", () => {
+            $(`.custom-modal`).css({
+                "display": "none",
+            });
+            callback();
+        });
+    }
+    static openNotificationModal(imgUrl) {
         $(`#notification-modal img`).attr(`src`, imgUrl);
         $(`#notification-modal`).css({
             "display": "block",
