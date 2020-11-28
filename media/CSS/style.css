@@ -8,16 +8,23 @@ body {
 
 chess-board {
     display: block;
-    width: 75vh;
-    height: 75vh;
+    width: 75vmin;
+    height: 75vmin;
     position: relative;
 }
-
-@media screen and (max-width:700px) {
+@media screen and (max-height:550px) {
     chess-board {
-        width: 98vw !important;
-        height: 98vw !important;
+        width: 75vh !important;
+        height: 75vh !important;
     }
+}
+@media screen and (max-width:550px) {
+    chess-board {
+        width: 98vmin ;
+        height: 98vmin ;
+    }
+}
+@media screen and (max-width:700px) {
     .font-size-vw {
         font-size: 13px !important;
     }
@@ -182,14 +189,14 @@ chess-block {
     width: 100%;
     height: 7vh;
     background-color: blanchedalmond;
-    border-radius: 12px;
+    border-radius: 1.1em;
     outline: none !important;
 }
 
 .custom-btn {
     width: 100%;
     background-color: lightgray;
-    border-radius: 12px;
+    border-radius: 1.1em;
     outline: none !important;
 }
 
@@ -223,15 +230,64 @@ chess-block {
     right: 0px;
 }
 
-#chat-box-footer {
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 6;
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: 0;
+    background-color: rgba(0, 0, 0, .5);
+}
+
+.custom-modal-content {
+    width: 0%;
+    height: fit-content;
+    background-color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 1.1em;
+    padding: 9px 13px;
+}
+
+.custom-modal-header h4 {
+    text-align: center;
+    line-height: 110%;
+    font-size: 1.6em;
+}
+
+.custom-modal-body {
+    display: flex;
+    justify-content: center;
+}
+
+.custom-modal-body img {
+    width: 50%;
+}
+
+.custom-modal-footer {
+    display: flex;
+    justify-content: center;
+}
+
+#function-col .box {
+    color: black;
+}
+
+#function-col .box .box-footer {
     display: flex;
 }
 
-#chat-box-input {
+#function-col .box input {
     color: red;
 }
 
-#chat-box-send-btn {
+#function-col .box button {
     color: black;
 }
 
@@ -241,23 +297,20 @@ chess-block {
     justify-content: space-between;
 }
 
-#sign-group-btn {
+#sign-col .btn-group-vertical {
     display: block;
+    background-color: lightcyan;
 }
 
 #utility-group {
     display: block;
 }
 
-#chat-box {
-    color: black;
-}
-
 #avatar-big {
     display: block;
 }
 
-#info-card-body {
+#sign-col .card .card-body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -274,12 +327,9 @@ chess-block {
     transform: translate(-50%, -50%);
 }
 
-#info-card {
+#sign-col .card {
     display: block;
-}
-
-#logo {
-    display: block;
+    background-color: lightseagreen;
 }
 
 #txt-logo {
@@ -293,8 +343,8 @@ chess-block {
     color: white;
 }
 
-#txt-welcome {
-    color: black;
+#sign-col h4 {
+    color: teal;
 }
 
 #tables {

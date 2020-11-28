@@ -19,21 +19,19 @@
 
 <body>
     <!-- notification modal -->
-    <div class="modal" id="notification-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Modal Heading Lorem ipsum dolor sit amet, consectetur adipisicin!</h4>
-                </div>
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <img src="./media/Image/sad.png" class="card-img-top" style="width: 50%;" alt="">
-                </div>
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                </div>
+    <div class="custom-modal" id="notification-modal">
+        <div class="custom-modal-content">
+            <!-- Modal Header -->
+            <div class="custom-modal-header mb-4">
+                <h4>Modal Heading Lorem ipsum dolor sit amet, consectetur adipisicin!</h4>
+            </div>
+            <!-- Modal body -->
+            <div class="custom-modal-body mb-4">
+                <img src="./media/Image/sad.png" class="card-img-top" alt="">
+            </div>
+            <!-- Modal footer -->
+            <div class="custom-modal-footer">
+                <button class="custom-btn-sm close-btn" style="width: 100px;">OK</button>
             </div>
         </div>
     </div>
@@ -90,7 +88,7 @@
             <div id="sign-col-content" style="height:100%;">
                 <div class="row no-margin bg-primary" style="height: 9%;">
                     <div class="col-sm-3 no-padding">
-                        <img id="logo" src="./media/Image/knight-w.png" class="img-fluid"
+                        <img src="./media/Image/knight-w.png" class="img-fluid"
                             style="width: 100%; height: 100%;"></img>
                     </div>
                     <div class="col-sm-9 no-padding">
@@ -98,12 +96,12 @@
                     </div>
                 </div>
 
-                <h4 id="txt-welcome" class="text-center font-size-vw-big">
+                <h4 class="text-center font-size-vw-big">
                     Wellcome to chess club online! Please log in!
                 </h4>
 
 
-                <div id="sign-group-btn" class="btn-group-vertical " style="height: 15%; width: 100%;">
+                <div class="btn-group-vertical " style="height: 15%; width: 100%;">
                     <button id="sign-in-btn" class="custom-btn mb-1" type="button" data-toggle="modal"
                         data-target="#sign-modal" style="height: 40%;">
                         Sign In
@@ -114,12 +112,12 @@
                     </button>
                 </div>
 
-                <div id="info-card" class="card " style="height: 35%;">
+                <div class="card " style="height: 35%;">
                     <div class=" card-header ">
                         <img src=" ./media/Image/avatar_4.png " id="avatar-big" alt=""
                             style="height: 12vh;width: 12vh;">
                     </div>
-                    <div id="info-card-body" class="card-body ">
+                    <div class="card-body ">
                         <h5 class="font-size-vw-sm overflow-hidden text-center">unknow player</h5>
                         <div class="card-body-flex-txt " style="width: 100%;">
                             <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Elo:</div>
@@ -153,7 +151,7 @@
 
                 <div class="space-vertical "></div>
 
-                <div id="utility-group" class="btn-group-vertical " style="height: 23%; width: 100%;">
+                <div class="btn-group-vertical " style="height: 23%; width: 100%;">
                     <button id="top-player-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
                         top
                         player
@@ -209,7 +207,7 @@
             </div>
 
             <!-- player 2 row  -->
-            <div id="player-block" class="d-flex bg-info position-relative" style="height: 8%;">
+            <div id="user-block" class="d-flex bg-info position-relative" style="height: 8%;">
 
                 <img src=" ./media/Image/avatar_2.png " class="avatar-sm ml-2 mr-2"
                     style="width: 8vh; height:8vh;"></img>
@@ -257,14 +255,14 @@
                 </button>
             </div>
 
-            <div id="chat-box" class="box " style="height:25%;">
+            <div class="box " style="height:25%;">
                 <div class="box-header ">Chat Box</div>
                 <div class="box-body" style="height: 55%;">
                     <!-- chat text in here -->
                 </div>
                 <div id="chat-box-footer" class="box-footer " style="height: 20%;">
-                    <input id="chat-box-input" type="text" style="width: 75%;">
-                    <button id="chat-box-send-btn" class="overflow-hidden " style="width: 25%;">Send</button>
+                    <input type="text" style="width: 75%;">
+                    <button class="overflow-hidden " style="width: 25%;">Send</button>
                 </div>
             </div>
 

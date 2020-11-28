@@ -1,17 +1,22 @@
 import AssignedVar from "./utility/AssignedVar.js";
 import Vector from "./utility/Vector.js";
 import Visualize from "./utility/Visualize.js";
-import { initGameBoard, onclickSelectedChessPieceAt } from "./InitGameBoard.js";
+import PopUp from "./utility/PopUp.js";
+import Game from "./gameplay/Game.js";
 
-import "./web-component/WaitingTable.js";
+import { initGameBoard, onclickSelectedChessPieceAt } from "./initGameBoard.js";
 
 export default function listenAllEvents() {
     responsiveSignColEventInvoke();
+    // Popup notifications
+    PopUp.onclickCloseModalBtn();
+    // onclick for all main buttons
     onclickCreateTableBtn();
     onclickPlaySoloBtn();
     onclickBackToLobbyBtn();
     onclickOpenSignColBtn();
     onclickReadyBtn();
+    onclickResignedBtn();
     onclickChangeThemeBtn();
     listenResizeEvent();
 }
@@ -83,7 +88,6 @@ function listenResizeEvent() {
 }
 
 function responsiveSignColEventInvoke() {
-    alert(`fldsfjldsjflsdjfldsjflsdjf`);
     let $signCol = $(`#sign-col`);
     if (window.innerWidth < AssignedVar.MAX_SCREEN_WIDTH) {
         $signCol.css({
@@ -104,7 +108,7 @@ function responsiveSignColEventInvoke() {
 function onclickPlaySoloBtn() {
     $(`#play-solo-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
-            createNewChessBoard();
+            AssignedVar.currentGame = new Game(0);
 
             $(`#play-group-btn`).hide(`fast`);
             $(`#gameplay-group-btn`).show(`fast`);
@@ -123,7 +127,7 @@ function onclickPlaySoloBtn() {
 function onclickCreateTableBtn() {
     $(`#create-table-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
-            createNewChessBoard();
+            AssignedVar.currentGame = new Game(0);
 
             $(`#play-group-btn`).hide(`fast`);
             $(`#gameplay-group-btn`).show(`fast`);
@@ -168,13 +172,30 @@ function onclickBackToLobbyBtn() {
 
 function onclickReadyBtn() {
     $(`#ready-btn`).click(function () {
-        AssignedVar.isPlayerReady = true;
+        AssignedVar.currentGame.isUserReady = true;
         $(this).hide("fast");
 
-        if (AssignedVar.isPlayerReady /* && AssignedVar.isEnemyReady) */) {
-            letPlayerControlChessPiece();
+        if (AssignedVar.currentGame.isGamePlaying) {
+            AssignedVar.currentGame.letPlayerControlChessPiece();
         }
     });
+}
+
+function onclickResignedBtn() {
+    let $drawsTxt = $(`#user-block .align-end div`)[1];
+    let $timeLeftTxt = $(`#user-block .align-end div`)[2];
+    let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
+    $($resignedBtn).click(() => {
+        if (AssignedVar.currentGame.isGamePlaying) {
+            PopUp.show(`User "${AssignedVar.thisUser.name}" have lost the game`, PopUp.sadImgUrl);
+            AssignedVar.enemyUser.tempWins++;
+            let $winsTxt = $(`#enemy-block .align-end div`)[0];
+            $winsTxt.textContent = `Wins: ${AssignedVar.enemyUser.tempWins}`;
+            AssignedVar.currentGame.resetGameBoard();
+        } else {
+            PopUp.show(`The game have to in playing stage in order to resign the enemy!`, PopUp.sadImgUrl);
+        }
+    })
 }
 
 function onclickChangeThemeBtn() {
@@ -185,38 +206,4 @@ function onclickChangeThemeBtn() {
         }
         Visualize.setThemeAt(Visualize.currentThemeIndex);
     });
-}
-
-function emptyWaitingTables() {
-    $(`#waiting-tables`).empty();
-}
-
-function createNewChessBoard() {
-    showChessBoardAndHideLobby();
-    let $chessBoard = document.createElement(`chess-board`);
-    $(`#board-package`).append($chessBoard);
-    initGameBoard();
-}
-
-function showChessBoardAndHideLobby() {
-    emptyWaitingTables();
-    $(`#waiting-tables`).hide(`fast`);
-    $(`#board-package`)[0].setAttribute(`style`, `display: flex !important; height: 80%;`);
-}
-
-function hideChessBoardAndShowLobby() {
-    $(`#board-package`)[0].setAttribute(`style`, `display: none;`);
-    $(`#waiting-tables`).show(`fast`);
-    initLobby();
-}
-
-function letPlayerControlChessPiece() {
-    for (let x = 0; x < 8; ++x) {
-        for (let y = 0; y < 8; ++y) {
-            let pos = new Vector(x, y);
-            if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
-                onclickSelectedChessPieceAt(pos);
-            }
-        }
-    }
 }

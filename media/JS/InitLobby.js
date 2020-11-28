@@ -1,4 +1,6 @@
 import Visualize from "./utility/Visualize.js";
+import User from "./gameplay/User.js";
+import AssignedVar from "./utility/AssignedVar.js";
 
 export default function initLobby() {
     $(`#gameplay-group-btn`).hide();

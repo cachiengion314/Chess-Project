@@ -1,11 +1,13 @@
 export default class AssignedVar {
+    static thisUser = null;
+    static enemyUser = null;
+    static currentGame = null;
     static games = [];
     static haveUsedSignColButton = false;
-    static isPlayerReady = false;
-    static isEnemyReady = false;
 
     static MAX_SCREEN_WIDTH = 950;
     static SIGN_COL_ZINDEX = "12";
+    static CUSTOM_MODAL_ZINDEX = "6";
     static READY_BTN_ZINDEX = "5";
     static CHESS_PIECE_ZINDEX = "4";
     static MAX_BLOCK_ZINDEX = "3";

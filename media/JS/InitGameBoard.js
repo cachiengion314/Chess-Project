@@ -1,5 +1,3 @@
-import Player from "./gameplay/Player.js";
-import Game from "./gameplay/Game.js";
 import AssignedVar from "./utility/AssignedVar.js";
 import Vector from "./utility/Vector.js";
 import Rook from "./pieces/Rook.js";
@@ -11,23 +9,9 @@ import Queen from "./pieces/Queen.js";
 import Pawn from "./pieces/Pawn.js";
 import Visualize from "./utility/Visualize.js";
 
-import "./web-component/ChessPiece.js";
-import "./web-component/ChessBlock.js";
-import "./web-component/ChessBoard.js";
-
 export function initGameBoard() {
-    initGame();
-    initLogicPlayer();
     initLogicPieces();
     initLogicBoard();
-}
-function initGame() {
-    AssignedVar.games.push(new Game(1));
-}
-function initLogicPlayer() {
-    AssignedVar.blackPlayer = new Player(AssignedVar.BLACK);
-    AssignedVar.whitePlayer = new Player(AssignedVar.WHITE);
-    AssignedVar.currentPlayer = AssignedVar.whitePlayer;
 }
 
 function initLogicPieces() {
@@ -39,6 +23,7 @@ function initLogicPieces() {
     AssignedVar.bBishop2 = new Bishop(AssignedVar.BLACK, new Vector(5, 0));
     AssignedVar.bKnight2 = new Knight(AssignedVar.BLACK, new Vector(6, 0));
     AssignedVar.bRook2 = new Rook(AssignedVar.BLACK, new Vector(7, 0));
+    AssignedVar.bPawns.splice(0);
     for (let i = 0; i < 8; ++i) {
         let bPawn = new Pawn(AssignedVar.BLACK, new Vector(i, 1));
         AssignedVar.bPawns.push(bPawn);
@@ -51,6 +36,7 @@ function initLogicPieces() {
     AssignedVar.wBishop2 = new Bishop(AssignedVar.WHITE, new Vector(5, 7));
     AssignedVar.wKnight2 = new Knight(AssignedVar.WHITE, new Vector(6, 7));
     AssignedVar.wRook2 = new Rook(AssignedVar.WHITE, new Vector(7, 7));
+    AssignedVar.wPawns.splice(0);
     for (let i = 0; i < 8; ++i) {
         let wPawn = new Pawn(AssignedVar.WHITE, new Vector(i, 6));
         AssignedVar.wPawns.push(wPawn);

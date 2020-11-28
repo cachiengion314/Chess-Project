@@ -1,9 +1,16 @@
-import initLobby from "./InitLobby.js";
-import listenAllEvents from "./ListenAllEvents.js";
+import initLobby from "./initLobby.js";
+import listenAllEvents from "./listenAllEvents.js";
+import initUsers from "./initUser.js";
 
-$(document).ready(whenDocumentFullyLoad);
+import "./web-component/WaitingTable.js";
+import "./web-component/ChessPiece.js";
+import "./web-component/ChessBlock.js";
+import "./web-component/ChessBoard.js";
 
-function whenDocumentFullyLoad() {
+$(document).ready(whenDocumentFullyLoaded);
+
+function whenDocumentFullyLoaded() {
     listenAllEvents();
+    initUsers();
     initLobby();
 }
