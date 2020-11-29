@@ -27,37 +27,50 @@
             </div>
             <!-- Modal body -->
             <div class="custom-modal-body mb-4">
-                <img src="./media/Image/sad.png" class="card-img-top" alt="">
+                <img src="./media/Image/sad.png" class="card-img-top" alt="" style="width: 50%;">
             </div>
             <!-- Modal footer -->
             <div class="custom-modal-footer">
-                <button class="custom-btn-sm close-btn" style="width: 100px;">Ok</button>
-                <button class="custom-btn-sm close-btn" style="width: 100px;">No</button>
-                <button class="custom-btn-sm close-btn" style="width: 100px;">Yes</button>
+                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Ok</button>
+                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">No</button>
+                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Yes</button>
             </div>
         </div>
     </div>
 
     <!-- sign modal -->
-    <div class="modal" id="sign-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Please type your info to sigh in</h4>
+    <div class="custom-modal" id="sign-modal">
+        <div class="custom-modal-content">
+            <!-- Modal Header -->
+            <div class="custom-modal-header mb-4">
+                <h4>Please sign in</h4>
+            </div>
+            <!-- Modal body -->
+            <div class="custom-modal-body mb-4">
+                <div class="align-col-center" style="width: 50%;">
+                    <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
+                        <div class="txt mb-1 ml-1">your name</div>
+                        <input type="text" style="height: 30px;">
+                    </div>
+                    <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
+                        <div class="txt mb-1 ml-1">your email</div>
+                        <input type="text" style="height: 30px;">
+                    </div>
+                    <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
+                        <div class="txt mb-1 ml-1">your password</div>
+                        <input type="text" style="height: 30px;">
+                    </div>
+                    <div class="txt-input" style="height: fit-content; width: 100%;">
+                        <div class="txt mb-1 ml-1">type your password again</div>
+                        <input type="text" style="height: 30px;">
+                    </div>
                 </div>
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div>User name</div>
-                    <input type="text">
-                    <div>Password</div>
-                    <input type="text">
-                </div>
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Sign</button>
-                </div>
+                <img src="./media/Image/king-b.png" alt="" class="p-3" style="width: 50%;">
+            </div>
+            <!-- Modal footer -->
+            <div class="custom-modal-footer">
+                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Cancel</button>
+                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Sign Up</button>
             </div>
         </div>
     </div>
@@ -94,7 +107,7 @@
                             style="width: 100%; height: 100%;"></img>
                     </div>
                     <div class="col-sm-9 no-padding">
-                        <h3 id="txt-logo" class="font-size-vh-ssbig">Chess Club Online</h3>
+                        <h3 class="font-size-vh-ssbig">Chess Club Online</h3>
                     </div>
                 </div>
 
@@ -104,12 +117,10 @@
 
 
                 <div class="btn-group-vertical " style="height: 15%; width: 100%;">
-                    <button id="sign-in-btn" class="custom-btn mb-1" type="button" data-toggle="modal"
-                        data-target="#sign-modal" style="height: 40%;">
+                    <button id="sign-in-btn" class="custom-btn mb-1" style="height: 40%;">
                         Sign In
                     </button>
-                    <button id="sign-up-btn" class="custom-btn " type="button" data-toggle="modal" data-target="fun"
-                        style="height: 40%;">
+                    <button id="sign-up-btn" class="custom-btn " style="height: 40%;">
                         Sign Up
                     </button>
                 </div>
@@ -189,7 +200,7 @@
                     style="width: 8vh; height:8vh;"></img>
                 <div class="d-block bg-danger" style="width: 150px;">
                     <div class="text-center bg-success font-size-vh-sm w-100 h-50">title enemy</div>
-                    <div class="align-center font-size-vh-sm w-100 h-50">Ready</div>
+                    <div class="align-row-center font-size-vh-sm w-100 h-50">Ready</div>
                 </div>
                 <div class="align-end">
                     <div class="font-size-vh-ssm">wins: 0</div>
@@ -216,7 +227,7 @@
 
                 <div class="d-block bg-danger" style="width: 150px;">
                     <div class="text-center text-white bg-success font-size-vh-sm w-100 h-50">Current player</div>
-                    <div class="align-center w-100 h-50">
+                    <div class="align-row-center w-100 h-50">
                         <div class="font-size-vh-sm">Ready</div>
                     </div>
                 </div>

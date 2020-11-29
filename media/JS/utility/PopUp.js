@@ -9,75 +9,133 @@ export default class PopUp {
     static bigModalWidth = "55%";
     static userNameTxtColor = "red";
 
+    static showSignIn(signInCallback = () => { }, cancelCallback = () => { }) {
+        let SIGN_MODAL_ID = `#sign-modal`;
+        let $cancelBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[0]
+        let $signInBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[1];
+        $signInBtn.textContent = `Sign In`;
+        $cancelBtn.onclick = () => {
+            PopUp.closeModal(SIGN_MODAL_ID, cancelCallback);
+        }
+        $signInBtn.onclick = () => {
+            PopUp.closeModal(SIGN_MODAL_ID, signInCallback);
+        }
+        console.log($(`${SIGN_MODAL_ID} .txt-input`));
+        let $nameBlock = $(`${SIGN_MODAL_ID} .txt-input`)[0];
+        let $emailBlock = $(`${SIGN_MODAL_ID} .txt-input`)[1];
+        let $password1Block = $(`${SIGN_MODAL_ID} .txt-input`)[2];
+        let $password2Block = $(`${SIGN_MODAL_ID} .txt-input`)[3];
+        $($nameBlock).show();
+        $($emailBlock).hide();
+        $($password1Block).show();
+        $($password2Block).hide();
+
+        $(`${SIGN_MODAL_ID} .txt`)[0].textContent = `Your name`;
+        // $(`${SIGN_MODAL_ID} .txt`)[1].textContent = `Your email`;
+        $(`${SIGN_MODAL_ID} .txt`)[2].textContent = `Your password`;
+        // $(`${SIGN_MODAL_ID} .txt`)[3].textContent = `Type your password again`;
+        $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.loadingImgUrl)
+        $(`${SIGN_MODAL_ID} h4`).html(`Wellcome back. Please sign in to enjoy the game!`);
+
+        PopUp.openModal(SIGN_MODAL_ID);
+    }
+    static showSignUp(signUpCallback = () => { }, cancelCallback = () => { }) {
+        let SIGN_MODAL_ID = `#sign-modal`;
+        let $cancelBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[0]
+        let $signUpBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[1];
+        $cancelBtn.onclick = () => {
+            PopUp.closeModal(SIGN_MODAL_ID, cancelCallback);
+        }
+        $signUpBtn.onclick = () => {
+            PopUp.closeModal(SIGN_MODAL_ID, signUpCallback);
+        }
+
+        let $nameBlock = $(`${SIGN_MODAL_ID} .txt-input`)[0];
+        let $emailBlock = $(`${SIGN_MODAL_ID} .txt-input`)[1];
+        let $password1Block = $(`${SIGN_MODAL_ID} .txt-input`)[2];
+        let $password2Block = $(`${SIGN_MODAL_ID} .txt-input`)[3];
+        $($nameBlock).show();
+        $($emailBlock).show();
+        $($password1Block).show();
+        $($password2Block).show();
+
+        $(`${SIGN_MODAL_ID} .txt`)[0].textContent = `Your name`;
+        $(`${SIGN_MODAL_ID} .txt`)[1].textContent = `Your email`;
+        $(`${SIGN_MODAL_ID} .txt`)[2].textContent = `Your password`;
+        $(`${SIGN_MODAL_ID} .txt`)[3].textContent = `Type your password again`;
+        $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happyImgUrl)
+        $(`${SIGN_MODAL_ID} h4`).html(`Sign Up`);
+
+        PopUp.openModal(SIGN_MODAL_ID);
+    }
     static showYesNo(content = "yes or no", imgUrl = PopUp.sadImgUrl, yesCallback = () => { }, noCallback = () => { }) {
-        let $okBtn = $(`.custom-modal-footer .close-btn`)[0];
-        let $noBtn = $(`.custom-modal-footer .close-btn`)[1];
-        let $yesBtn = $(`.custom-modal-footer .close-btn`)[2];
+        let NOTIFICATION_MODAL_ID = `#notification-modal`;
+        let $okBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[0];
+        let $noBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[1];
+        let $yesBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[2];
         $($yesBtn).show();
         $($noBtn).show();
         $($okBtn).hide();
         $noBtn.onclick = () => {
-            PopUp.closeModal(noCallback);
+            PopUp.closeModal(NOTIFICATION_MODAL_ID, noCallback);
         };
         $yesBtn.onclick = () => {
-            PopUp.closeModal(yesCallback);
+            PopUp.closeModal(NOTIFICATION_MODAL_ID, yesCallback);
         };
 
         content = PopUp.highlightContent(content);
-        $(`#notification-modal h4`).html(content);
+        $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
 
-        PopUp.openNotificationModal(imgUrl);
+        PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
     }
     static show(content = "notify", imgUrl = PopUp.successImgUrl) {
-        let $okBtn = $(`.custom-modal-footer .close-btn`)[0];
-        let $noBtn = $(`.custom-modal-footer .close-btn`)[1];
-        let $yesBtn = $(`.custom-modal-footer .close-btn`)[2];
+        let NOTIFICATION_MODAL_ID = `#notification-modal`;
+        let $okBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[0];
+        let $noBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[1];
+        let $yesBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[2];
         $($yesBtn).hide();
         $($noBtn).hide();
         $($okBtn).show();
         $okBtn.onclick = () => {
-            PopUp.closeModal();
+            PopUp.closeModal(NOTIFICATION_MODAL_ID);
         };
 
         content = PopUp.highlightContent(content);
-        $(`#notification-modal h4`).html(content);
+        $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
 
-        PopUp.openNotificationModal(imgUrl);
+        PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
     }
-    static indexOfTimeout;
-    static closeModal(callback = () => { }) {
-        console.log(`close invoke`);
-        $(`.custom-modal h4`).css({
+    static closeModal(MODAL_ID, completedCallback = () => { }) {
+        $(`${MODAL_ID} h4`).css({
             "display": "none",
         });
-        $(`.custom-modal .custom-modal-content`).animate({
+        $(`${MODAL_ID} .custom-modal-content`).animate({
             "width": "0%",
         }, "fast", () => {
-            $(`.custom-modal`).css({
+            $(`${MODAL_ID}`).css({
                 "display": "none",
             });
-            clearTimeout(PopUp.indexOfTimeout);
-            PopUp.indexOfTimeout = setTimeout(
-                callback, 100
-            );
+            setTimeout(completedCallback, 100);
         });
     }
-    static openNotificationModal(imgUrl) {
+    static openModal(MODAL_ID, imgUrl = PopUp.successImgUrl) {
         PopUp.calculateModalWidth();
-        $(`#notification-modal img`).attr(`src`, imgUrl);
-        $(`#notification-modal`).css({
+        if (MODAL_ID == "#notification-modal") {
+            $(`${MODAL_ID} img`).attr(`src`, imgUrl);
+        }
+        $(`${MODAL_ID}`).css({
             "display": "block",
         });
-        $(`#notification-modal .custom-modal-content`).animate({
+        $(`${MODAL_ID} .custom-modal-content`).animate({
             "width": PopUp.bigModalWidth,
         }, "fast", () => {
-            $(`#notification-modal .custom-modal-header h4`).css({
+            $(`${MODAL_ID} .custom-modal-header h4`).css({
                 "display": "inline",
             });
         });
-        $(`#notification-modal .custom-modal-content`).animate({
+        $(`${MODAL_ID} .custom-modal-content`).animate({
             "width": PopUp.normalModalWidth,
         }, "fast");
     }

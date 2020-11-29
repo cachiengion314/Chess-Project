@@ -68,6 +68,17 @@ chess-block {
     color: lightyellow;
 }
 
+input {
+    border-radius: 1em;
+    outline: none;
+    padding-left: 9px;
+    width: 85%;
+    transition: width .5s;
+}
+input:focus {
+    width: 100%;
+}
+
 .king-w {
     background-image: url("../Image/king-w.png");
 }
@@ -221,8 +232,15 @@ chess-block {
     background-color: lightcyan;
 }
 
-.align-center {
+.align-row-center {
     display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.align-col-center {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
@@ -255,12 +273,13 @@ chess-block {
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 1.1em;
+    border: 3px solid black;
     padding: 9px 13px;
 }
 
 .custom-modal-header {
-   display: flex;
-   justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .custom-modal-header h4 {
@@ -273,10 +292,6 @@ chess-block {
 .custom-modal-body {
     display: flex;
     justify-content: center;
-}
-
-.custom-modal-body img {
-    width: 50%;
 }
 
 .custom-modal-footer {
@@ -341,7 +356,7 @@ chess-block {
     background-color: lightseagreen;
 }
 
-#txt-logo {
+#sign-col h3 {
     line-height: 23px;
     margin-bottom: 0px;
     height: 100%;

@@ -18,6 +18,7 @@ export default class Game {
 
     }
     get isGamePlaying() {
+        // this below code need to modified soon
         this.enemyAcc.isReady = true;
         return this.userAcc.isReady && this.enemyAcc.isReady;
     }

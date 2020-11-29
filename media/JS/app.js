@@ -1,6 +1,5 @@
 import initLobby from "./initLobby.js";
 import listenAllEvents from "./listenAllEvents.js";
-import initUsers from "./initUser.js";
 
 import "./web-component/WaitingTable.js";
 import "./web-component/ChessPiece.js";

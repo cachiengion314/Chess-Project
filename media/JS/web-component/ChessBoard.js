@@ -3,7 +3,7 @@ class ChessBoard extends HTMLElement {
         super();
     }
     connectedCallback() {
-        console.log(`hi chess-board`);
+       
     }
 }
 

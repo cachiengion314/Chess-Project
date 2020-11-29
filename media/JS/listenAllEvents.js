@@ -10,6 +10,8 @@ import { initGameBoard, onclickSelectedChessPieceAt } from "./initGameBoard.js";
 export default function listenAllEvents() {
     responsiveSignColEventInvoke();
     // onclick for all main buttons
+    onclickSignInBtn();
+    onclickSignUpBtn();
     onclickCreateTableBtn();
     onclickPlaySoloBtn();
     onclickBackToLobbyBtn();
@@ -20,7 +22,18 @@ export default function listenAllEvents() {
     onclickChangeThemeBtn();
     listenResizeEvent();
 }
-
+function onclickSignInBtn() {
+    let $signInBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[0];
+    $signInBtn.onclick = () => {
+        PopUp.showSignIn();
+    }
+}
+function onclickSignUpBtn() {
+    let $signUpBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[1];
+    $signUpBtn.onclick = () => {
+        PopUp.showSignUp();
+    }
+}
 function onclickOpenSignColBtn() {
     $(`#sign-col-btn`).click(() => {
         AssignedVar.haveUsedSignColButton = true;
@@ -235,12 +248,16 @@ function loseGameResult() {
 function hideReadyBtn() {
     let $readyBtn = $(`#ready-btn`);
     $($readyBtn).animate({
-        "left": "100%",
-        "opacity": ".5",
+        "left": "40%",
+        "opacity": ".8",
+    }, "fast");
+    $($readyBtn).animate({
+        "left": "80%",
+        "opacity": ".4",
     }, "fast");
     $($readyBtn).animate({
         "opacity": "0",
-    }, "slow", () => $($readyBtn).hide());
+    }, "fast", () => $($readyBtn).hide());
 }
 
 function showReadyBtn() {
