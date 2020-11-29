@@ -72,8 +72,8 @@ export default class Visualize {
         let str = ``;
         for (let y = 0; y < 8; ++y) {
             for (let x = 0; x < 8; ++x) {
-                let block = `${AssignedVar.chessBoard[x][y].id}`;
-                if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
+                let block = `${AssignedVar.currentGame.chessBoard[x][y].id}`;
+                if (AssignedVar.currentGame.chessBoard[x][y].type == AssignedVar.PIECE) {
                     block = `[${block}]`;
                 } else {
                     block = `[           ]`;
@@ -90,8 +90,8 @@ export default class Visualize {
 
     static chessPieceImageAt(pos) {
         let $chessPiece = Visualize.createWebComponent(AssignedVar.CHESS_PIECE);
-        $chessPiece.name = AssignedVar.chessBoard[pos.x][pos.y].name;
-        $chessPiece.id = AssignedVar.chessBoard[pos.x][pos.y].id;
+        $chessPiece.name = AssignedVar.currentGame.chessBoard[pos.x][pos.y].name;
+        $chessPiece.id = AssignedVar.currentGame.chessBoard[pos.x][pos.y].id;
         Visualize.setChessComponentPositionAt(pos, $chessPiece);
     }
     static createWebComponent(componentName) {
@@ -106,8 +106,8 @@ export default class Visualize {
     static chessBlockImageAt(pos) {
         let $chessBlock = Visualize.createWebComponent(AssignedVar.CHESS_BLOCK);
         Visualize.setNormalColorForBlock($chessBlock, pos);
-        if (AssignedVar.chessBoard[pos.x][pos.y].type != AssignedVar.PIECE) {
-            $chessBlock.id = AssignedVar.chessBoard[pos.x][pos.y].id;
+        if (AssignedVar.currentGame.chessBoard[pos.x][pos.y].type != AssignedVar.PIECE) {
+            $chessBlock.id = AssignedVar.currentGame.chessBoard[pos.x][pos.y].id;
         } else {
             $chessBlock.id = AssignedVar.EMPTY + "_" + pos.convertToId();
         }

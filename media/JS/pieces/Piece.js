@@ -7,9 +7,9 @@ export default class Piece extends ChessBlock {
         this.type = AssignedVar.PIECE;
         this.color = color;
         if (color == AssignedVar.WHITE) {
-            this.controlByPlayerId = AssignedVar.whitePlayer.id;
+            this.controlByPlayerId = AssignedVar.currentGame.whitePlayer.id;
         } else if (color == AssignedVar.BLACK) {
-            this.controlByPlayerId = AssignedVar.blackPlayer.id;
+            this.controlByPlayerId = AssignedVar.currentGame.blackPlayer.id;
         }
     }
 }

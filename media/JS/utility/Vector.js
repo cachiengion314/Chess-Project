@@ -74,7 +74,7 @@ export default class Vector {
     }
     isPositionHasPiece() {
         if (this.isPositionOnTheBoard()) {
-            let piece = AssignedVar.chessBoard[this.x][this.y];
+            let piece = AssignedVar.currentGame.chessBoard[this.x][this.y];
             if (piece.type == AssignedVar.PIECE) {
                 return true;
             } else {
@@ -85,10 +85,10 @@ export default class Vector {
         }
     }
     isPositionCanAttack() {
-        if (!AssignedVar.currentPlayer || !this.isPositionOnTheBoard()) return false;
+        if (!AssignedVar.currentGame.currentPlayer || !this.isPositionOnTheBoard()) return false;
         if (this.isPositionHasPiece()) {
-            let piece = AssignedVar.chessBoard[this.x][this.y];
-            if (piece.controlByPlayerId == AssignedVar.currentPlayer.id) {
+            let piece = AssignedVar.currentGame.chessBoard[this.x][this.y];
+            if (piece.controlByPlayerId == AssignedVar.currentGame.currentPlayer.id) {
                 return false;
             } else {
                 return true;

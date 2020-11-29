@@ -12,18 +12,21 @@ chess-board {
     height: 75vmin;
     position: relative;
 }
+
 @media screen and (max-height:550px) {
     chess-board {
         width: 75vh !important;
         height: 75vh !important;
     }
 }
+
 @media screen and (max-width:550px) {
     chess-board {
-        width: 98vmin ;
-        height: 98vmin ;
+        width: 98vmin;
+        height: 98vmin;
     }
 }
+
 @media screen and (max-width:700px) {
     .font-size-vw {
         font-size: 13px !important;
@@ -255,7 +258,13 @@ chess-block {
     padding: 9px 13px;
 }
 
+.custom-modal-header {
+   display: flex;
+   justify-content: center;
+}
+
 .custom-modal-header h4 {
+    display: inline;
     text-align: center;
     line-height: 110%;
     font-size: 1.6em;

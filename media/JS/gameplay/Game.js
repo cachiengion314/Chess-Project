@@ -11,9 +11,9 @@ export default class Game {
         this.isEnemyReady = true;
         this.isGamePlaying = false;
         this.gameMode = gameMode;
+        this.chessBoard = [];
 
         this.initLogicPlayer();
-        this.createNewChessBoard();
     }
     set isGamePlaying(val) {
 
@@ -25,16 +25,17 @@ export default class Game {
         for (let x = 0; x < 8; ++x) {
             for (let y = 0; y < 8; ++y) {
                 let pos = new Vector(x, y);
-                if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
+                if (this.chessBoard[x][y].type == AssignedVar.PIECE) {
                     onclickSelectedChessPieceAt(pos);
                 }
             }
         }
     }
     initLogicPlayer() {
-        AssignedVar.blackPlayer = new Player(AssignedVar.BLACK);
-        AssignedVar.whitePlayer = new Player(AssignedVar.WHITE);
-        AssignedVar.currentPlayer = AssignedVar.whitePlayer;
+        this.blackPlayer = new Player(AssignedVar.BLACK);
+        this.whitePlayer = new Player(AssignedVar.WHITE);
+        this.currentPlayer = this.whitePlayer;
+        this.userColor = AssignedVar.WHITE;
     }
     createNewChessBoard() {
         this.showChessBoardAndHideLobby();
@@ -56,6 +57,12 @@ export default class Game {
     emptyWaitingTables() {
         $(`#waiting-tables`).empty();
     }
+    isUserTurn() {
+        if (this.currentPlayer.color == this.userColor) {
+            return true;
+        }
+        return false;
+    }
     resetGameBoard() {
         if (this.$chessBoard) {
             $(this.$chessBoard).empty();
@@ -64,14 +71,11 @@ export default class Game {
         AssignedVar.$selectedPiece = null;
         AssignedVar.selectedPieceSpecialBlocks = [];
         AssignedVar.legalMovesOfSelectedPiece = [];
-        AssignedVar.chessBoard = [];
-        AssignedVar.currentPlayer = null;
-        AssignedVar.whitePlayer = null;
-        AssignedVar.blackPlayer = null;
+        this.chessBoard = [];
+        this.currentPlayer = null;
+        this.whitePlayer = null;
+        this.blackPlayer = null;
         AssignedVar.currentGame.isUserReady = false;
-
-        let $readyBtn = $(`#ready-btn`);
-        $($readyBtn).show(`fast`);
 
         this.initLogicPlayer();
         initGameBoard();

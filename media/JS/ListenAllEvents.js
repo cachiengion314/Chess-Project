@@ -8,8 +8,6 @@ import { initGameBoard, onclickSelectedChessPieceAt } from "./initGameBoard.js";
 
 export default function listenAllEvents() {
     responsiveSignColEventInvoke();
-    // Popup notifications
-    PopUp.onclickCloseModalBtn();
     // onclick for all main buttons
     onclickCreateTableBtn();
     onclickPlaySoloBtn();
@@ -110,6 +108,7 @@ function onclickPlaySoloBtn() {
     $(`#play-solo-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
             AssignedVar.currentGame = new Game(0, AssignedVar.OFFLINE);
+            AssignedVar.currentGame.createNewChessBoard();
 
             $(`#play-group-btn`).hide(`fast`);
             $(`#gameplay-group-btn`).show(`fast`);
@@ -129,6 +128,7 @@ function onclickCreateTableBtn() {
     $(`#create-table-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
             AssignedVar.currentGame = new Game(0, AssignedVar.ONLINE);
+            AssignedVar.currentGame.createNewChessBoard();
 
             $(`#play-group-btn`).hide(`fast`);
             $(`#gameplay-group-btn`).show(`fast`);
@@ -174,8 +174,7 @@ function onclickBackToLobbyBtn() {
 function onclickReadyBtn() {
     $(`#ready-btn`).click(function () {
         AssignedVar.currentGame.isUserReady = true;
-        $(this).hide("fast");
-
+        hideReadyBtn();
         if (AssignedVar.currentGame.isGamePlaying) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
         }
@@ -188,11 +187,9 @@ function onclickResignedBtn() {
     let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
     $($resignedBtn).click(() => {
         if (AssignedVar.currentGame.isGamePlaying) {
-            PopUp.showYesNo(`Are you sure want to resign?`, PopUp.sadImgUrl,
-                () => {
-                    loseGameResult();
-                    PopUp.show(`You are crazey!!!`);
-                }
+            
+            PopUp.showYesNo(`Are you sure want to resign?`, PopUp.questionMarkImgUrl,
+                loseGameResult
             );
         } else {
             PopUp.show(`The game have to in playing stage in order to resign the enemy!`, PopUp.sadImgUrl);
@@ -212,14 +209,14 @@ function onclickOfferADrawBtn() {
                 }
                 break;
             case AssignedVar.OFFLINE:
-                PopUp.show(`Hey its not fare!`);
+                PopUp.show(`Hey we are in the offline mode!`);
                 break;
         }
     });
 }
 
 function onclickChangeThemeBtn() {
-    $(`#change-theme-btn`).on(`click`, () => {
+    $(`#change-theme-btn`).click(() => {
         Visualize.currentThemeIndex++;
         if (Visualize.currentThemeIndex == Visualize.themes.length) {
             Visualize.currentThemeIndex = 0;
@@ -229,9 +226,30 @@ function onclickChangeThemeBtn() {
 }
 
 function loseGameResult() {
-    PopUp.show(`User "${AssignedVar.thisUser.name}" have lost the game`, PopUp.sadImgUrl);
+    // PopUp.show(`User "${AssignedVar.thisUser.name}" have lost the game`, PopUp.sadImgUrl);
     AssignedVar.enemyUser.tempWins++;
     let $winsTxt = $(`#enemy-block .align-end div`)[0];
     $winsTxt.textContent = `Wins: ${AssignedVar.enemyUser.tempWins}`;
     AssignedVar.currentGame.resetGameBoard();
+    showReadyBtn();
+}
+
+function hideReadyBtn() {
+    let $readyBtn = $(`#ready-btn`);
+    $($readyBtn).animate({
+        "left": "100%",
+        "opacity": ".5",
+    }, "fast");
+    $($readyBtn).animate({
+        "opacity": "0",
+    }, "slow", () => $($readyBtn).hide());
+}
+
+function showReadyBtn() {
+    let $readyBtn = $(`#ready-btn`);
+    $($readyBtn).show();
+    $($readyBtn).css({
+        "left": "50%",
+        "opacity": "1",
+    });
 }

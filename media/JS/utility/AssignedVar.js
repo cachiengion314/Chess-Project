@@ -20,7 +20,6 @@ export default class AssignedVar {
     static selectedPieceSpecialBlocks = [];
     static legalMovesOfSelectedPiece = [];
     static coordinatesBlocks = [];
-    static chessBoard = [];
 
     static LEFT_ARROW = "&#9664;";
     static RIGHT_ARROW = "&#9658;";
@@ -59,10 +58,6 @@ export default class AssignedVar {
     static QUEEN = `queen`;
     static KNIGHT = `knight`;
     static PAWN = `pawn`;
-
-    static currentPlayer = null;
-    static blackPlayer = null;
-    static whitePlayer = null;
 
     static bRook;
     static bKnight;

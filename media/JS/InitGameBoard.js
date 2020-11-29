@@ -41,27 +41,27 @@ function initLogicPieces() {
         let wPawn = new Pawn(AssignedVar.WHITE, new Vector(i, 6));
         AssignedVar.wPawns.push(wPawn);
     }
-    AssignedVar.blackPlayer.alivePieces.push(AssignedVar.bRook, AssignedVar.bKnight, AssignedVar.bBishop, AssignedVar.bKing, AssignedVar.bQueen,
+    AssignedVar.currentGame.blackPlayer.alivePieces.push(AssignedVar.bRook, AssignedVar.bKnight, AssignedVar.bBishop, AssignedVar.bKing, AssignedVar.bQueen,
         AssignedVar.bBishop2, AssignedVar.bKnight2, AssignedVar.bRook2, ...AssignedVar.bPawns);
-    AssignedVar.whitePlayer.alivePieces.push(AssignedVar.wRook, AssignedVar.wKnight, AssignedVar.wBishop, AssignedVar.wKing, AssignedVar.wQueen,
+    AssignedVar.currentGame.whitePlayer.alivePieces.push(AssignedVar.wRook, AssignedVar.wKnight, AssignedVar.wBishop, AssignedVar.wKing, AssignedVar.wQueen,
         AssignedVar.wBishop2, AssignedVar.wKnight2, AssignedVar.wRook2, ...AssignedVar.wPawns);
 }
 
 function initLogicBoard() {
     for (let x = 0; x < 8; ++x) {
         let array1 = [];
-        AssignedVar.chessBoard.push(array1);
+        AssignedVar.currentGame.chessBoard.push(array1);
         for (let y = 0; y < 8; ++y) {
             let array2 = [];
-            AssignedVar.chessBoard[x].push(array2);
-            AssignedVar.chessBoard[x][y] = new Empty(new Vector(x, y));
+            AssignedVar.currentGame.chessBoard[x].push(array2);
+            AssignedVar.currentGame.chessBoard[x][y] = new Empty(new Vector(x, y));
         }
     }
-    for (let piece of AssignedVar.blackPlayer.alivePieces) {
-        AssignedVar.chessBoard[piece.currentPos.x][piece.currentPos.y] = piece;
+    for (let piece of AssignedVar.currentGame.blackPlayer.alivePieces) {
+        AssignedVar.currentGame.chessBoard[piece.currentPos.x][piece.currentPos.y] = piece;
     }
-    for (let piece of AssignedVar.whitePlayer.alivePieces) {
-        AssignedVar.chessBoard[piece.currentPos.x][piece.currentPos.y] = piece;
+    for (let piece of AssignedVar.currentGame.whitePlayer.alivePieces) {
+        AssignedVar.currentGame.chessBoard[piece.currentPos.x][piece.currentPos.y] = piece;
     }
 
     initVisualizeBoard();
@@ -71,7 +71,7 @@ function initVisualizeBoard() {
     for (let x = 0; x < 8; ++x) {
         for (let y = 0; y < 8; ++y) {
             let pos = new Vector(x, y);
-            if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
+            if (AssignedVar.currentGame.chessBoard[x][y].type == AssignedVar.PIECE) {
                 Visualize.chessPieceImageAt(pos);
             }
         }
@@ -84,9 +84,9 @@ function initVisualizeBoard() {
             Visualize.onBlockMouseLeaveOf($(`#${AssignedVar.EMPTY}_${pos.convertToId()}`)[0]);
             onclickSelectedEmptyAt(pos);
 
-            if (AssignedVar.chessBoard[x][y].type == AssignedVar.PIECE) {
-                Visualize.onPieceMouseEnterOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
-                Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.chessBoard[x][y].id}`)[0]);
+            if (AssignedVar.currentGame.chessBoard[x][y].type == AssignedVar.PIECE) {
+                Visualize.onPieceMouseEnterOf($(`#${AssignedVar.currentGame.chessBoard[x][y].id}`)[0]);
+                Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.currentGame.chessBoard[x][y].id}`)[0]);
         
                 // onclickSelectedChessPieceAt(pos);
             }
@@ -105,10 +105,10 @@ function onclickSelectedEmptyAt(fixedPosition) {
 }
 
 export function onclickSelectedChessPieceAt(fixedPosition) {
-    let $chessPiece = $(`#${AssignedVar.chessBoard[fixedPosition.x][fixedPosition.y].id}`);
+    let $chessPiece = $(`#${AssignedVar.currentGame.chessBoard[fixedPosition.x][fixedPosition.y].id}`);
     $chessPiece.on(`click`, () => {
         let pos = Vector.convertIdToVector($chessPiece[0].id);
-        if (AssignedVar.currentPlayer.id == $chessPiece[0].controlbyplayerid) {
+        if (AssignedVar.currentGame.currentPlayer.id == $chessPiece[0].controlbyplayerid) {
             setupOnClickCallbackAt(pos);
         } else {
             if (pos.isPositionInLegalMoves()) {
@@ -125,8 +125,8 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
 function setupOnClickCallbackAt(pos) {
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {
-            let pieceAtPos = AssignedVar.chessBoard[pos.x][pos.y];
-            if (pieceAtPos.controlByPlayerId == AssignedVar.currentPlayer.id) {
+            let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
+            if (pieceAtPos.controlByPlayerId == AssignedVar.currentGame.currentPlayer.id) {
                 unSubscribeSelectedPiece();
             } else {
                 logicDestroyEnemyPiece(pieceAtPos);
@@ -152,38 +152,38 @@ function setupOnClickCallbackAt(pos) {
 
 function logicDestroyEnemyPiece(logicEnemyPiece) {
     if (logicEnemyPiece.controlByPlayerId == 0) {
-        AssignedVar.whitePlayer.alivePieces = AssignedVar.whitePlayer.alivePieces.filter(item => {
+        AssignedVar.currentGame.whitePlayer.alivePieces = AssignedVar.currentGame.whitePlayer.alivePieces.filter(item => {
             return item.id != logicEnemyPiece.id;
         });
-        AssignedVar.whitePlayer.deadthPieces.push(logicEnemyPiece);
+        AssignedVar.currentGame.whitePlayer.deadthPieces.push(logicEnemyPiece);
     } else {
-        AssignedVar.blackPlayer.alivePieces = AssignedVar.blackPlayer.alivePieces.filter(item => {
+        AssignedVar.currentGame.blackPlayer.alivePieces = AssignedVar.currentGame.blackPlayer.alivePieces.filter(item => {
             return item.id != logicEnemyPiece.id;
         });
-        AssignedVar.blackPlayer.deadthPieces.push(logicEnemyPiece);
+        AssignedVar.currentGame.blackPlayer.deadthPieces.push(logicEnemyPiece);
     }
-    AssignedVar.chessBoard[logicEnemyPiece.currentPos.x][logicEnemyPiece.currentPos.y] = new Empty(logicEnemyPiece.currentPos);
+    AssignedVar.currentGame.chessBoard[logicEnemyPiece.currentPos.x][logicEnemyPiece.currentPos.y] = new Empty(logicEnemyPiece.currentPos);
 
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
 }
 
 function logicMovePieceTo(nextPos) {
     let currentPos = AssignedVar.selectedPiece.currentPos;
-    AssignedVar.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
-    AssignedVar.chessBoard[nextPos.x][nextPos.y] = AssignedVar.selectedPiece;
-    AssignedVar.chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
-    AssignedVar.chessBoard[nextPos.x][nextPos.y].id = AssignedVar.selectedPiece.getId();
-    AssignedVar.$selectedPiece.id = AssignedVar.chessBoard[nextPos.x][nextPos.y].id;
+    AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
+    AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y] = AssignedVar.selectedPiece;
+    AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
+    AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id = AssignedVar.selectedPiece.getId();
+    AssignedVar.$selectedPiece.id = AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id;
 
     Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }
 
 function changePlayerTurn() {
-    if (AssignedVar.currentPlayer.id == 0) {
-        AssignedVar.currentPlayer = AssignedVar.blackPlayer;
+    if (AssignedVar.currentGame.currentPlayer.id == 0) {
+        AssignedVar.currentGame.currentPlayer = AssignedVar.currentGame.blackPlayer;
     } else {
-        AssignedVar.currentPlayer = AssignedVar.whitePlayer;
+        AssignedVar.currentGame.currentPlayer = AssignedVar.currentGame.whitePlayer;
     }
 }
 
@@ -194,8 +194,8 @@ function subscribeSelectedPieceAt(pos) {
 }
 
 function logicSubscribeSelectedPieceAt(pos) {
-    AssignedVar.selectedPiece = AssignedVar.chessBoard[pos.x][pos.y];
-    AssignedVar.$selectedPiece = $(`#${AssignedVar.chessBoard[pos.x][pos.y].id}`)[0];
+    AssignedVar.selectedPiece = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
+    AssignedVar.$selectedPiece = $(`#${AssignedVar.currentGame.chessBoard[pos.x][pos.y].id}`)[0];
     AssignedVar.legalMovesOfSelectedPiece = AssignedVar.selectedPiece.getAllPossibleMoves();
 }
 

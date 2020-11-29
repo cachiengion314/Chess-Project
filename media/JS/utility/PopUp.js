@@ -1,53 +1,50 @@
 export default class PopUp {
     static sadImgUrl = "./media/Image/sad.png";
-    static happyImgUrl = "";
+    static happyImgUrl = "./media/Image/happy.png";
     static loadingImgUrl = "./media/Image/sand_clock.png";
     static successImgUrl = "./media/Image/success.png";
+    static questionMarkImgUrl = "./media/Image/question_mark.png";
+
     static normalModalWidth = "65%";
     static bigModalWidth = "55%";
     static userNameTxtColor = "red";
-    static $noBtn = null;
-    static $yesBtn = null;
-    static $okBtn = null;
-    static yesCallback;
-    static noCallback;
 
-    static onclickCloseModalBtn() {
-        PopUp.$okBtn = $(`.custom-modal-footer .close-btn`)[0];
-        PopUp.$noBtn = $(`.custom-modal-footer .close-btn`)[1];
-        PopUp.$yesBtn = $(`.custom-modal-footer .close-btn`)[2];
-
-        $(PopUp.$okBtn).on("click", () => {
-            PopUp.closeModal();
-        });
-        $(PopUp.$noBtn).on("click", () => {
-            PopUp.closeModal(() => {
-                PopUp.noCallback();
-            });
-        });
-        $(PopUp.$yesBtn).on("click", () => {
-            PopUp.closeModal(() => {
-                PopUp.yesCallback();
-            });
-        });
-    }
     static showYesNo(content = "yes or no", imgUrl = PopUp.sadImgUrl, yesCallback = () => { }, noCallback = () => { }) {
-        $(PopUp.$yesBtn).show();
-        $(PopUp.$noBtn).show();
-        $(PopUp.$okBtn).hide();
+        let $okBtn = $(`.custom-modal-footer .close-btn`)[0];
+        let $noBtn = $(`.custom-modal-footer .close-btn`)[1];
+        let $yesBtn = $(`.custom-modal-footer .close-btn`)[2];
+        $($yesBtn).show();
+        $($noBtn).show();
+        $($okBtn).hide();
+        $($noBtn).click(() => {
+            PopUp.closeModal(() => {
+                noCallback();
+            });
+        });
+        $($yesBtn).click(() => {
+            PopUp.closeModal(() => {
+                yesCallback();
+            });
+        });
+
         PopUp.calculateModalWidth();
         content = PopUp.highlightContent(content);
         $(`#notification-modal h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
 
-        PopUp.noCallback = noCallback;
-        PopUp.yesCallback = yesCallback;
         PopUp.openNotificationModal(imgUrl);
     }
     static show(content = "notify", imgUrl = PopUp.successImgUrl) {
-        $(PopUp.$yesBtn).hide();
-        $(PopUp.$noBtn).hide();
-        $(PopUp.$okBtn).show();
+        let $okBtn = $(`.custom-modal-footer .close-btn`)[0];
+        let $noBtn = $(`.custom-modal-footer .close-btn`)[1];
+        let $yesBtn = $(`.custom-modal-footer .close-btn`)[2];
+        $($yesBtn).hide();
+        $($noBtn).hide();
+        $($okBtn).show();
+        $($okBtn).click(() => {
+            PopUp.closeModal();
+        });
+
         PopUp.calculateModalWidth();
         content = PopUp.highlightContent(content);
         $(`#notification-modal h4`).html(content);
@@ -65,7 +62,9 @@ export default class PopUp {
             $(`.custom-modal`).css({
                 "display": "none",
             });
-            callback();
+            setTimeout(
+                callback, 100
+            );
         });
     }
     static openNotificationModal(imgUrl) {
@@ -76,10 +75,6 @@ export default class PopUp {
         $(`#notification-modal .custom-modal-content`).animate({
             "width": PopUp.bigModalWidth,
         }, "fast", () => {
-            $(`#notification-modal .custom-modal-header`).css({
-                "display": "flex",
-                "justify-content": "center",
-            });
             $(`#notification-modal .custom-modal-header h4`).css({
                 "display": "inline",
             });
