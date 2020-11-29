@@ -5,21 +5,21 @@ import initLobby from "../initLobby.js";
 import { initGameBoard, onclickSelectedChessPieceAt } from "../initGameBoard.js";
 
 export default class Game {
-    constructor(id, gameMode) {
+    constructor(id, userAcc, enemyAcc, gameMode) {
         this.id = id;
-        this.isUserReady = false;
-        this.isEnemyReady = true;
         this.isGamePlaying = false;
         this.gameMode = gameMode;
         this.chessBoard = [];
-
+        this.userAcc = userAcc;
+        this.enemyAcc = enemyAcc;
         this.initLogicPlayer();
     }
     set isGamePlaying(val) {
 
     }
     get isGamePlaying() {
-        return this.isUserReady && this.isEnemyReady;
+        this.enemyAcc.isReady = true;
+        return this.userAcc.isReady && this.enemyAcc.isReady;
     }
     letPlayerControlChessPiece() {
         for (let x = 0; x < 8; ++x) {
@@ -35,7 +35,8 @@ export default class Game {
         this.blackPlayer = new Player(AssignedVar.BLACK);
         this.whitePlayer = new Player(AssignedVar.WHITE);
         this.currentPlayer = this.whitePlayer;
-        this.userColor = AssignedVar.WHITE;
+        this.userAcc.controllingColor = AssignedVar.WHITE;
+        this.enemyAcc.controllingColor = AssignedVar.BLACK;
     }
     createNewChessBoard() {
         this.showChessBoardAndHideLobby();
@@ -58,7 +59,7 @@ export default class Game {
         $(`#waiting-tables`).empty();
     }
     isUserTurn() {
-        if (this.currentPlayer.color == this.userColor) {
+        if (this.currentPlayer.color == this.userAcc.controllingColor) {
             return true;
         }
         return false;
@@ -75,7 +76,7 @@ export default class Game {
         this.currentPlayer = null;
         this.whitePlayer = null;
         this.blackPlayer = null;
-        AssignedVar.currentGame.isUserReady = false;
+        AssignedVar.currentGame.userAcc.isReady = false;
 
         this.initLogicPlayer();
         initGameBoard();

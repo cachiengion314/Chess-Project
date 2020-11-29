@@ -11,6 +11,5 @@ $(document).ready(whenDocumentFullyLoaded);
 
 function whenDocumentFullyLoaded() {
     listenAllEvents();
-    initUsers();
     initLobby();
 }

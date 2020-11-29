@@ -16,18 +16,13 @@ export default class PopUp {
         $($yesBtn).show();
         $($noBtn).show();
         $($okBtn).hide();
-        $($noBtn).click(() => {
-            PopUp.closeModal(() => {
-                noCallback();
-            });
-        });
-        $($yesBtn).click(() => {
-            PopUp.closeModal(() => {
-                yesCallback();
-            });
-        });
+        $noBtn.onclick = () => {
+            PopUp.closeModal(noCallback);
+        };
+        $yesBtn.onclick = () => {
+            PopUp.closeModal(yesCallback);
+        };
 
-        PopUp.calculateModalWidth();
         content = PopUp.highlightContent(content);
         $(`#notification-modal h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
@@ -41,18 +36,19 @@ export default class PopUp {
         $($yesBtn).hide();
         $($noBtn).hide();
         $($okBtn).show();
-        $($okBtn).click(() => {
+        $okBtn.onclick = () => {
             PopUp.closeModal();
-        });
+        };
 
-        PopUp.calculateModalWidth();
         content = PopUp.highlightContent(content);
         $(`#notification-modal h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
 
         PopUp.openNotificationModal(imgUrl);
     }
+    static indexOfTimeout;
     static closeModal(callback = () => { }) {
+        console.log(`close invoke`);
         $(`.custom-modal h4`).css({
             "display": "none",
         });
@@ -62,12 +58,14 @@ export default class PopUp {
             $(`.custom-modal`).css({
                 "display": "none",
             });
-            setTimeout(
+            clearTimeout(PopUp.indexOfTimeout);
+            PopUp.indexOfTimeout = setTimeout(
                 callback, 100
             );
         });
     }
     static openNotificationModal(imgUrl) {
+        PopUp.calculateModalWidth();
         $(`#notification-modal img`).attr(`src`, imgUrl);
         $(`#notification-modal`).css({
             "display": "block",

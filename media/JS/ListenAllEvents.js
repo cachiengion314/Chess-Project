@@ -1,5 +1,6 @@
 import AssignedVar from "./utility/AssignedVar.js";
 import Vector from "./utility/Vector.js";
+import User from "./gameplay/User.js";
 import Visualize from "./utility/Visualize.js";
 import PopUp from "./utility/PopUp.js";
 import Game from "./gameplay/Game.js";
@@ -107,7 +108,7 @@ function responsiveSignColEventInvoke() {
 function onclickPlaySoloBtn() {
     $(`#play-solo-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
-            AssignedVar.currentGame = new Game(0, AssignedVar.OFFLINE);
+            AssignedVar.currentGame = new Game(0, new User("cachiengion314"), new User("anoyingGuys"), AssignedVar.OFFLINE);
             AssignedVar.currentGame.createNewChessBoard();
 
             $(`#play-group-btn`).hide(`fast`);
@@ -127,7 +128,7 @@ function onclickPlaySoloBtn() {
 function onclickCreateTableBtn() {
     $(`#create-table-btn`).click(() => {
         if (AssignedVar.games.length < 1) {
-            AssignedVar.currentGame = new Game(0, AssignedVar.ONLINE);
+            AssignedVar.currentGame = new Game(0, new User("cachiengion314"), new User("anoyingGuys"), AssignedVar.ONLINE);
             AssignedVar.currentGame.createNewChessBoard();
 
             $(`#play-group-btn`).hide(`fast`);
@@ -173,7 +174,7 @@ function onclickBackToLobbyBtn() {
 
 function onclickReadyBtn() {
     $(`#ready-btn`).click(function () {
-        AssignedVar.currentGame.isUserReady = true;
+        AssignedVar.currentGame.userAcc.isReady = true;
         hideReadyBtn();
         if (AssignedVar.currentGame.isGamePlaying) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
@@ -187,10 +188,7 @@ function onclickResignedBtn() {
     let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
     $($resignedBtn).click(() => {
         if (AssignedVar.currentGame.isGamePlaying) {
-            
-            PopUp.showYesNo(`Are you sure want to resign?`, PopUp.questionMarkImgUrl,
-                loseGameResult
-            );
+            PopUp.showYesNo(`Are you sure want to resign?`, PopUp.questionMarkImgUrl, loseGameResult);
         } else {
             PopUp.show(`The game have to in playing stage in order to resign the enemy!`, PopUp.sadImgUrl);
         }
@@ -226,10 +224,10 @@ function onclickChangeThemeBtn() {
 }
 
 function loseGameResult() {
-    // PopUp.show(`User "${AssignedVar.thisUser.name}" have lost the game`, PopUp.sadImgUrl);
-    AssignedVar.enemyUser.tempWins++;
+    PopUp.show(`player "${AssignedVar.currentGame.userAcc.name}" have lost the game`, PopUp.sadImgUrl);
+    AssignedVar.currentGame.enemyAcc.tempWins++;
     let $winsTxt = $(`#enemy-block .align-end div`)[0];
-    $winsTxt.textContent = `Wins: ${AssignedVar.enemyUser.tempWins}`;
+    $winsTxt.textContent = `Wins: ${AssignedVar.currentGame.enemyAcc.tempWins}`;
     AssignedVar.currentGame.resetGameBoard();
     showReadyBtn();
 }

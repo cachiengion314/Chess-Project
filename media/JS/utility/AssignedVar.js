@@ -1,6 +1,5 @@
 export default class AssignedVar {
-    static thisUser = null;
-    static enemyUser = null;
+    static userAcc = null;
     static currentGame = null;
     static games = [];
     static haveUsedSignColButton = false;
