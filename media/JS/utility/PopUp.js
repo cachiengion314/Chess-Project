@@ -11,6 +11,8 @@ export default class PopUp {
 
     static showSignIn(signInCallback = () => { }, cancelCallback = () => { }) {
         let SIGN_MODAL_ID = `#sign-modal`;
+        PopUp.openModal(SIGN_MODAL_ID);
+
         let $cancelBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[0]
         let $signInBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[1];
         $signInBtn.textContent = `Sign In`;
@@ -20,7 +22,6 @@ export default class PopUp {
         $signInBtn.onclick = () => {
             PopUp.closeModal(SIGN_MODAL_ID, signInCallback);
         }
-        console.log($(`${SIGN_MODAL_ID} .txt-input`));
         let $nameBlock = $(`${SIGN_MODAL_ID} .txt-input`)[0];
         let $emailBlock = $(`${SIGN_MODAL_ID} .txt-input`)[1];
         let $password1Block = $(`${SIGN_MODAL_ID} .txt-input`)[2];
@@ -31,16 +32,14 @@ export default class PopUp {
         $($password2Block).hide();
 
         $(`${SIGN_MODAL_ID} .txt`)[0].textContent = `Your name`;
-        // $(`${SIGN_MODAL_ID} .txt`)[1].textContent = `Your email`;
         $(`${SIGN_MODAL_ID} .txt`)[2].textContent = `Your password`;
-        // $(`${SIGN_MODAL_ID} .txt`)[3].textContent = `Type your password again`;
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.loadingImgUrl)
         $(`${SIGN_MODAL_ID} h4`).html(`Wellcome back. Please sign in to enjoy the game!`);
-
-        PopUp.openModal(SIGN_MODAL_ID);
     }
     static showSignUp(signUpCallback = () => { }, cancelCallback = () => { }) {
         let SIGN_MODAL_ID = `#sign-modal`;
+        PopUp.openModal(SIGN_MODAL_ID);
+
         let $cancelBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[0]
         let $signUpBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[1];
         $cancelBtn.onclick = () => {
@@ -65,11 +64,11 @@ export default class PopUp {
         $(`${SIGN_MODAL_ID} .txt`)[3].textContent = `Type your password again`;
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happyImgUrl)
         $(`${SIGN_MODAL_ID} h4`).html(`Sign Up`);
-
-        PopUp.openModal(SIGN_MODAL_ID);
     }
     static showYesNo(content = "yes or no", imgUrl = PopUp.sadImgUrl, yesCallback = () => { }, noCallback = () => { }) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
+        PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
+
         let $okBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[0];
         let $noBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[1];
         let $yesBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[2];
@@ -86,11 +85,11 @@ export default class PopUp {
         content = PopUp.highlightContent(content);
         $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
-
-        PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
     }
     static show(content = "notify", imgUrl = PopUp.successImgUrl) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
+        PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
+
         let $okBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[0];
         let $noBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[1];
         let $yesBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[2];
@@ -104,8 +103,6 @@ export default class PopUp {
         content = PopUp.highlightContent(content);
         $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
-
-        PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
     }
     static closeModal(MODAL_ID, completedCallback = () => { }) {
         $(`${MODAL_ID} h4`).css({

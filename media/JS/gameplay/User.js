@@ -1,6 +1,10 @@
+import AssignedVar from "../utility/AssignedVar.js";
+
 export default class User {
-    constructor(name) {
+    constructor(name, email, password) {
         this.name = name;
+        this.email = email;
+        this.password = password;
 
         this.wins = 0;
         this.draws = 0;
@@ -11,6 +15,6 @@ export default class User {
         this.tempLoses = 0;
 
         this.isReady = false;
-        this.controllingColor = null;
+        this.controllingColor = AssignedVar.EMPTY;
     }
 }

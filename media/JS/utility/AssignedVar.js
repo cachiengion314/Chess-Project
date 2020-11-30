@@ -3,6 +3,8 @@ export default class AssignedVar {
     static currentGame = null;
     static games = [];
     static haveUsedSignColButton = false;
+    static db = null;
+    static dbUsers = null;
     static OFFLINE = "ofline";
     static ONLINE = "online";
 
@@ -13,7 +15,7 @@ export default class AssignedVar {
     static CHESS_PIECE_ZINDEX = "4";
     static MAX_BLOCK_ZINDEX = "3";
     static MIN_BLOCK_ZINDEX = "2";
-    
+
     static selectedPiece = null;
     static $selectedPiece = null;
     static selectedPieceSpecialBlocks = [];

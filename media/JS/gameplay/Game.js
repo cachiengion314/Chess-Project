@@ -14,9 +14,7 @@ export default class Game {
         this.enemyAcc = enemyAcc;
         this.initLogicPlayer();
     }
-    set isGamePlaying(val) {
-
-    }
+    set isGamePlaying(val) { }
     get isGamePlaying() {
         // this below code need to modified soon
         this.enemyAcc.isReady = true;
