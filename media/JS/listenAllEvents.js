@@ -1,4 +1,5 @@
 import AssignedVar from "./utility/AssignedVar.js";
+import Firebase from "./utility/Firebase.js";
 import Vector from "./utility/Vector.js";
 import User from "./gameplay/User.js";
 import Visualize from "./utility/Visualize.js";
@@ -25,14 +26,83 @@ export default function listenAllEvents() {
 function onclickSignInBtn() {
     let $signInBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[0];
     $signInBtn.onclick = () => {
-        PopUp.showSignIn();
+        PopUp.showSignIn(() => {
+            let $yourNameInput = $(`#sign-modal input`)[0];
+            let $password1Input = $(`#sign-modal input`)[2];
+
+            let $yourName = $(`#sign-modal .txt`)[0];
+            let $password1 = $(`#sign-modal .txt`)[2];
+            if (hasRedTxtShouldAppear($yourNameInput.value, $yourName) |
+                hasRedTxtShouldAppear($password1Input.value, $password1)) {
+            } else {
+                PopUp.closeModal(`#sign-modal`, () => {
+                    PopUp.showLoading(() => {
+                        setTimeout(() => {
+                            PopUp.closeModal(`#notification-modal`, () => { PopUp.show(`The waiting is over!`); });
+                        }, 3000);
+                    });
+                });
+            }
+        });
     }
 }
 function onclickSignUpBtn() {
     let $signUpBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[1];
     $signUpBtn.onclick = () => {
-        PopUp.showSignUp();
+        PopUp.showSignUp(() => {
+            let $yourNameInput = $(`#sign-modal input`)[0];
+            let $yourEmailInput = $(`#sign-modal input`)[1];
+            let $password1Input = $(`#sign-modal input`)[2];
+            let $password2Input = $(`#sign-modal input`)[3];
+            let $yourName = $(`#sign-modal .txt`)[0];
+            let $yourEmail = $(`#sign-modal .txt`)[1];
+            let $password1 = $(`#sign-modal .txt`)[2];
+            let $password2 = $(`#sign-modal .txt`)[3];
+
+            if (hasRedTxtShouldAppear($yourNameInput.value, $yourName) |
+                hasRedTxtShouldAppear($yourEmailInput.value, $yourEmail) |
+                hasRedTxtShouldAppear($password1Input.value, $password1) |
+                hasRedTxtShouldAppear($password2Input.value, $password2)) {
+            } else {
+                if ($password1Input.value == $password2Input.value) {
+                    PopUp.closeModal(`#sign-modal`, () => {
+                        PopUp.showLoading(() => {
+                            setTimeout(() => {
+                                PopUp.closeModal(`#notification-modal`,
+                                    () => {
+                                        PopUp.show(`The waiting is over!`);
+                                    }
+                                )
+                            }, 3000);
+                        });
+                    });
+                } else {
+                    PopUp.show(`Your "clarify password" doesn't match upper password`, PopUp.jokeImgUrl);
+                }
+            }
+        });
     }
+}
+function hasRedTxtShouldAppear(inputVal, $txtDom) {
+    if (inputVal == "") {
+        let origintTitle = $txtDom.textContent.replace(`Type`, ``);
+        origintTitle = origintTitle.replace(`again`, ``);
+        origintTitle = origintTitle.replace(/"/g, ``);
+        if (!$txtDom.classList.contains(`red`)) {
+            $txtDom.classList.toggle(`red`);
+        }
+        $txtDom.textContent = `Type "${origintTitle}" again`;
+        return true;
+    }
+
+    let title = $txtDom.textContent.replace(`Type`, ``);
+    title = title.replace(`again`, ``);
+    title = title.replace(/"/g, ``);
+    $txtDom.textContent = title;
+    if ($txtDom.classList.contains(`red`)) {
+        $txtDom.classList.toggle(`red`);
+    }
+    return false;
 }
 function onclickOpenSignColBtn() {
     $(`#sign-col-btn`).click(() => {
@@ -201,7 +271,7 @@ function onclickResignedBtn() {
     let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
     $($resignedBtn).click(() => {
         if (AssignedVar.currentGame.isGamePlaying) {
-            PopUp.showYesNo(`Are you sure want to resign?`, PopUp.questionMarkImgUrl, loseGameResult);
+            PopUp.showYesNo(`Are you sure want to resign?`, PopUp.questionImgUrl, loseGameResult);
         } else {
             PopUp.show(`The game have to in playing stage in order to resign the enemy!`, PopUp.sadImgUrl);
         }

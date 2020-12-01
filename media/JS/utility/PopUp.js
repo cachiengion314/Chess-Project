@@ -1,9 +1,16 @@
+import AssignedVar from "./AssignedVar.js";
+
 export default class PopUp {
     static sadImgUrl = "./media/Image/sad.png";
     static happyImgUrl = "./media/Image/happy.png";
+    static happierImgUrl = "./media/Image/happier.png"
+    static angryImgUrl = "./media/Image/angry.png"
     static loadingImgUrl = "./media/Image/sand_clock.png";
     static successImgUrl = "./media/Image/success.png";
-    static questionMarkImgUrl = "./media/Image/question_mark.png";
+    static questionImgUrl = "./media/Image/question.png";
+    static jokeImgUrl = "./media/Image/joke.png";
+    static boringImgUrl = "./media/Image/boring.png";
+    static cuteImgUrl = "./media/Image/cute.png";
 
     static normalModalWidth = "65%";
     static bigModalWidth = "55%";
@@ -20,7 +27,7 @@ export default class PopUp {
             PopUp.closeModal(SIGN_MODAL_ID, cancelCallback);
         }
         $signInBtn.onclick = () => {
-            PopUp.closeModal(SIGN_MODAL_ID, signInCallback);
+            signInCallback();
         }
         let $nameBlock = $(`${SIGN_MODAL_ID} .txt-input`)[0];
         let $emailBlock = $(`${SIGN_MODAL_ID} .txt-input`)[1];
@@ -31,9 +38,18 @@ export default class PopUp {
         $($password1Block).show();
         $($password2Block).hide();
 
-        $(`${SIGN_MODAL_ID} .txt`)[0].textContent = `Your name`;
-        $(`${SIGN_MODAL_ID} .txt`)[2].textContent = `Your password`;
-        $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.loadingImgUrl)
+        let yourName = $(`${SIGN_MODAL_ID} .txt`)[0];
+        if (yourName.classList.contains(`red`)) {
+            yourName.classList.toggle(`red`);
+        }
+        yourName.textContent = `Your name`;
+        let yourPass = $(`${SIGN_MODAL_ID} .txt`)[2];
+        if (yourPass.classList.contains(`red`)) {
+            yourPass.classList.toggle(`red`);
+        }
+        yourPass.textContent = `Your password`;
+
+        $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happierImgUrl)
         $(`${SIGN_MODAL_ID} h4`).html(`Wellcome back. Please sign in to enjoy the game!`);
     }
     static showSignUp(signUpCallback = () => { }, cancelCallback = () => { }) {
@@ -46,7 +62,7 @@ export default class PopUp {
             PopUp.closeModal(SIGN_MODAL_ID, cancelCallback);
         }
         $signUpBtn.onclick = () => {
-            PopUp.closeModal(SIGN_MODAL_ID, signUpCallback);
+            signUpCallback();
         }
 
         let $nameBlock = $(`${SIGN_MODAL_ID} .txt-input`)[0];
@@ -58,12 +74,46 @@ export default class PopUp {
         $($password1Block).show();
         $($password2Block).show();
 
-        $(`${SIGN_MODAL_ID} .txt`)[0].textContent = `Your name`;
-        $(`${SIGN_MODAL_ID} .txt`)[1].textContent = `Your email`;
-        $(`${SIGN_MODAL_ID} .txt`)[2].textContent = `Your password`;
-        $(`${SIGN_MODAL_ID} .txt`)[3].textContent = `Type your password again`;
+        let yourName = $(`${SIGN_MODAL_ID} .txt`)[0];
+        if (yourName.classList.contains(`red`)) {
+            yourName.classList.toggle(`red`);
+        }
+        yourName.textContent = `Your name`;
+        let yourEmail = $(`${SIGN_MODAL_ID} .txt`)[1];
+        if (yourEmail.classList.contains(`red`)) {
+            yourEmail.classList.toggle(`red`);
+        }
+        yourEmail.textContent = `Your email`;
+        let yourPass = $(`${SIGN_MODAL_ID} .txt`)[2];
+        if (yourPass.classList.contains(`red`)) {
+            yourPass.classList.toggle(`red`);
+        }
+        yourPass.textContent = `Your password`;
+        let clarifyPass = $(`${SIGN_MODAL_ID} .txt`)[3];
+        if (clarifyPass.classList.contains(`red`)) {
+            clarifyPass.classList.toggle(`red`);
+        }
+        clarifyPass.textContent = `Clarify password`;
+
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happyImgUrl)
         $(`${SIGN_MODAL_ID} h4`).html(`Sign Up`);
+    }
+    static showLoading(closeConditionCallback, content = `Please stand by!`) {
+        let NOTIFICATION_MODAL_ID = `#notification-modal`;
+        PopUp.openModal(NOTIFICATION_MODAL_ID, PopUp.loadingImgUrl);
+
+        let $okBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[0];
+        let $noBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[1];
+        let $yesBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[2];
+        $($yesBtn).hide();
+        $($noBtn).hide();
+        $($okBtn).hide();
+
+        closeConditionCallback();
+
+        content = PopUp.highlightContent(content);
+        $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
+        $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
     }
     static showYesNo(content = "yes or no", imgUrl = PopUp.sadImgUrl, yesCallback = () => { }, noCallback = () => { }) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
@@ -119,12 +169,16 @@ export default class PopUp {
     }
     static openModal(MODAL_ID, imgUrl = PopUp.successImgUrl) {
         PopUp.calculateModalWidth();
-        if (MODAL_ID == "#notification-modal") {
-            $(`${MODAL_ID} img`).attr(`src`, imgUrl);
-        }
         $(`${MODAL_ID}`).css({
             "display": "block",
+            "z-index": AssignedVar.CUSTOM_MODAL_ZINDEX,
         });
+        if (MODAL_ID == "#notification-modal") {
+            $(`${MODAL_ID} img`).attr(`src`, imgUrl);
+            $(`${MODAL_ID}`).css({
+                "z-index": AssignedVar.NOTIFICATION_MODAL_ZINDEX,
+            });
+        }
         $(`${MODAL_ID} .custom-modal-content`).animate({
             "width": PopUp.bigModalWidth,
         }, "fast", () => {

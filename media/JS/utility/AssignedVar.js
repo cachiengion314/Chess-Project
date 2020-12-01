@@ -10,6 +10,7 @@ export default class AssignedVar {
 
     static MAX_SCREEN_WIDTH = 950;
     static SIGN_COL_ZINDEX = "12";
+    static NOTIFICATION_MODAL_ZINDEX = "7";
     static CUSTOM_MODAL_ZINDEX = "6";
     static READY_BTN_ZINDEX = "5";
     static CHESS_PIECE_ZINDEX = "4";

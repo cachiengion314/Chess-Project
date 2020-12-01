@@ -75,6 +75,7 @@ input {
     width: 85%;
     transition: width .5s;
 }
+
 input:focus {
     width: 100%;
 }
@@ -125,6 +126,10 @@ input:focus {
 
 .pawn-b {
     background-image: url("../Image/pawn-b.png");
+}
+
+.red {
+    color: red;
 }
 
 .all-contents {
