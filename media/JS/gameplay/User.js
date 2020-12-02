@@ -16,5 +16,6 @@ export default class User {
 
         this.isReady = false;
         this.controllingColor = AssignedVar.EMPTY;
+        this.accDateCreated = new Date().toLocaleDateString();
     }
 }

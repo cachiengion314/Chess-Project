@@ -3,11 +3,8 @@ export default class AssignedVar {
     static currentGame = null;
     static games = [];
     static haveUsedSignColButton = false;
-    static db = null;
-    static dbUsers = null;
-    static OFFLINE = "ofline";
-    static ONLINE = "online";
 
+    static FAKE_LOADING_TIME = 1500;
     static MAX_SCREEN_WIDTH = 950;
     static SIGN_COL_ZINDEX = "12";
     static NOTIFICATION_MODAL_ZINDEX = "7";
@@ -16,6 +13,9 @@ export default class AssignedVar {
     static CHESS_PIECE_ZINDEX = "4";
     static MAX_BLOCK_ZINDEX = "3";
     static MIN_BLOCK_ZINDEX = "2";
+    static LEFT_ARROW = "&#9664;";
+    static RIGHT_ARROW = "&#9658;";
+    static CIRCLE = "&#9673;";
 
     static selectedPiece = null;
     static $selectedPiece = null;
@@ -23,43 +23,108 @@ export default class AssignedVar {
     static legalMovesOfSelectedPiece = [];
     static coordinatesBlocks = [];
 
-    static LEFT_ARROW = "&#9664;";
-    static RIGHT_ARROW = "&#9658;";
-    static CIRCLE = "&#9673;";
-    static WHITE = `white`;
-    static BLACK = `black`;
-    static EMPTY = `empty`;
-    static PIECE = `piece`;
-    static CHESS_PIECE = `chess-piece`;
-    static CHESSBOARD_BG_COLOR = `chessboard-bg-color`;
-    static CHESS_BLOCK = `chess-block`;
-    static POSITION_BLOCK = "position-block";
-    static HIGHLIGHT_BLOCK = "highlight-block";
-    static ATTACK_BLOCK = "attack-block";
-    static DARK_BLOCK = "dark-block";
-    static LIGHT_BLOCK = "light-block";
-    static COORDINATES_COLOR = "coordinates-color";
-
-    static KING_W = `king-w`;
-    static QUEEN_W = `queen-w`;
-    static BISHOP_W = `bishop-w`;
-    static KNIGHT_W = `knight-w`;
-    static ROOK_W = `rook-w`;
-    static PAWN_W = `pawn-w`;
-
-    static KING_B = `king-b`;
-    static QUEEN_B = `queen-b`;
-    static BISHOP_B = `bishop-b`;
-    static KNIGHT_B = `knight-b`;
-    static ROOK_B = `rook-b`;
-    static PAWN_B = `pawn-b`;
-
-    static ROOK = `rook`;
-    static BISHOP = `bishop`;
-    static KING = `king`;
-    static QUEEN = `queen`;
-    static KNIGHT = `knight`;
-    static PAWN = `pawn`;
+    static get OFFLINE() {
+        return "offline";
+    }
+    static get ONLINE() {
+        return "online";
+    }
+    static get NO_USER() {
+        return "no_user";
+    }
+    static get WHITE() {
+        return "white";
+    }
+    static get BLACK() {
+        return "black";
+    }
+    static get EMPTY() {
+        return "empty";
+    }
+    static get PIECE() {
+        return "piece";
+    }
+    static get CHESS_PIECE() {
+        return "chess-piece";
+    }
+    static get CHESSBOARD_BG_COLOR() {
+        return "chessboard-bg-color";
+    }
+    static get CHESS_BLOCK() {
+        return "chess-block";
+    }
+    static get POSITION_BLOCK() {
+        return "position-block";
+    }
+    static get HIGHLIGHT_BLOCK() {
+        return "highlight-block";
+    }
+    static get ATTACK_BLOCK() {
+        return "attack-block";
+    }
+    static get DARK_BLOCK() {
+        return "dark-block";
+    }
+    static get LIGHT_BLOCK() {
+        return "light-block";
+    }
+    static get COORDINATES_COLOR() {
+        return "coordinates-color";
+    }
+    static get KING_W() {
+        return "king-w";
+    }
+    static get QUEEN_W() {
+        return "queen-w";
+    }
+    static get BISHOP_W() {
+        return "bishop-w";
+    }
+    static get KNIGHT_W() {
+        return "knight-w";
+    }
+    static get ROOK_W() {
+        return "rook-w";
+    }
+    static get PAWN_W() {
+        return "pawn-w";
+    }
+    static get KING_B() {
+        return "king-b";
+    }
+    static get QUEEN_B() {
+        return "queen-b";
+    }
+    static get BISHOP_B() {
+        return "bishop-b";
+    }
+    static get KNIGHT_B() {
+        return "knight-b";
+    }
+    static get ROOK_B() {
+        return "rook-b";
+    }
+    static get PAWN_B() {
+        return "pawn-b";
+    }
+    static get ROOK() {
+        return "rook";
+    }
+    static get BISHOP() {
+        return "bishop";
+    }
+    static get KING() {
+        return "king";
+    }
+    static get QUEEN() {
+        return "queen";
+    }
+    static get KNIGHT() {
+        return "knight";
+    }
+    static get PAWN() {
+        return "pawn";
+    }
 
     static bRook;
     static bKnight;

@@ -58,6 +58,7 @@ export default class PopUp {
 
         let $cancelBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[0]
         let $signUpBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[1];
+        $signUpBtn.textContent = `Sign Up`;
         $cancelBtn.onclick = () => {
             PopUp.closeModal(SIGN_MODAL_ID, cancelCallback);
         }

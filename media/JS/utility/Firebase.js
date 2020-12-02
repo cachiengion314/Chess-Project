@@ -1,43 +1,80 @@
 import AssignedVar from "./AssignedVar.js";
+import User from "../gameplay/User.js";
 
 export default class Firebase {
+    static database;
+    static get db() {
+        return Firebase.database;
+    }
+
+    static databaseCollectionUser;
+    static get dbUsers() {
+        return Firebase.databaseCollectionUser;
+    }
+
     static initialize() {
         firebase.initializeApp({
             apiKey: 'AIzaSyA8X5BGIHdic4rowTSnVhx_OrdHSkonngQ',
             authDomain: 'chess-club-online.firebaseapp.com',
             projectId: 'chess-club-online',
         });
-
-        AssignedVar.db = firebase.firestore();
-        AssignedVar.dbUsers = AssignedVar.db.collection(`users`);
+        Firebase.database = firebase.firestore();
+        Firebase.databaseCollectionUser = Firebase.db.collection(`users`);
     }
-    static setUser() {
-        let me1 = new User(`cachiengion314`, `cachiengion314@gmail.com`, `12345`);
-        let me2 = new User(`lung123`, `lung123@gmail.com`, `12345`);
-        let me3 = new User(`xuan`, `xuan@gmail.com`, `12345`);
-        let me4 = new User(`phong`, `phong@gmail.com`, `12345`);
-        let me5 = new User(`tuanhtranthi`, `tuanhtranthi@gmail.com`, `12345`);
-        me1 = Firebase.convertCustomObjToGenericObj(me1);
-        me2 = Firebase.convertCustomObjToGenericObj(me2);
-        me3 = Firebase.convertCustomObjToGenericObj(me3);
-        me4 = Firebase.convertCustomObjToGenericObj(me4);
-        me5 = Firebase.convertCustomObjToGenericObj(me5);
-
-        AssignedVar.dbUsers.doc().set(me1);
-        AssignedVar.dbUsers.doc().set(me2);
-        AssignedVar.dbUsers.doc().set(me3);
-        AssignedVar.dbUsers.doc().set(me4);
-        AssignedVar.dbUsers.doc().set(me5);
+    static setUser(userInfo = {}, successCompletedCallback = () => { }, failCompletedCallback = () => { }) {
+        let customUser = new User(
+            userInfo.name,
+            userInfo.email,
+            userInfo.password
+        );
+        let newUser = Firebase.convertCustomObjToGenericObj(customUser)
+        let p = Firebase.dbUsers.doc().set(newUser);
+        p.then(() => {
+            successCompletedCallback();
+        })
+            .catch((error) => {
+                failCompletedCallback(error);
+            });
     }
-    static getUser() {
-        let promiseUser = AssignedVar.dbUsers.get();
-        promiseUser.then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                console.log(doc.id, "=>", doc.data());
+    static authenticateUser(givenUserName = `phong`, givenPassword = `12345`, completedCallback = () => { }) {
+        let isGivenPasswordRight = false;
+        let p = Firebase.dbUsers.where(`name`, `==`, givenUserName).get();
+        p.then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+                let documents = querySnapshot.docs;
+                let userPassword = documents[0].data().password;
+                if (userPassword === givenPassword) {
+                    isGivenPasswordRight = true;
+                }
+                completedCallback(isGivenPasswordRight, documents[0].data());
+            } else {
+                completedCallback(isGivenPasswordRight, AssignedVar.NO_USER);
+            }
+        });
+    }
+    static findNameAndEmailDuplicate(givenName = "phong", givenEmail = "fun@mail.com", givenPassword = `12345`, completedCallback = () => { }) {
+        let isNameDuplicate = false;
+        let isEmailDuplicate = false;
+        let userInfo = {
+            name: givenName,
+            email: givenEmail,
+            password: givenPassword,
+        }
+        let pName = Firebase.dbUsers.where(`name`, `==`, givenName).get();
+        pName.then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+                isNameDuplicate = true;
+            }
+            let pEmail = Firebase.dbUsers.where(`email`, `==`, givenEmail).get();
+            pEmail.then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    isEmailDuplicate = true;
+                }
+                completedCallback(isNameDuplicate, isEmailDuplicate, userInfo);
             });
         });
     }
-    static convertCustomObjToGenericObj() {
+    static convertCustomObjToGenericObj(customObj) {
         let genericObj = {};
         for (let property in customObj) {
             genericObj[property] = customObj[property];
