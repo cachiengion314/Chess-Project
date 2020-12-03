@@ -21,21 +21,18 @@ export default class Firebase {
         Firebase.database = firebase.firestore();
         Firebase.databaseCollectionUser = Firebase.db.collection(`users`);
     }
-    static setUser(userInfo = {}, successCompletedCallback = () => { }, failCompletedCallback = () => { }) {
-        let customUser = new User(
-            userInfo.name,
-            userInfo.email,
-            userInfo.password
-        );
+    static setUser(userInfo = {}, successCompletedCallback = (id) => { }, failCompletedCallback = (error) => { }) {
+        let customUser = new User(userInfo.name, userInfo.email, userInfo.password);
         let newUser = Firebase.convertCustomObjToGenericObj(customUser)
-        let p = Firebase.dbUsers.doc().set(newUser);
-        p.then(() => {
-            successCompletedCallback();
+        let p = Firebase.dbUsers.add(newUser);
+        p.then((resolve) => {
+            successCompletedCallback(resolve.id);
         })
             .catch((error) => {
                 failCompletedCallback(error);
             });
     }
+    // for sign in feature
     static authenticateUser(givenUserName = `phong`, givenPassword = `12345`, completedCallback = () => { }) {
         let isGivenPasswordRight = false;
         let p = Firebase.dbUsers.where(`name`, `==`, givenUserName).get();
@@ -46,20 +43,17 @@ export default class Firebase {
                 if (userPassword === givenPassword) {
                     isGivenPasswordRight = true;
                 }
-                completedCallback(isGivenPasswordRight, documents[0].data());
+                completedCallback(isGivenPasswordRight, documents[0].id, documents[0].data());
             } else {
-                completedCallback(isGivenPasswordRight, AssignedVar.NO_USER);
+                completedCallback(isGivenPasswordRight, -1, AssignedVar.NO_USER);
             }
         });
     }
+    // for sign up feature
     static findNameAndEmailDuplicate(givenName = "phong", givenEmail = "fun@mail.com", givenPassword = `12345`, completedCallback = () => { }) {
         let isNameDuplicate = false;
         let isEmailDuplicate = false;
-        let userInfo = {
-            name: givenName,
-            email: givenEmail,
-            password: givenPassword,
-        }
+        let userInfo = new User(givenName, givenEmail, givenPassword);
         let pName = Firebase.dbUsers.where(`name`, `==`, givenName).get();
         pName.then((querySnapshot) => {
             if (!querySnapshot.empty) {

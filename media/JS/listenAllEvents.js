@@ -8,10 +8,13 @@ import Game from "./gameplay/Game.js";
 import { initGameBoard, onclickSelectedChessPieceAt } from "./initGameBoard.js";
 
 export default function listenAllEvents() {
+    saveDataForTheFirstTime();
+    checkUserSignStatus();
     responsiveSignColEventInvoke();
     // onclick for all main buttons
     onclickSignInBtn();
     onclickSignUpBtn();
+    onclickSignOutBtn();
     onclickCreateTableBtn();
     onclickPlaySoloBtn();
     onclickBackToLobbyBtn();
@@ -21,6 +24,20 @@ export default function listenAllEvents() {
     onclickOfferADrawBtn();
     onclickChangeThemeBtn();
     listenResizeEvent();
+}
+
+function saveDataForTheFirstTime() {
+    if (isFirstTime()) {
+        setChessClubObj(AssignedVar.chessClubObj);
+    }
+}
+function checkUserSignStatus() {
+    let userInfo = getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][getUserSignInId()];
+    if (getUserSignInId() == -1) {
+        signOut();
+    } else {
+        signIn(getUserSignInId(), userInfo);
+    }
 }
 
 function onclickSignInBtn() {
@@ -33,7 +50,7 @@ function onclickSignInBtn() {
             let $password1 = $(`#sign-modal .txt`)[2];
             if (hasRedTxtShouldAppear($yourNameInput.value, $yourName) |
                 hasRedTxtShouldAppear($password1Input.value, $password1)) {
-                PopUp.show(`You should correct your information!`, PopUp.angryImgUrl);
+                PopUp.show(`You should correct your informations!`, PopUp.angryImgUrl);
             } else {
                 PopUp.showLoading(() => {
                     Firebase.authenticateUser($yourNameInput.value, $password1Input.value, authenticateUserCompletedCallback);
@@ -60,7 +77,7 @@ function onclickSignUpBtn() {
                 hasRedTxtShouldAppear($yourEmailInput.value, $yourEmail) |
                 hasRedTxtShouldAppear($password1Input.value, $password1) |
                 hasRedTxtShouldAppear($password2Input.value, $password2)) {
-                PopUp.show(`You should correct your information!`, PopUp.angryImgUrl);
+                PopUp.show(`You should correct your informations!`, PopUp.angryImgUrl);
             } else {
                 if ($password1Input.value == $password2Input.value) {
                     PopUp.showLoading(() => {
@@ -72,6 +89,16 @@ function onclickSignUpBtn() {
                 }
             }
         }, clearInputvalue);
+    }
+}
+
+function onclickSignOutBtn() {
+    let $signOutBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[2];
+    $signOutBtn.onclick = () => {
+        PopUp.showYesNo(`Are you sure want to sign out?`, PopUp.questionImgUrl, () => {
+            signOut();
+            PopUp.show(`You have been sign out!`);
+        });
     }
 }
 
@@ -141,26 +168,9 @@ function listenResizeEvent() {
     });
 }
 
-function responsiveSignColEventInvoke() {
-    let $signCol = $(`#sign-col`);
-    if (window.innerWidth < AssignedVar.MAX_SCREEN_WIDTH) {
-        $signCol.css({
-            "display": "none",
-        });
-        $(`#sign-col-content`).css({
-            "width": "0%",
-        });
-    } else {
-        $signCol.css({
-            "display": "block",
-        });
-        $(`#sign-col-content`).css({
-            "width": "100%",
-        });
-    }
-}
 function onclickPlaySoloBtn() {
-    $(`#play-solo-btn`).click(() => {
+    let $playSoloBtn = $(`#play-group-btn button`)[1];
+    $playSoloBtn.onclick = () => {
         if (AssignedVar.games.length < 1) {
             AssignedVar.currentGame = new Game(0, new User("cachiengion314"), new User("anoyingGuys"), AssignedVar.OFFLINE);
             AssignedVar.currentGame.createNewChessBoard();
@@ -177,10 +187,11 @@ function onclickPlaySoloBtn() {
         } else {
             console.log(`you cannot create more game than one!`);
         }
-    });
+    };
 }
 function onclickCreateTableBtn() {
-    $(`#create-table-btn`).click(() => {
+    let $createTableBtn = $(`#play-group-btn button`)[0];
+    $createTableBtn.onclick = () => {
         if (AssignedVar.games.length < 1) {
             AssignedVar.currentGame = new Game(0, new User("cachiengion314"), new User("anoyingGuys"), AssignedVar.ONLINE);
             AssignedVar.currentGame.createNewChessBoard();
@@ -197,7 +208,7 @@ function onclickCreateTableBtn() {
         } else {
             console.log(`you cannot create more game than one!`);
         }
-    });
+    };
 }
 // need to fix this soon
 function onclickBackToLobbyBtn() {
@@ -276,24 +287,26 @@ function onclickChangeThemeBtn() {
         Visualize.setThemeAt(Visualize.currentThemeIndex);
     });
 }
-// utility functions
-function authenticateUserCompletedCallback(isPasswordRight, userInfo) {
+// utility functions and callbacks
+// for sign in feature
+function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {
     setTimeout(() => {
-        if (userInfo == AssignedVar.NO_USER) {
+        if (userDataFromDb == AssignedVar.NO_USER) {
             PopUp.show(`Sorry! Your info are not in our database!`, PopUp.questionImgUrl);
         } else {
             if (isPasswordRight) {
                 PopUp.closeModal(`#sign-modal`, () => {
-                    PopUp.show(`Wellcome back "${userInfo.name}"! Please play some games!`, PopUp.cuteImgUrl);
+                    PopUp.show(`Wellcome back "${userDataFromDb.name}"! Hope you have some funs!`, PopUp.cuteImgUrl);
                     clearInputvalue();
+                    signIn(userId, userDataFromDb);
                 });
             } else {
-                PopUp.show(`Account "${userInfo.name}" have different password! Please type the right one!`, PopUp.angryImgUrl);
+                PopUp.show(`Account "${userDataFromDb.name}" have different password! Please type the right one!`, PopUp.angryImgUrl);
             }
         }
     }, AssignedVar.FAKE_LOADING_TIME);
 }
-
+// for sign up feature
 function findNameAndEmailDuplicateCompletedCallback(isNameDuplicate, isEmailDuplicate, userInfo) {
     setTimeout(() => {
         if (isNameDuplicate && !isEmailDuplicate) {
@@ -303,16 +316,68 @@ function findNameAndEmailDuplicateCompletedCallback(isNameDuplicate, isEmailDupl
         } else if (isNameDuplicate && isEmailDuplicate) {
             PopUp.show(`your name and email is duplicate in our database! Please choose another one!`, PopUp.angryImgUrl);
         } else {
-            Firebase.setUser(userInfo, () => {
+            Firebase.setUser(userInfo, (userId) => {
                 PopUp.closeModal(`#sign-modal`, () => {
                     PopUp.show(`Congratulation! Your assignment is done!`);
                     clearInputvalue();
+                    signIn(userId, userInfo);
                 });
             },
                 (errorCode) => { PopUp.show(`There is an error! "${errorCode}" in this!`, PopUp.sadImgUrl) }
             );
         }
     }, AssignedVar.FAKE_LOADING_TIME);
+}
+
+function signIn(id, userInfo) {
+    let $signIn = $(`#sign-col .custom-btn`)[0];
+    let $signUp = $(`#sign-col .custom-btn`)[1];
+    let $signOut = $(`#sign-col .custom-btn`)[2];
+    $($signIn).hide();
+    $($signUp).hide();
+    $($signOut).show();
+    let userName = userInfo.name;
+    let obj = getChessClubObj();
+    obj[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][id] = userInfo;
+    setChessClubObj(obj);
+    showWelcomeTitle(`Welcome ${userName} to chess club online!`);
+    $(`#play-group-btn button`)[0].disabled = false
+    $(`#play-group-btn button`)[1].disabled = false
+    showUserStatistic();
+    setUserSignInId(id);
+}
+
+function signOut() {
+    let $signIn = $(`#sign-col .custom-btn`)[0];
+    let $signUp = $(`#sign-col .custom-btn`)[1];
+    let $signOut = $(`#sign-col .custom-btn`)[2];
+    $($signIn).show();
+    $($signUp).show();
+    $($signOut).hide();
+    showWelcomeTitle(`Welcome to chess club online! Please sign in`);
+    $(`#play-group-btn button`)[0].disabled = true
+    $(`#play-group-btn button`)[1].disabled = false
+    hideUserStatistic();
+    setUserSignInId(-1);
+}
+
+function responsiveSignColEventInvoke() {
+    let $signCol = $(`#sign-col`);
+    if (window.innerWidth < AssignedVar.MAX_SCREEN_WIDTH) {
+        $signCol.css({
+            "display": "none",
+        });
+        $(`#sign-col-content`).css({
+            "width": "0%",
+        });
+    } else {
+        $signCol.css({
+            "display": "block",
+        });
+        $(`#sign-col-content`).css({
+            "width": "100%",
+        });
+    }
 }
 
 function loseGameResult() {
@@ -372,4 +437,48 @@ function hasRedTxtShouldAppear(inputVal, $txtDom, password1 = `i_dont_need_passw
         $txtDom.classList.toggle(`red`);
     }
     return false;
+}
+
+function showWelcomeTitle(content) {
+    $(`#sign-col h4`).text(content);
+}
+
+function showUserStatistic() {
+    $(`#user-statistic`).show();
+}
+
+function hideUserStatistic() {
+    $(`#user-statistic`).hide();
+}
+
+// utility function for localStorage feature section
+function isFirstTime() {
+    let rawObj = localStorage.getItem(AssignedVar.KEY_CHESS_CLUB_ONLINE);
+    if (rawObj == undefined || rawObj == null) {
+        return true;
+    }
+    return false;
+}
+
+function setChessClubObj(obj) {
+    localStorage.setItem(AssignedVar.KEY_CHESS_CLUB_ONLINE, JSON.stringify(obj));
+}
+
+function getChessClubObj() {
+    return JSON.parse(localStorage.getItem(AssignedVar.KEY_CHESS_CLUB_ONLINE));
+}
+
+function setUserSignInId(id) {
+    let obj = getChessClubObj();
+    obj[AssignedVar.KEY_CURRENT_USER_SIGNIN_INDEX] = id;
+    setChessClubObj(obj);
+}
+
+function getUserSignInId() {
+    let obj = getChessClubObj();
+    let index = obj[AssignedVar.KEY_CURRENT_USER_SIGNIN_INDEX];
+    if (index == null || index == undefined || index == -1) {
+        return -1;
+    }
+    return index;
 }

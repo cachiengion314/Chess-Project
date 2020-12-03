@@ -23,6 +23,20 @@ export default class AssignedVar {
     static legalMovesOfSelectedPiece = [];
     static coordinatesBlocks = [];
 
+    static chessClubObj = {
+        "current_user_signin_index": -1,
+        "all_accounts_sign_up": {},
+        "theme_index": 0,
+    }
+    static get KEY_CHESS_CLUB_ONLINE() {
+        return "chess_club_online";
+    }
+    static get KEY_ALL_ACCOUNTS_SIGN_UP() {
+        return "all_accounts_sign_up";
+    }
+    static get KEY_CURRENT_USER_SIGNIN_INDEX() {
+        return "current_user_signin_index";
+    }
     static get OFFLINE() {
         return "offline";
     }

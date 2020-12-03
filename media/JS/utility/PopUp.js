@@ -39,15 +39,10 @@ export default class PopUp {
         $($password2Block).hide();
 
         let yourName = $(`${SIGN_MODAL_ID} .txt`)[0];
-        if (yourName.classList.contains(`red`)) {
-            yourName.classList.toggle(`red`);
-        }
         yourName.textContent = `Your name`;
         let yourPass = $(`${SIGN_MODAL_ID} .txt`)[2];
-        if (yourPass.classList.contains(`red`)) {
-            yourPass.classList.toggle(`red`);
-        }
         yourPass.textContent = `Your password`;
+        $(`${SIGN_MODAL_ID} .txt`).removeClass(`red`);
 
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happierImgUrl)
         $(`${SIGN_MODAL_ID} h4`).html(`Wellcome back. Please sign in to enjoy the game!`);
@@ -76,25 +71,14 @@ export default class PopUp {
         $($password2Block).show();
 
         let yourName = $(`${SIGN_MODAL_ID} .txt`)[0];
-        if (yourName.classList.contains(`red`)) {
-            yourName.classList.toggle(`red`);
-        }
         yourName.textContent = `Your name`;
         let yourEmail = $(`${SIGN_MODAL_ID} .txt`)[1];
-        if (yourEmail.classList.contains(`red`)) {
-            yourEmail.classList.toggle(`red`);
-        }
         yourEmail.textContent = `Your email`;
         let yourPass = $(`${SIGN_MODAL_ID} .txt`)[2];
-        if (yourPass.classList.contains(`red`)) {
-            yourPass.classList.toggle(`red`);
-        }
         yourPass.textContent = `Your password`;
         let clarifyPass = $(`${SIGN_MODAL_ID} .txt`)[3];
-        if (clarifyPass.classList.contains(`red`)) {
-            clarifyPass.classList.toggle(`red`);
-        }
         clarifyPass.textContent = `Clarify password`;
+        $(`${SIGN_MODAL_ID} .txt`).removeClass(`red`);
 
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happyImgUrl)
         $(`${SIGN_MODAL_ID} h4`).html(`Sign Up`);
