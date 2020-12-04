@@ -1,21 +1,41 @@
+import Game from "../gameplay/Game.js";
+
+let _isUserAndEnemyReady = false;
+let _isUserInLobby = true;
+
 export default class AssignedVar {
     static userAcc = null;
     static currentGame = null;
-    static games = [];
     static haveUsedSignColButton = false;
 
-    static FAKE_LOADING_TIME = 1500;
-    static MAX_SCREEN_WIDTH = 950;
-    static SIGN_COL_ZINDEX = "12";
-    static NOTIFICATION_MODAL_ZINDEX = "7";
-    static CUSTOM_MODAL_ZINDEX = "6";
-    static READY_BTN_ZINDEX = "5";
-    static CHESS_PIECE_ZINDEX = "4";
-    static MAX_BLOCK_ZINDEX = "3";
-    static MIN_BLOCK_ZINDEX = "2";
-    static LEFT_ARROW = "&#9664;";
-    static RIGHT_ARROW = "&#9658;";
-    static CIRCLE = "&#9673;";
+    static get IsUserAndEnemyReady() {
+        _isUserAndEnemyReady = false;
+        if (!AssignedVar.currentGame) {
+            _isUserAndEnemyReady = false;
+        } else {
+            if (AssignedVar.currentGame.enemyAcc.isReady && AssignedVar.currentGame.userAcc.isReady) {
+                _isUserAndEnemyReady = true;
+            }
+        }
+        return _isUserAndEnemyReady;
+    }
+    static set IsUserInLobby(val) {
+        Game.hideChatbox();
+        if (val) {
+            Game.hideChessBoardAndShowLobby();
+            Game.hideQuitGameBtn();
+        } else {
+            Game.showChessBoardAndHideLobby();
+            Game.showQuitGameBtn();
+            if (AssignedVar.currentGame && AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+                Game.showChatbox();
+            }
+        }
+        _isUserInLobby = val;
+    }
+    static get IsUserInLobby() {
+        return _isUserInLobby;
+    }
 
     static selectedPiece = null;
     static $selectedPiece = null;
@@ -24,18 +44,44 @@ export default class AssignedVar {
     static coordinatesBlocks = [];
 
     static chessClubObj = {
-        "current_user_signin_index": -1,
-        "all_accounts_sign_up": {},
-        "theme_index": 0,
+        "current_user_signin_id": -1,
+        "all_accounts_sign_up_in_this_browser": {},
+    }
+    static get FAKE_LOADING_TIME() {
+        return 1500;
+    }
+    static get MAX_SCREEN_WIDTH() {
+        return 950;
+    }
+    static get SIGN_COL_ZINDEX() {
+        return "12";
+    }
+    static get NOTIFICATION_MODAL_ZINDEX() {
+        return "7";
+    }
+    static get CUSTOM_MODAL_ZINDEX() {
+        return "6";
+    }
+    static get READY_BTN_ZINDEX() {
+        return "5";
+    }
+    static get CHESS_PIECE_ZINDEX() {
+        return "4";
+    }
+    static get MAX_BLOCK_ZINDEX() {
+        return "3";
+    }
+    static get MIN_BLOCK_ZINDEX() {
+        return "2";
     }
     static get KEY_CHESS_CLUB_ONLINE() {
         return "chess_club_online";
     }
     static get KEY_ALL_ACCOUNTS_SIGN_UP() {
-        return "all_accounts_sign_up";
+        return "all_accounts_sign_up_in_this_browser";
     }
-    static get KEY_CURRENT_USER_SIGNIN_INDEX() {
-        return "current_user_signin_index";
+    static get KEY_CURRENT_USER_SIGNIN_ID() {
+        return "current_user_signin_id";
     }
     static get OFFLINE() {
         return "offline";

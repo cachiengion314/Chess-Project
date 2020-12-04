@@ -388,7 +388,6 @@ input:focus {
 }
 
 #board-package {
-    display: none !important;
     display: flex;
     justify-content: center;
     align-items: center;

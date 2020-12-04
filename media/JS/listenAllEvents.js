@@ -15,9 +15,9 @@ export default function listenAllEvents() {
     onclickSignInBtn();
     onclickSignUpBtn();
     onclickSignOutBtn();
-    onclickCreateTableBtn();
+    onclickOnlineModeBtn();
     onclickPlaySoloBtn();
-    onclickBackToLobbyBtn();
+    onclickQuitGameBtn();
     onclickOpenSignColBtn();
     onclickReadyBtn();
     onclickResignedBtn();
@@ -43,6 +43,10 @@ function checkUserSignStatus() {
 function onclickSignInBtn() {
     let $signInBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[0];
     $signInBtn.onclick = () => {
+        if (AssignedVar.IsUserAndEnemyReady) {
+            PopUp.show(`You cannot sign in when playing`);
+            return;
+        }
         PopUp.showSignIn(() => {
             let $yourNameInput = $(`#sign-modal input`)[0];
             let $password1Input = $(`#sign-modal input`)[2];
@@ -63,6 +67,10 @@ function onclickSignInBtn() {
 function onclickSignUpBtn() {
     let $signUpBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[1];
     $signUpBtn.onclick = () => {
+        if (AssignedVar.IsUserAndEnemyReady) {
+            PopUp.show(`You cannot sign up when playing`);
+            return;
+        }
         PopUp.showSignUp(() => {
             let $yourNameInput = $(`#sign-modal input`)[0];
             let $yourEmailInput = $(`#sign-modal input`)[1];
@@ -169,90 +177,65 @@ function listenResizeEvent() {
 }
 
 function onclickPlaySoloBtn() {
-    let $playSoloBtn = $(`#play-group-btn button`)[1];
+    let $playSoloBtn = $(`#mode-group-btn button`)[1];
     $playSoloBtn.onclick = () => {
-        if (AssignedVar.games.length < 1) {
+        if (!AssignedVar.IsUserAndEnemyReady) {
             AssignedVar.currentGame = new Game(0, new User("cachiengion314"), new User("anoyingGuys"), AssignedVar.OFFLINE);
             AssignedVar.currentGame.createNewChessBoard();
-
-            $(`#play-group-btn`).hide(`fast`);
-            $(`#gameplay-group-btn`).show(`fast`);
-            let secondBtn = $(`#gameplay-group-btn button`)[1];
-            let thirdBtn = $(`#gameplay-group-btn button`)[2];
-            $(secondBtn).text(`Resigned for player 1`);
-            $(thirdBtn).text(`Resigned for player 2`);
-
-            let $backLobbyBtn = $(`#back-to-lobby-btn`);
-            $backLobbyBtn.html(AssignedVar.LEFT_ARROW);
+            AssignedVar.IsUserInLobby = false;
         } else {
-            console.log(`you cannot create more game than one!`);
+            PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
         }
     };
 }
-function onclickCreateTableBtn() {
-    let $createTableBtn = $(`#play-group-btn button`)[0];
+function onclickOnlineModeBtn() {
+    let $createTableBtn = $(`#mode-group-btn button`)[0];
     $createTableBtn.onclick = () => {
-        if (AssignedVar.games.length < 1) {
-            AssignedVar.currentGame = new Game(0, new User("cachiengion314"), new User("anoyingGuys"), AssignedVar.ONLINE);
-            AssignedVar.currentGame.createNewChessBoard();
-
-            $(`#play-group-btn`).hide(`fast`);
-            $(`#gameplay-group-btn`).show(`fast`);
-            let secondBtn = $(`#gameplay-group-btn button`)[1];
-            let thirdBtn = $(`#gameplay-group-btn button`)[2];
-            $(secondBtn).text(`Resigned`);
-            $(thirdBtn).hide();
-
-            let $backLobbyBtn = $(`#back-to-lobby-btn`);
-            $backLobbyBtn.html(AssignedVar.LEFT_ARROW);
-        } else {
-            console.log(`you cannot create more game than one!`);
+        let id = getUserSignInId();
+        switch (id) {
+            case -1:
+                PopUp.show(`You have to sign in to enable this feature!`);
+                break;
+            default:
+                if (!AssignedVar.IsUserAndEnemyReady) {
+                    AssignedVar.currentGame = new Game(0, new User("cachiengion314"), new User("anoyingGuys"), AssignedVar.ONLINE);
+                    AssignedVar.currentGame.createNewChessBoard();
+                    AssignedVar.IsUserInLobby = false;
+                } else {
+                    PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
+                }
         }
     };
 }
-// need to fix this soon
-function onclickBackToLobbyBtn() {
-    // let $backLobbyBtn = $(`#back-to-lobby-btn`);
 
-    // $backLobbyBtn.click(() => {
-
-    //     if ($(`#back-to-lobby-btn`).html() === AssignedVar.CIRCLE) {
-    //         console.log(`back to the lobby`, $backLobbyBtn.html());
-    //         return;
-    //     }
-    //     let arr = $backLobbyBtn.text().split();
-    //     let str = "";
-    //     for (let value of arr) {
-    //         str += value;
-    //     }
-    //     console.log(str, AssignedVar.LEFT_ARROW);
-    //     if (str === AssignedVar.LEFT_ARROW) {
-    //         console.log(`hidhfidhsifhdf`);
-    //         $backLobbyBtn.html(AssignedVar.RIGHT_ARROW);
-    //         hideChessBoardAndShowLobby();
-    //     } else if (str === AssignedVar.RIGHT_ARROW) {
-    //         showChessBoardAndHideLobby();
-    //         $backLobbyBtn.html(AssignedVar.LEFT_ARROW);
-    //     }
-    // });
+function onclickQuitGameBtn() {
+    let $quitGameBtn = $(`#function-col button`)[0];
+    $quitGameBtn.onclick = () => {
+        if (!AssignedVar.IsUserAndEnemyReady) {
+            AssignedVar.IsUserInLobby = true;
+        } else {
+            PopUp.show(`You cannot quit when the game is still playing!`, PopUp.sadImgUrl);
+        }
+    };
 }
 
 function onclickReadyBtn() {
     $(`#ready-btn`).click(function () {
+        Game.hideReadyBtn();
         AssignedVar.currentGame.userAcc.isReady = true;
-        hideReadyBtn();
-        if (AssignedVar.currentGame.isGamePlaying) {
+        if (AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
+            AssignedVar.currentGame.enemyAcc.isReady = true;
+        }
+        if (AssignedVar.IsUserAndEnemyReady) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
         }
     });
 }
 
 function onclickResignedBtn() {
-    let $drawsTxt = $(`#user-block .align-end div`)[1];
-    let $timeLeftTxt = $(`#user-block .align-end div`)[2];
     let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
     $($resignedBtn).click(() => {
-        if (AssignedVar.currentGame.isGamePlaying) {
+        if (AssignedVar.IsUserAndEnemyReady) {
             PopUp.showYesNo(`Are you sure want to resign?`, PopUp.questionImgUrl, loseGameResult);
         } else {
             PopUp.show(`The game have to in playing stage in order to resign the enemy!`, PopUp.sadImgUrl);
@@ -264,9 +247,8 @@ function onclickOfferADrawBtn() {
     $($drawBtn).click(() => {
         switch (AssignedVar.currentGame.gameMode) {
             case AssignedVar.ONLINE:
-                if (AssignedVar.currentGame.isGamePlaying) {
+                if (AssignedVar.IsUserAndEnemyReady) {
                     PopUp.show(`you have send a draw request to the enemy!`);
-
                 } else {
                     PopUp.show(`The game have to in playing stage in order to send a draw request to the enemy!`, PopUp.sadImgUrl);
                 }
@@ -341,8 +323,7 @@ function signIn(id, userInfo) {
     obj[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][id] = userInfo;
     setChessClubObj(obj);
     showWelcomeTitle(`Welcome ${userName} to chess club online!`);
-    $(`#play-group-btn button`)[0].disabled = false
-    $(`#play-group-btn button`)[1].disabled = false
+    AssignedVar.IsUserInLobby = true;
     showUserStatistic();
     setUserSignInId(id);
 }
@@ -355,8 +336,7 @@ function signOut() {
     $($signUp).show();
     $($signOut).hide();
     showWelcomeTitle(`Welcome to chess club online! Please sign in`);
-    $(`#play-group-btn button`)[0].disabled = true
-    $(`#play-group-btn button`)[1].disabled = false
+    AssignedVar.IsUserInLobby = true;
     hideUserStatistic();
     setUserSignInId(-1);
 }
@@ -386,35 +366,7 @@ function loseGameResult() {
     let $winsTxt = $(`#enemy-block .align-end div`)[0];
     $winsTxt.textContent = `Wins: ${AssignedVar.currentGame.enemyAcc.tempWins}`;
     AssignedVar.currentGame.resetGameBoard();
-    showReadyBtn();
-}
-
-function hideReadyBtn() {
-    let $readyBtn = $(`#ready-btn`);
-    $($readyBtn).animate({
-        "left": "40%",
-        "opacity": ".8",
-    }, "fast");
-    $($readyBtn).animate({
-        "left": "80%",
-        "opacity": ".4",
-    }, "fast");
-    $($readyBtn).animate({
-        "opacity": "0",
-    }, "fast", () => $($readyBtn).hide());
-}
-
-function showReadyBtn() {
-    let $readyBtn = $(`#ready-btn`);
-    $($readyBtn).show();
-    $($readyBtn).css({
-        "left": "50%",
-        "opacity": "1",
-    });
-}
-
-function clearInputvalue() {
-    $(`#sign-modal input`).val("");
+    Game.showReadyBtn();
 }
 
 function hasRedTxtShouldAppear(inputVal, $txtDom, password1 = `i_dont_need_password`) {
@@ -439,6 +391,10 @@ function hasRedTxtShouldAppear(inputVal, $txtDom, password1 = `i_dont_need_passw
     return false;
 }
 
+function clearInputvalue() {
+    $(`#sign-modal input`).val("");
+}
+
 function showWelcomeTitle(content) {
     $(`#sign-col h4`).text(content);
 }
@@ -451,7 +407,7 @@ function hideUserStatistic() {
     $(`#user-statistic`).hide();
 }
 
-// utility function for localStorage feature section
+// utility function that are for localStorage feature section
 function isFirstTime() {
     let rawObj = localStorage.getItem(AssignedVar.KEY_CHESS_CLUB_ONLINE);
     if (rawObj == undefined || rawObj == null) {
@@ -470,13 +426,13 @@ function getChessClubObj() {
 
 function setUserSignInId(id) {
     let obj = getChessClubObj();
-    obj[AssignedVar.KEY_CURRENT_USER_SIGNIN_INDEX] = id;
+    obj[AssignedVar.KEY_CURRENT_USER_SIGNIN_ID] = id;
     setChessClubObj(obj);
 }
 
 function getUserSignInId() {
     let obj = getChessClubObj();
-    let index = obj[AssignedVar.KEY_CURRENT_USER_SIGNIN_INDEX];
+    let index = obj[AssignedVar.KEY_CURRENT_USER_SIGNIN_ID];
     if (index == null || index == undefined || index == -1) {
         return -1;
     }
