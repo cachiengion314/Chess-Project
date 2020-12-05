@@ -12,8 +12,7 @@ $(document).ready(whenDocumentFullyLoaded);
 
 function whenDocumentFullyLoaded() {
     Firebase.initialize();
-
-    listenAllEvents();
     initLobby();
+    listenAllEvents();
 }
 

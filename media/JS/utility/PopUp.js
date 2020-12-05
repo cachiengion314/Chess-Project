@@ -83,7 +83,7 @@ export default class PopUp {
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happyImgUrl)
         $(`${SIGN_MODAL_ID} h4`).html(`Sign Up`);
     }
-    static showLoading(closeConditionCallback, content = `Please stand by!`) {
+    static showLoading(closeConditionCallback, content = `Please stand by!`, fakeLoadingTime = 0) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
         PopUp.openModal(NOTIFICATION_MODAL_ID, PopUp.loadingImgUrl);
 
@@ -94,11 +94,11 @@ export default class PopUp {
         $($noBtn).hide();
         $($okBtn).hide();
 
-        closeConditionCallback();
-
         content = PopUp.highlightContent(content);
         $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
+
+        setTimeout(closeConditionCallback, fakeLoadingTime)
     }
     static showYesNo(content = "yes or no", imgUrl = PopUp.sadImgUrl, yesCallback = () => { }, noCallback = () => { }) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;

@@ -10,6 +10,6 @@ export default class Player {
             this.id = 1;
         }
         this.alivePieces = [];
-        this.deadthPieces = [];
+        this.deathPieces = [];
     }
 }

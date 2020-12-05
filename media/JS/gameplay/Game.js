@@ -2,16 +2,37 @@ import AssignedVar from "../utility/AssignedVar.js";
 import Player from "../gameplay/Player.js";
 import Vector from "../utility/Vector.js";
 import { initGameBoard, onclickSelectedChessPieceAt } from "../initGameBoard.js";
+import Firebase from "../utility/Firebase.js";
+
+let $chessBoard;
+let _tablesCount = 0;
+let _blackPlayer;
+let _whitePlayer;
 
 export default class Game {
-    constructor(id, userAcc, enemyAcc, gameMode) {
-        this.id = id;
-        this.isGamePlaying = false;
+    constructor(userId, userAcc, gameMode) {
+        this.id = userId;
+        this.userAcc = userAcc;
         this.gameMode = gameMode;
         this.chessBoard = [];
-        this.userAcc = userAcc;
-        this.enemyAcc = enemyAcc;
+        this.enemyAcc = null;
         this.initLogicPlayer();
+    }
+    static get TablesCount() {
+        return _tablesCount;
+    }
+    static set TablesCount(val) {
+        _tablesCount = val;
+    }
+    static get $ChessBoard() {
+        return $chessBoard;
+    }
+
+    static get blackPlayer() {
+        return _blackPlayer;
+    }
+    static get whitePlayer() {
+        return _whitePlayer;
     }
     letPlayerControlChessPiece() {
         for (let x = 0; x < 8; ++x) {
@@ -24,16 +45,15 @@ export default class Game {
         }
     }
     initLogicPlayer() {
-        this.blackPlayer = new Player(AssignedVar.BLACK);
-        this.whitePlayer = new Player(AssignedVar.WHITE);
-        this.currentPlayer = this.whitePlayer;
+        _blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
+        _whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
+        this.currentPlayer = Game.whitePlayer;
         this.userAcc.controllingColor = AssignedVar.WHITE;
-        this.enemyAcc.controllingColor = AssignedVar.BLACK;
     }
     createNewChessBoard() {
         Game.showChessBoardAndHideLobby();
-        this.$chessBoard = document.createElement(`chess-board`);
-        $(`#board-package`).append(this.$chessBoard);
+        $chessBoard = document.createElement(`chess-board`);
+        $(`#board-package`).append(Game.$ChessBoard);
         Game.showReadyBtn();
         initGameBoard();
     }
@@ -44,8 +64,8 @@ export default class Game {
         return false;
     }
     resetGameBoard() {
-        if (this.$chessBoard) {
-            $(this.$chessBoard).empty();
+        if (Game.$ChessBoard) {
+            $($chessBoard).empty();
         }
         AssignedVar.selectedPiece = null;
         AssignedVar.$selectedPiece = null;
@@ -53,14 +73,15 @@ export default class Game {
         AssignedVar.legalMovesOfSelectedPiece = [];
         this.chessBoard = [];
         this.currentPlayer = null;
-        this.whitePlayer = null;
-        this.blackPlayer = null;
+        _whitePlayer = null;
+        _blackPlayer = null;
         AssignedVar.currentGame.userAcc.isReady = false;
         AssignedVar.currentGame.enemyAcc.isReady = false;
 
         this.initLogicPlayer();
         initGameBoard();
     }
+   
     static showChessBoardAndHideLobby() {
         // Game.emptyWaitingTables();
 
@@ -114,11 +135,11 @@ export default class Game {
         $($chatbox).hide(`fast`);
     }
     static hideQuitGameBtn() {
-        let $quitGameBtn = $(`#function-col button`)[0];
+        let $quitGameBtn = $(`#function-col button`)[1];
         $($quitGameBtn).hide();
     }
     static showQuitGameBtn() {
-        let $quitGameBtn = $(`#function-col button`)[0];
+        let $quitGameBtn = $(`#function-col button`)[1];
         $($quitGameBtn).show();
     }
     static hideReadyBtn(completedCallback = () => { }) {

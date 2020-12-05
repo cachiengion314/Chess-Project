@@ -8,6 +8,7 @@ import King from "./pieces/King.js";
 import Queen from "./pieces/Queen.js";
 import Pawn from "./pieces/Pawn.js";
 import Visualize from "./utility/Visualize.js";
+import Game from "./gameplay/Game.js";
 
 export function initGameBoard() {
     initLogicPieces();
@@ -41,26 +42,24 @@ function initLogicPieces() {
         let wPawn = new Pawn(AssignedVar.WHITE, new Vector(i, 6));
         AssignedVar.wPawns.push(wPawn);
     }
-    AssignedVar.currentGame.blackPlayer.alivePieces.push(AssignedVar.bRook, AssignedVar.bKnight, AssignedVar.bBishop, AssignedVar.bKing, AssignedVar.bQueen,
+    Game.blackPlayer.alivePieces.push(AssignedVar.bRook, AssignedVar.bKnight, AssignedVar.bBishop, AssignedVar.bKing, AssignedVar.bQueen,
         AssignedVar.bBishop2, AssignedVar.bKnight2, AssignedVar.bRook2, ...AssignedVar.bPawns);
-    AssignedVar.currentGame.whitePlayer.alivePieces.push(AssignedVar.wRook, AssignedVar.wKnight, AssignedVar.wBishop, AssignedVar.wKing, AssignedVar.wQueen,
+    Game.whitePlayer.alivePieces.push(AssignedVar.wRook, AssignedVar.wKnight, AssignedVar.wBishop, AssignedVar.wKing, AssignedVar.wQueen,
         AssignedVar.wBishop2, AssignedVar.wKnight2, AssignedVar.wRook2, ...AssignedVar.wPawns);
 }
 
 function initLogicBoard() {
     for (let x = 0; x < 8; ++x) {
-        let array1 = [];
-        AssignedVar.currentGame.chessBoard.push(array1);
+        let array = [];
+        AssignedVar.currentGame.chessBoard.push(array);
         for (let y = 0; y < 8; ++y) {
-            let array2 = [];
-            AssignedVar.currentGame.chessBoard[x].push(array2);
-            AssignedVar.currentGame.chessBoard[x][y] = new Empty(new Vector(x, y));
+            AssignedVar.currentGame.chessBoard[x].push(new Empty(new Vector(x, y)));
         }
     }
-    for (let piece of AssignedVar.currentGame.blackPlayer.alivePieces) {
+    for (let piece of Game.blackPlayer.alivePieces) {
         AssignedVar.currentGame.chessBoard[piece.currentPos.x][piece.currentPos.y] = piece;
     }
-    for (let piece of AssignedVar.currentGame.whitePlayer.alivePieces) {
+    for (let piece of Game.whitePlayer.alivePieces) {
         AssignedVar.currentGame.chessBoard[piece.currentPos.x][piece.currentPos.y] = piece;
     }
 
@@ -87,8 +86,6 @@ function initVisualizeBoard() {
             if (AssignedVar.currentGame.chessBoard[x][y].type == AssignedVar.PIECE) {
                 Visualize.onPieceMouseEnterOf($(`#${AssignedVar.currentGame.chessBoard[x][y].id}`)[0]);
                 Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.currentGame.chessBoard[x][y].id}`)[0]);
-        
-                // onclickSelectedChessPieceAt(pos);
             }
         }
     }
@@ -152,15 +149,15 @@ function setupOnClickCallbackAt(pos) {
 
 function logicDestroyEnemyPiece(logicEnemyPiece) {
     if (logicEnemyPiece.controlByPlayerId == 0) {
-        AssignedVar.currentGame.whitePlayer.alivePieces = AssignedVar.currentGame.whitePlayer.alivePieces.filter(item => {
+        Game.whitePlayer.alivePieces = Game.whitePlayer.alivePieces.filter(item => {
             return item.id != logicEnemyPiece.id;
         });
-        AssignedVar.currentGame.whitePlayer.deadthPieces.push(logicEnemyPiece);
+        Game.whitePlayer.deathPieces.push(logicEnemyPiece);
     } else {
-        AssignedVar.currentGame.blackPlayer.alivePieces = AssignedVar.currentGame.blackPlayer.alivePieces.filter(item => {
+        Game.blackPlayer.alivePieces = Game.blackPlayer.alivePieces.filter(item => {
             return item.id != logicEnemyPiece.id;
         });
-        AssignedVar.currentGame.blackPlayer.deadthPieces.push(logicEnemyPiece);
+        Game.blackPlayer.deathPieces.push(logicEnemyPiece);
     }
     AssignedVar.currentGame.chessBoard[logicEnemyPiece.currentPos.x][logicEnemyPiece.currentPos.y] = new Empty(logicEnemyPiece.currentPos);
 
@@ -181,9 +178,9 @@ function logicMovePieceTo(nextPos) {
 
 function changePlayerTurn() {
     if (AssignedVar.currentGame.currentPlayer.id == 0) {
-        AssignedVar.currentGame.currentPlayer = AssignedVar.currentGame.blackPlayer;
+        AssignedVar.currentGame.currentPlayer = Game.blackPlayer;
     } else {
-        AssignedVar.currentGame.currentPlayer = AssignedVar.currentGame.whitePlayer;
+        AssignedVar.currentGame.currentPlayer = Game.whitePlayer;
     }
 }
 

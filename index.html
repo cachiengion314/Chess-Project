@@ -88,7 +88,20 @@
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <button id="change-theme-btn" class="custom-btn " style=" height: 25%; ">change theme</button>
+                    <button id="change-theme-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">change
+                        theme</button>
+                    <button id="about-us-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
+                        about
+                        us
+                    </button>
+                    <button id="how-to-play-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
+                        how to
+                        play
+                    </button>
+                    <button id="top-player-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
+                        top
+                        player
+                    </button>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -172,38 +185,24 @@
 
                 <div class="space-vertical "></div>
 
-                <div class="btn-group-vertical " style="height: 20%; width: 100%;">
-                    <button id="top-player-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
-                        top
-                        player
-                    </button>
+                <div class="btn-group-vertical " style="height: 5%; width: 100%;">
                     <button id="option-btn" class="custom-btn font-size-vw-big mb-1" type="button" data-toggle="modal"
-                        data-target="#option-modal" style="height: 25%;">
+                        data-target="#option-modal" style="height: 100%;">
                         Option
                     </button>
-                    <button id="how-to-play-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
-                        how to
-                        play
-                    </button>
-                    <button id="about-us-btn" class="custom-btn font-size-vw-big" style=" height: 25%; ">
-                        about
-                        us
-                    </button>
                 </div>
-
+                <div class="space-vertical"></div>
             </div>
-
         </div>
 
         <!-- 2. main gameplay col  -->
         <div id="main-col" class="no-padding " style="height: 100vh;">
             <!-- board row -->
-            <div id="waiting-tables" class=" bg-light" style="height: 100%;">
+            <div id="waiting-tables" class="bg-light" style="height: 100%;">
                 <!-- <waiting-table></waiting-table> -->
             </div>
             <div id="gameplay" style="height: 100%;">
                 <div class="d-flex bg-warning position-relative" style="height: 4%;">
-                    <button id="sign-col-btn" class="font-size-vw-sm">&#9776;</button>
                     <div id="table-txt" class="text-primary ml-2">Table 2</div>
                 </div>
                 <!-- player 1 row  -->
@@ -252,7 +251,9 @@
         <!-- 3. functions col  -->
         <div id="function-col" class="pos-relative " style="height:100vh">
 
-            <div class="space-vertical"></div>
+            <div class="horizontal-bar bg-primary" style="height: 5%;">
+                <button id="sign-col-btn" class="custom-btn-sm">&#9776;</button>
+            </div>
 
             <button class="custom-btn-sm font-size-vw-sm mb-1" style="height: 5%;">
                 Quit game
@@ -260,7 +261,7 @@
 
             <div id="mode-group-btn" style="height: 30%">
                 <button class="custom-btn font-size-vw-big mb-1" style=" height: 50%; ">
-                    Online mode
+                    Create s table
                 </button>
                 <button class="custom-btn font-size-vw-big" style=" height: 40%; ">
                     Solo mode

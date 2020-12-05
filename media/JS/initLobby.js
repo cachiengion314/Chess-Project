@@ -1,19 +1,24 @@
 import Visualize from "./utility/Visualize.js";
-import User from "./gameplay/User.js";
 import AssignedVar from "./utility/AssignedVar.js";
+import User from "./gameplay/User.js";
+import Firebase from "./utility/Firebase.js";
 import Game from "./gameplay/Game.js";
 
 export default function initLobby() {
-    Game.hideChessBoardAndShowLobby();
+    Firebase.queryAllTable((allGames) => {
+        Game.TablesCount = allGames.length;
 
-    setTimeout(() => {
-        test();
-    }, 500);
+        Game.hideChessBoardAndShowLobby();
+        for (let i = 0; i < Game.TablesCount; ++i) {
+            let tableIndex = i + 1;
+            createWaitingTableWith(tableIndex, allGames[i].data().userAcc.name);
+        }
+    });
 }
 
-function test() {
-    for (let i = 0; i < 14; ++i) {
-        let $component = document.createElement(`waiting-table`);
-        $(`#waiting-tables`).append($component);
-    }
+function createWaitingTableWith(index, createdUserName) {
+    let $table = document.createElement(`waiting-table`);
+    $(`#waiting-tables`).append($table);
+    $table.name = "waiting-table-" + index + "-" + createdUserName;
+    return $table;
 }

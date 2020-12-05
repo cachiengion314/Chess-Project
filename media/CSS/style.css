@@ -304,6 +304,13 @@ input:focus {
     justify-content: center;
 }
 
+.horizontal-bar{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
 #function-col .box {
     color: black;
 }
@@ -394,6 +401,9 @@ input:focus {
 }
 
 #sign-col-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     width: 100%;
     padding-left: 10px;
     padding-right: 10px;
@@ -425,7 +435,7 @@ input:focus {
 
 #sign-col-btn {
     display: none;
-    height: 100%;
+    height: fit-content;
 }
 
 #back-to-lobby-btn {
@@ -447,6 +457,5 @@ input:focus {
     }
     #sign-col-btn {
         display: block;
-        float: left;
     }
 }

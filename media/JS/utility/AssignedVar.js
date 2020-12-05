@@ -1,7 +1,27 @@
 import Game from "../gameplay/Game.js";
+import Firebase from "./Firebase.js";
 
 let _isUserAndEnemyReady = false;
 let _isUserInLobby = true;
+
+let _bKnight;
+let _bBishop;
+let _bKing;
+let _bQueen;
+let _bBishop2;
+let _bKnight2;
+let _bRook2;
+let _bRook;
+let _bPawns = [];
+let _wRook;
+let _wKnight;
+let _wBishop;
+let _wKing;
+let _wQueen;
+let _wBishop2;
+let _wKnight2;
+let _wRook2;
+let _wPawns = [];
 
 export default class AssignedVar {
     static userAcc = null;
@@ -12,10 +32,21 @@ export default class AssignedVar {
         _isUserAndEnemyReady = false;
         if (!AssignedVar.currentGame) {
             _isUserAndEnemyReady = false;
-        } else {
-            if (AssignedVar.currentGame.enemyAcc.isReady && AssignedVar.currentGame.userAcc.isReady) {
-                _isUserAndEnemyReady = true;
-            }
+            return _isUserAndEnemyReady;
+        }
+        switch (AssignedVar.currentGame.gameMode) {
+            case AssignedVar.ONLINE:
+                if (!AssignedVar.currentGame.enemyAcc) {
+                    _isUserAndEnemyReady = false;
+                } else if (AssignedVar.currentGame.enemyAcc.isReady && AssignedVar.currentGame.userAcc.isReady) {
+                    _isUserAndEnemyReady = true;
+                }
+                break;
+            case AssignedVar.OFFLINE:
+                if (AssignedVar.currentGame.userAcc.isReady) {
+                    _isUserAndEnemyReady = true;
+                }
+                break;
         }
         return _isUserAndEnemyReady;
     }
@@ -186,22 +217,114 @@ export default class AssignedVar {
         return "pawn";
     }
 
-    static bRook;
-    static bKnight;
-    static bBishop;
-    static bKing;
-    static bQueen;
-    static bBishop2;
-    static bKnight2;
-    static bRook2;
-    static bPawns = [];
-    static wRook;
-    static wKnight;
-    static wBishop;
-    static wKing;
-    static wQueen;
-    static wBishop2;
-    static wKnight2;
-    static wRook2;
-    static wPawns = [];
+    static get bRook() {
+        return _bRook;
+    }
+    static set bRook(val) {
+        _bRook = (val);
+    }
+    static get bKnight() {
+        return _bKnight;
+    }
+    static set bKnight(val) {
+        _bKnight = (val);
+    }
+    static get bBishop() {
+        return _bBishop;
+    }
+    static set bBishop(val) {
+        _bBishop = (val);
+    }
+
+    static get bKing() {
+        return _bKing;
+    }
+    static set bKing(val) {
+        _bKing = (val);
+    }
+
+    static get bQueen() {
+        return _bQueen;
+    }
+    static set bQueen(val) {
+        _bQueen = (val);
+    }
+    static get bBishop2() {
+        return _bBishop2;
+    }
+    static set bBishop2(val) {
+        _bBishop2 = (val);
+    }
+    static get bKnight2() {
+        return _bKnight2;
+    }
+    static set bKnight2(val) {
+        _bKnight2 = (val);
+    }
+    static get bRook2() {
+        return _bRook2;
+    }
+    static set bRook2(val) {
+        _bRook2 = (val);
+    }
+    static get bPawns() {
+        return _bPawns;
+    }
+    static set bPawns(val) {
+        _bPawns = val;
+    }
+    static get wRook() {
+        return _wRook;
+    }
+    static set wRook(val) {
+        _wRook = (val);
+    }
+    static get wKnight() {
+        return _wKnight;
+    }
+    static set wKnight(val) {
+        _wKnight = (val);
+    }
+    static get wBishop() {
+        return _wBishop;
+    }
+    static set wBishop(val) {
+        _wBishop = (val);
+    }
+    static get wKing() {
+        return _wKing;
+    }
+    static set wKing(val) {
+        _wKing = (val);
+    }
+    static get wQueen() {
+        return _wQueen;
+    }
+    static set wQueen(val) {
+        _wQueen = (val);
+    }
+    static get wBishop2() {
+        return _wBishop2;
+    }
+    static set wBishop2(val) {
+        _wBishop2 = (val);
+    }
+    static get wKnight2() {
+        return _wKnight2;
+    }
+    static set wKnight2(val) {
+        _wKnight2 = (val);
+    }
+    static get wRook2() {
+        return _wRook2;
+    }
+    static set wRook2(val) {
+        _wRook2 = (val);
+    }
+    static get wPawns() {
+        return _wPawns;
+    }
+    static set wPawns(val) {
+        _wPawns = val;
+    }
 }

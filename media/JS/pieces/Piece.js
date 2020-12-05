@@ -1,5 +1,6 @@
 import ChessBlock from "./ChessBlock.js";
 import AssignedVar from "../utility/AssignedVar.js";
+import Game from "../gameplay/Game.js";
 
 export default class Piece extends ChessBlock {
     constructor(color, currentPos) {
@@ -7,9 +8,9 @@ export default class Piece extends ChessBlock {
         this.type = AssignedVar.PIECE;
         this.color = color;
         if (color == AssignedVar.WHITE) {
-            this.controlByPlayerId = AssignedVar.currentGame.whitePlayer.id;
+            this.controlByPlayerId = Game.whitePlayer.id;
         } else if (color == AssignedVar.BLACK) {
-            this.controlByPlayerId = AssignedVar.currentGame.blackPlayer.id;
+            this.controlByPlayerId = Game.blackPlayer.id;
         }
     }
 }
