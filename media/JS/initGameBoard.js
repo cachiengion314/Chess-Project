@@ -9,6 +9,7 @@ import Queen from "./pieces/Queen.js";
 import Pawn from "./pieces/Pawn.js";
 import Visualize from "./utility/Visualize.js";
 import Game from "./gameplay/Game.js";
+import Firebase from "./utility/Firebase.js";
 
 export function initGameBoard() {
     initLogicPieces();
@@ -119,7 +120,7 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     });
 }
 
-function setupOnClickCallbackAt(pos) {
+export function setupOnClickCallbackAt(pos) {
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {
             let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
@@ -145,9 +146,16 @@ function setupOnClickCallbackAt(pos) {
             }
         }
     }
+
 }
 
-function logicDestroyEnemyPiece(logicEnemyPiece) {
+export function updateToFirestoreData() {
+    Firebase.setTable(Firebase.curretnTableId, AssignedVar.currentGame, () => {
+        console.log(`updateToFirestoreData`);
+    });
+}
+
+export function logicDestroyEnemyPiece(logicEnemyPiece) {
     if (logicEnemyPiece.controlByPlayerId == 0) {
         Game.whitePlayer.alivePieces = Game.whitePlayer.alivePieces.filter(item => {
             return item.id != logicEnemyPiece.id;
@@ -164,7 +172,7 @@ function logicDestroyEnemyPiece(logicEnemyPiece) {
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
 }
 
-function logicMovePieceTo(nextPos) {
+export function logicMovePieceTo(nextPos) {
     let currentPos = AssignedVar.selectedPiece.currentPos;
     AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
     AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y] = AssignedVar.selectedPiece;
@@ -176,15 +184,19 @@ function logicMovePieceTo(nextPos) {
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }
 
-function changePlayerTurn() {
+export function changePlayerTurn() {
     if (AssignedVar.currentGame.currentPlayer.id == 0) {
         AssignedVar.currentGame.currentPlayer = Game.blackPlayer;
     } else {
         AssignedVar.currentGame.currentPlayer = Game.whitePlayer;
     }
+
+    if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+        updateToFirestoreData();
+    }
 }
 
-function subscribeSelectedPieceAt(pos) {
+export function subscribeSelectedPieceAt(pos) {
     Visualize.removeAllSpecialBlocksFromLastSelectedPiece();
     logicSubscribeSelectedPieceAt(pos);
     Visualize.selectedPieceEffectAt(pos);
@@ -196,7 +208,7 @@ function logicSubscribeSelectedPieceAt(pos) {
     AssignedVar.legalMovesOfSelectedPiece = AssignedVar.selectedPiece.getAllPossibleMoves();
 }
 
-function unSubscribeSelectedPiece() {
+export function unSubscribeSelectedPiece() {
     Visualize.removeAllSpecialBlocksFromLastSelectedPiece();
     logicUnSubscribeSelectedPiece();
 }

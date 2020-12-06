@@ -7,7 +7,6 @@ import Game from "./gameplay/Game.js";
 export default function initLobby() {
     Firebase.queryAllTable((allGames) => {
         Game.TablesCount = allGames.length;
-
         Game.hideChessBoardAndShowLobby();
         for (let i = 0; i < Game.TablesCount; ++i) {
             let tableIndex = i + 1;

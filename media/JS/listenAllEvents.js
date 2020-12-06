@@ -4,8 +4,12 @@ import User from "./gameplay/User.js";
 import Visualize from "./utility/Visualize.js";
 import PopUp from "./utility/PopUp.js";
 import Game from "./gameplay/Game.js";
+import Vector from "./utility/Vector.js";
 
-import { initGameBoard, onclickSelectedChessPieceAt } from "./initGameBoard.js";
+import {
+    subscribeSelectedPieceAt, changePlayerTurn, logicMovePieceTo, logicDestroyEnemyPiece,
+    unSubscribeSelectedPiece, setupOnClickCallbackAt, updateToFirestoreData
+} from "./initGameBoard.js";
 
 export default function listenAllEvents() {
     User.saveDataForTheFirstTime();
@@ -188,18 +192,20 @@ function onclickOnlineModeBtn() {
                 if (!AssignedVar.IsUserAndEnemyReady) {
                     let userAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
                     let userOwnGame = new Game(User.getUserSignInId(), userAcc, AssignedVar.ONLINE);
-                    // console.log(userOwnGame);
-                    let tableId = "table-" + User.getUserSignInId();
+                    AssignedVar.currentGame = userOwnGame;
+
                     PopUp.showLoading(() => {
-                        AssignedVar.currentGame = userOwnGame;
                         AssignedVar.currentGame.createNewChessBoard();
-                        Firebase.setTable(tableId, userOwnGame, () => {
+                        Firebase.setTable(Firebase.curretnTableId, userOwnGame, () => {
                             AssignedVar.IsUserInLobby = false;
                             PopUp.closeModal(`#notification-modal`);
+                            Firebase.onSnapshotWithId(Firebase.curretnTableId, tableChangedCallback);
+
                         }, (errorCode) => {
                             PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
+                            AssignedVar.currentGame = null;
                         });
-                    }, `Please waiting us to create table!`, AssignedVar.FAKE_LOADING_TIME);
+                    }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
 
                 } else {
                     PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
@@ -223,11 +229,16 @@ function onclickReadyBtn() {
     $(`#ready-btn`).click(function () {
         Game.hideReadyBtn();
         AssignedVar.currentGame.userAcc.isReady = true;
-        
+        createFakeEnemy();
         if (AssignedVar.IsUserAndEnemyReady) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
         }
     });
+}
+
+function createFakeEnemy(){
+    AssignedVar.currentGame.enemyAcc = Firebase.convertCustomObjToGenericObj(new User(`fakeEnemy`, `123`, `123`));
+    AssignedVar.currentGame.enemyAcc.isReady = true;
 }
 
 function onclickResignedBtn() {
@@ -268,8 +279,40 @@ function onclickChangeThemeBtn() {
         Visualize.setThemeAt(Visualize.currentThemeIndex);
     });
 }
-// utility functions and callbacks
+// utility functions and callbacks section
 // for sign in feature
+// onSnapshot change in server side
+function tableChangedCallback(firebaseGameObjData) {
+    if (AssignedVar.currentGame.currentPlayer.id == 0) {
+        for (let i = 0; i < firebaseGameObjData.whitePlayer.alivePieces.length; ++i) {
+            let modifiedPos = firebaseGameObjData.whitePlayer.alivePieces[i].currentPos;
+            let originPos = new Vector(modifiedPos.x, modifiedPos.y);
+            if (Game.whitePlayer.alivePieces[i]) {
+                originPos = Game.whitePlayer.alivePieces[i].currentPos;
+            }
+            if (!originPos.isEqualTo(modifiedPos)) {
+                setupOnClickCallbackAt(originPos);
+                setupOnClickCallbackAt(modifiedPos);
+                break;
+            }
+        }
+    } else {
+        for (let i = 0; i < firebaseGameObjData.blackPlayer.alivePieces.length; ++i) {
+            let modifiedPos = firebaseGameObjData.blackPlayer.alivePieces[i].currentPos;
+            let originPos = new Vector(modifiedPos.x, modifiedPos.y);
+            if (Game.blackPlayer.alivePieces[i]) {
+                originPos = Game.blackPlayer.alivePieces[i].currentPos;
+            }
+            if (!originPos.isEqualTo(modifiedPos)) {
+                setupOnClickCallbackAt(originPos);
+                setupOnClickCallbackAt(modifiedPos);
+                break;
+            }
+        }
+    }
+
+}
+
 function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {
     if (userDataFromDb == AssignedVar.NO_USER) {
         PopUp.show(`Sorry! Your info are not in our database!`, PopUp.questionImgUrl);

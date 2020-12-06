@@ -1,5 +1,6 @@
 import initLobby from "./initLobby.js";
 import listenAllEvents from "./listenAllEvents.js";
+import Game from "./gameplay/Game.js";
 
 import "./web-component/WaitingTable.js";
 import "./web-component/ChessPiece.js";
@@ -12,6 +13,7 @@ $(document).ready(whenDocumentFullyLoaded);
 
 function whenDocumentFullyLoaded() {
     Firebase.initialize();
+    Game.initLogicPlayer();
     initLobby();
     listenAllEvents();
 }

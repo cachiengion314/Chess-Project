@@ -3,6 +3,7 @@ import Player from "../gameplay/Player.js";
 import Vector from "../utility/Vector.js";
 import { initGameBoard, onclickSelectedChessPieceAt } from "../initGameBoard.js";
 import Firebase from "../utility/Firebase.js";
+import User from "./User.js";
 
 let $chessBoard;
 let _tablesCount = 0;
@@ -16,7 +17,6 @@ export default class Game {
         this.gameMode = gameMode;
         this.chessBoard = [];
         this.enemyAcc = null;
-        this.initLogicPlayer();
     }
     static get TablesCount() {
         return _tablesCount;
@@ -31,8 +31,14 @@ export default class Game {
     static get blackPlayer() {
         return _blackPlayer;
     }
+    static set blackPlayer(val) {
+        _blackPlayer = val;
+    }
     static get whitePlayer() {
         return _whitePlayer;
+    }
+    static set whitePlayer(val) {
+        _whitePlayer = val;
     }
     letPlayerControlChessPiece() {
         for (let x = 0; x < 8; ++x) {
@@ -44,17 +50,24 @@ export default class Game {
             }
         }
     }
-    initLogicPlayer() {
-        _blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
-        _whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
+    static initLogicPlayer() {
+        Game.blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
+        Game.whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
+    }
+    setCurrentPlayer() {
         this.currentPlayer = Game.whitePlayer;
+        this.whitePlayer = Game.whitePlayer;
+        this.blackPlayer = Game.blackPlayer;
         this.userAcc.controllingColor = AssignedVar.WHITE;
+        // this.enemyAcc.controllingColor = AssignedVar.BLACK;
     }
     createNewChessBoard() {
         Game.showChessBoardAndHideLobby();
         $chessBoard = document.createElement(`chess-board`);
         $(`#board-package`).append(Game.$ChessBoard);
         Game.showReadyBtn();
+        Game.initLogicPlayer();
+        this.setCurrentPlayer();
         initGameBoard();
     }
     isUserTurn() {
@@ -73,15 +86,14 @@ export default class Game {
         AssignedVar.legalMovesOfSelectedPiece = [];
         this.chessBoard = [];
         this.currentPlayer = null;
-        _whitePlayer = null;
-        _blackPlayer = null;
         AssignedVar.currentGame.userAcc.isReady = false;
         AssignedVar.currentGame.enemyAcc.isReady = false;
 
-        this.initLogicPlayer();
+        Game.initLogicPlayer();
+        this.setCurrentPlayer();
         initGameBoard();
     }
-   
+
     static showChessBoardAndHideLobby() {
         // Game.emptyWaitingTables();
 
