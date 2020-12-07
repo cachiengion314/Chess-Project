@@ -111,9 +111,7 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
         } else {
             if (pos.isPositionInLegalMoves()) {
                 setupOnClickCallbackAt(pos);
-                if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
-                    updateToFirestoreData();
-                }
+               
             } else {
                 if (pos.isPositionHasPiece()) {
                     Visualize.cannotAttackPieceEffect($chessPiece[0]);
@@ -123,18 +121,14 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     });
 }
 
-export function onclickMovePieceAt(pos){
+export function onclickMovePieceAt(pos) {
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {
             let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
-            if (false) {
-                unSubscribeSelectedPiece();
-            } else {
-                logicDestroyEnemyPiece(pieceAtPos);
-                logicMovePieceTo(pos);
-                unSubscribeSelectedPiece();
-                changePlayerTurn();
-            }
+            logicDestroyEnemyPiece(pieceAtPos);
+            logicMovePieceTo(pos);
+            unSubscribeSelectedPiece();
+
         } else {
             subscribeSelectedPieceAt(pos);
         }
@@ -142,7 +136,7 @@ export function onclickMovePieceAt(pos){
         if (pos.isPositionInLegalMoves()) {
             logicMovePieceTo(pos);
             unSubscribeSelectedPiece();
-            changePlayerTurn();
+        
         } else {
             if (AssignedVar.selectedPiece) {
                 unSubscribeSelectedPiece();
@@ -181,12 +175,6 @@ export function setupOnClickCallbackAt(pos) {
 
 }
 
-export function updateToFirestoreData() {
-    Firebase.setTable(Firebase.curretnTableId, AssignedVar.currentGame, () => {
-        console.log(`updateToFirestoreData success!`, AssignedVar.currentGame);
-    });
-}
-
 export function logicDestroyEnemyPiece(logicEnemyPiece) {
     if (logicEnemyPiece.controlByPlayerId == 0) {
         Game.whitePlayer.alivePieces = Game.whitePlayer.alivePieces.filter(item => {
@@ -200,7 +188,7 @@ export function logicDestroyEnemyPiece(logicEnemyPiece) {
         Game.blackPlayer.deathPieces.push(logicEnemyPiece);
     }
     AssignedVar.currentGame.chessBoard[logicEnemyPiece.currentPos.x][logicEnemyPiece.currentPos.y] = new Empty(logicEnemyPiece.currentPos);
-
+    console.log(`logicDestroyEnemyPiece. logicEnemyPieces:`, logicEnemyPiece);
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
 }
 
