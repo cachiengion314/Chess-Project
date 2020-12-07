@@ -17,7 +17,7 @@ export default function initLobby() {
         Game.hideChessBoardAndShowLobby();
         for (let i = 0; i < Game.TablesCount; ++i) {
             let tableIndex = i + 1;
-            createWaitingTableWith(tableIndex, allTables[i].data().owner.name, allTables[i].data().id);
+            createWaitingTableWith(tableIndex, allTables[i].data().owner.name, allTables[i].data().tableId);
         }
     });
 }
