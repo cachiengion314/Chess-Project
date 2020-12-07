@@ -265,7 +265,7 @@ function onclickOnlineModeBtn() {
                         AssignedVar.currentGame.setCurrentPlayer();
 
                         let newTable = {
-                            tableId: Firebase.curretnTableId,
+                            tableId: Firebase.currentTableId,
                             owner: userAcc,
                             ownerLastMove: null,
                             ownerMove: null,
@@ -274,13 +274,13 @@ function onclickOnlineModeBtn() {
                             opponentLastMove: null,
                             opponentMove: null,
 
-                            currentTurn: `owner`,
+                            lastTurn: `owner`,
                         }
 
-                        Firebase.setTable(Firebase.curretnTableId, newTable, () => {
+                        Firebase.setTable(Firebase.currentTableId, newTable, () => {
                             AssignedVar.IsUserInLobby = false;
                             PopUp.closeModal(`#notification-modal`);
-                            Firebase.onSnapshotWithId(Firebase.curretnTableId, tableChangedCallback);
+                            Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
                         }, (errorCode) => {
                             PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
                             AssignedVar.currentGame = null;
@@ -299,7 +299,7 @@ function onclickOnlineModeBtn() {
 // for sign in feature
 // onSnapshot change for the server side
 function tableChangedCallback(tableData) {
-    if (!tableData.opponentLastMove || !tableData.opponentMove) { return; }
+    if (tableData.lastTurn == AssignedVar.OWNER || !tableData.opponentLastMove || !tableData.opponentMove) { return; }
     console.log("tableData from listenAllevent", tableData);
     console.log(`opponentLastMove`, tableData.opponentLastMove)
     console.log(`opponentMove`, tableData.opponentMove)

@@ -34,10 +34,10 @@ export default class Firebase {
     static get dbCurrentGameData() {
         return _dbCurrentTableData;
     }
-    static set curretnTableId(value) {
+    static set currentTableId(value) {
         _currentTableId = value;
     }
-    static get curretnTableId() {
+    static get currentTableId() {
         if (_currentTableId == -1) {
             return `table-` + User.getUserSignInId();
         }
@@ -133,15 +133,19 @@ export default class Firebase {
         let obj = {};
         let move = "ownerMove";
         let lastMove = "ownerLastMove";
+        let lastTurn = AssignedVar.OWNER;
         let mytableId = `table-` + User.getUserSignInId();
         if (tableId != mytableId) {
             move = "opponentMove";
             lastMove = "opponentLastMove";
+            lastTurn = AssignedVar.OPPONENT;
         }
 
         obj[move] = pieceMove;
         obj[lastMove] = pieceLastMove;
+        obj["lastTurn"] = lastTurn;
 
+        console.log(`firebase update move obj`, obj);
         let ref = Firebase.dbTalbes.doc(tableId);
         ref.update(obj)
             .then(() => {

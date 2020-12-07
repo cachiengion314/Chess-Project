@@ -132,19 +132,17 @@ export function onclickMovePieceAt(pos) {
         if (AssignedVar.selectedPiece) {
             let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
             logicDestroyEnemyPiece(pieceAtPos);
-            logicMovePieceTo(pos);
+            noUpdateFirebaseLogicMovePieceTo(pos);
             unSubscribeSelectedPiece();
             changePlayerTurn();
-            ;
         } else {
             subscribeSelectedPieceAt(pos);
         }
     } else {
         if (pos.isPositionInLegalMoves()) {
-            logicMovePieceTo(pos);
+            noUpdateFirebaseLogicMovePieceTo(pos);
             unSubscribeSelectedPiece();
             changePlayerTurn();
-
         } else {
             if (AssignedVar.selectedPiece) {
                 unSubscribeSelectedPiece();
@@ -199,7 +197,17 @@ export function logicDestroyEnemyPiece(logicEnemyPiece) {
     console.log(`logicDestroyEnemyPiece. logicEnemyPieces:`, logicEnemyPiece);
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
 }
+export function noUpdateFirebaseLogicMovePieceTo(nextPos) {
+    let currentPos = AssignedVar.selectedPiece.currentPos;
+    AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
+    AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y] = AssignedVar.selectedPiece;
+    AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
+    AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id = AssignedVar.selectedPiece.getId();
+    AssignedVar.$selectedPiece.id = AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id;
 
+    Visualize.logInfo();
+    Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
+}
 export function logicMovePieceTo(nextPos) {
     let currentPos = AssignedVar.selectedPiece.currentPos;
     AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
@@ -208,27 +216,14 @@ export function logicMovePieceTo(nextPos) {
     AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id = AssignedVar.selectedPiece.getId();
     AssignedVar.$selectedPiece.id = AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id;
 
-    let arr = AssignedVar.$selectedPiece.id.split("_");
-    let cPlayer = Game.whitePlayer;
-    if (AssignedVar.selectedPiece.color == AssignedVar.BLACK) {
-        cPlayer = Game.blackPlayer;
+    let name = AssignedVar.$selectedPiece.id.split("_")[0];
+    let lastMoveId = name + "_" + currentPos.convertToId();
+    if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+        Firebase.updateMove(Firebase.currentTableId, lastMoveId, AssignedVar.$selectedPiece.id, () => {
+            console.log(`logicMove! lastMoveId, move`, lastMoveId, AssignedVar.$selectedPiece.id);
+        });
     }
-    for (let piece of cPlayer.alivePieces) {
-        if (piece.name == arr[0]) {
-            piece.id = AssignedVar.$selectedPiece.id;
-            piece.currentPos = nextPos;
-
-            let lastMoveId = `${piece.name}_${currentPos.convertToId()}`;
-            if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
-                Firebase.updateMove(Firebase.curretnTableId, lastMoveId, piece.id, () => {
-                    console.log(`logicMove! lastMoveId, move`, lastMoveId, piece.id);
-                });
-            }
-
-            break;
-        }
-    }
-
+   
     Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }

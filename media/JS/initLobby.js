@@ -32,10 +32,11 @@ function createWaitingTableWith(index, createdUserName, id) {
 }
 
 function onclickWaitingTable() {
-    Firebase.curretnTableId = this.id;
-    console.log(`click, firebaseCurrentTalbeId:`, Firebase.curretnTableId);
+    Firebase.currentTableId = this.id;
+    console.log(`click, firebaseCurrentTalbeId:`, Firebase.currentTableId);
     let acc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
     acc.controllingColor = AssignedVar.BLACK;
+    console.log(acc.controllingColor);
     AssignedVar.currentGame = new Game(acc, AssignedVar.ONLINE);
     let propertyObj = {
         opponent: acc,
@@ -43,12 +44,12 @@ function onclickWaitingTable() {
 
     PopUp.showLoading(() => {
         AssignedVar.currentGame.createNewChessBoard();
-        AssignedVar.currentGame.setCurrentPlayer(); 
+        AssignedVar.currentGame.setCurrentPlayer();
         AssignedVar.IsUserInLobby = false;
 
-        Firebase.updateTableProperty(Firebase.curretnTableId, propertyObj, () => {
+        Firebase.updateTableProperty(Firebase.currentTableId, propertyObj, () => {
             PopUp.closeModal(`#notification-modal`);
-            Firebase.onSnapshotWithId(Firebase.curretnTableId, tableChangedCallback);
+            Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
         }, (errorCode) => {
             PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
             AssignedVar.currentGame = null;
@@ -58,7 +59,8 @@ function onclickWaitingTable() {
 }
 
 function tableChangedCallback(tableData) {
-    if (!tableData.ownerLastMove || !tableData.ownerMove) { return; }
+    if (tableData.lastTurn == AssignedVar.OPPONENT || !tableData.ownerLastMove || !tableData.ownerMove) { return; }
+
     console.log("tableData from innitlobby", tableData);
     console.log(`ownerLastMove`, tableData.ownerLastMove)
     console.log(`ownerMove`, tableData.ownerMove)

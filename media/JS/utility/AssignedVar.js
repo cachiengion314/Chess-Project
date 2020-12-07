@@ -30,10 +30,10 @@ export default class AssignedVar {
     static haveUsedSignColButton = false;
     static isLetPlayerControlPiece = false;
 
-    static get IsGameStart(){
+    static get IsGameStart() {
         return _isGameStart;
     }
-    static set IsGameStart(val){
+    static set IsGameStart(val) {
         _isGameStart = val;
     }
 
@@ -92,6 +92,12 @@ export default class AssignedVar {
     }
     static get MAX_SCREEN_WIDTH() {
         return 950;
+    }
+    static get OWNER() {
+        return "owner";
+    }
+    static get OPPONENT() {
+        return "opponent";
     }
     static get SIGN_COL_ZINDEX() {
         return "12";
