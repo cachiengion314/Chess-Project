@@ -185,12 +185,14 @@ export function logicMovePieceTo(nextPos) {
         for (let piece of AssignedVar.currentGame.whitePlayer.alivePieces) {
             if (piece.name == arr[0]) {
                 piece.id = AssignedVar.$selectedPiece.id;
+                piece.currentPos = nextPos;
             }
         }
     } else {
         for (let piece of AssignedVar.currentGame.blackPlayer.alivePieces) {
             if (piece.name == arr[0]) {
                 piece.id = AssignedVar.$selectedPiece.id;
+                piece.currentPos = nextPos;
             }
         }
     }
