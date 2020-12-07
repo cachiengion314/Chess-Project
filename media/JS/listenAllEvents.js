@@ -23,7 +23,7 @@ export default function listenAllEvents() {
     onclickPlaySoloBtn();
     onclickQuitGameBtn();
     onclickOpenSignColBtn();
-
+    onclickReadyBtn(Firebase.curretnTableId);
     onclickResignedBtn();
     onclickOfferADrawBtn();
     onclickChangeThemeBtn();
@@ -200,7 +200,6 @@ function onclickOnlineModeBtn() {
                     PopUp.showLoading(() => {
                         AssignedVar.currentGame.createNewChessBoard();
                         AssignedVar.currentGame.setCurrentPlayer();
-                        onclickReadyBtn(Firebase.curretnTableId);
 
                         Firebase.setTable(Firebase.curretnTableId, userOwnGame, () => {
                             AssignedVar.IsUserInLobby = false;
