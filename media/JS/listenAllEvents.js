@@ -310,6 +310,8 @@ function tableChangedCallback(tableData) {
 
     setupOnClickCallbackAt(lastMove);
     setupOnClickCallbackAt(move);
+
+    console.log(`last move, move`, lastMove, move);
 }
 
 function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {
