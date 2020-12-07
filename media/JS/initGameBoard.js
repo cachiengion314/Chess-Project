@@ -128,14 +128,15 @@ export function onclickMovePieceAt(pos) {
             logicDestroyEnemyPiece(pieceAtPos);
             logicMovePieceTo(pos);
             unSubscribeSelectedPiece();
-
-        } else {
+            changePlayerTurn()
+;        } else {
             subscribeSelectedPieceAt(pos);
         }
     } else {
         if (pos.isPositionInLegalMoves()) {
             logicMovePieceTo(pos);
             unSubscribeSelectedPiece();
+            changePlayerTurn();
         
         } else {
             if (AssignedVar.selectedPiece) {
