@@ -8,7 +8,7 @@ import Vector from "./utility/Vector.js";
 
 import {
     subscribeSelectedPieceAt, changePlayerTurn, logicMovePieceTo, logicDestroyEnemyPiece,
-    unSubscribeSelectedPiece, setupOnClickCallbackAt, updateToFirestoreData,onclickMovePieceAt
+    unSubscribeSelectedPiece, setupOnClickCallbackAt, updateToFirestoreData, onclickMovePieceAt
 } from "./initGameBoard.js";
 
 export default function initLobby() {
@@ -67,8 +67,8 @@ function tableChangedCallback(tableData) {
     let arrMove = ownerMove.split("_");
     console.log(`arrLastMove`, arrLastMove);
     console.log(`arrMove`, arrMove);
-    let lastMove = new Vector(Number(arrLastMove[1]), Number([arrLastMove[2]]));
-    let move = new Vector(Number(arrMove[1]), Number([arrMove[2]]));
+    let lastMove = new Vector(Number(arrLastMove[1]), Number(arrLastMove[2]));
+    let move = new Vector(Number(arrMove[1]), Number(arrMove[2]));
 
     onclickMovePieceAt(lastMove);
     onclickMovePieceAt(move);
