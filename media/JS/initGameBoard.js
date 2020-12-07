@@ -123,7 +123,7 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     });
 }
 
-export function onclickMovePieceAt(){
+export function onclickMovePieceAt(pos){
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {
             let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
