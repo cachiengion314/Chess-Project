@@ -12,12 +12,12 @@ import {
 } from "./initGameBoard.js";
 
 export default function initLobby() {
-    Firebase.queryAllTable((allGames) => {
-        Game.TablesCount = allGames.length;
+    Firebase.queryAllTable((allTables) => {
+        Game.TablesCount = allTables.length;
         Game.hideChessBoardAndShowLobby();
         for (let i = 0; i < Game.TablesCount; ++i) {
             let tableIndex = i + 1;
-            createWaitingTableWith(tableIndex, allGames[i].data().userAcc.name, allGames[i].data().id);
+            createWaitingTableWith(tableIndex, allTables[i].data().owner.name, allTables[i].data().id);
         }
     });
 }
@@ -33,16 +33,19 @@ function createWaitingTableWith(index, createdUserName, id) {
 
 function onclickWaitingTable() {
     Firebase.curretnTableId = this.id;
-    Firebase.getTable(this.id, (gameData) => {
+    Firebase.getTable(this.id, (tableData) => {
         let acc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
-        gameData.enemyAcc = acc;
-        AssignedVar.currentGame = gameData;
+
+        let propertyObj = {
+            opponent: acc,
+        }
 
         PopUp.showLoading(() => {
             AssignedVar.currentGame.createNewChessBoard();
+            AssignedVar.currentGame.setCurrentPlayer();
+            AssignedVar.IsUserInLobby = false;
 
-            Firebase.updateEnemyAcc(this.id, acc, () => {
-                AssignedVar.IsUserInLobby = false;
+            Firebase.updateTableProperty(Firebase.curretnTableId, propertyObj, () => {
                 PopUp.closeModal(`#notification-modal`);
                 Firebase.onSnapshotWithId(Firebase.curretnTableId, tableChangedCallback);
             }, (errorCode) => {
@@ -52,39 +55,18 @@ function onclickWaitingTable() {
         }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
     });
 }
-function tableChangedCallback(firebaseGameObjData) {
-    AssignedVar.currentGame.userAcc = firebaseGameObjData.userAcc;
-    AssignedVar.currentGame.enemyAcc = firebaseGameObjData.enemyAcc
-    if (AssignedVar.IsUserAndEnemyReady) {
-        AssignedVar.currentGame.letPlayerControlChessPiece();
-    }
 
-    if (firebaseGameObjData.currentPlayer.id == 0) {
-        for (let i = 0; i < firebaseGameObjData.whitePlayer.alivePieces.length; ++i) {
-            let modifiedPos = firebaseGameObjData.whitePlayer.alivePieces[i].currentPos;
-            let originPos = new Vector(modifiedPos.x, modifiedPos.y);
-            if (Game.whitePlayer.alivePieces[i]) {
-                originPos = Game.whitePlayer.alivePieces[i].currentPos;
-            }
-            if (!originPos.isEqualTo(modifiedPos)) {
-                setupOnClickCallbackAt(originPos);
-                setupOnClickCallbackAt(modifiedPos);
-                break;
-            }
-        }
-    } else {
-        for (let i = 0; i < firebaseGameObjData.blackPlayer.alivePieces.length; ++i) {
-            let modifiedPos = firebaseGameObjData.blackPlayer.alivePieces[i].currentPos;
-            let originPos = new Vector(modifiedPos.x, modifiedPos.y);
-            if (Game.blackPlayer.alivePieces[i]) {
-                originPos = Game.blackPlayer.alivePieces[i].currentPos;
-            }
-            if (!originPos.isEqualTo(modifiedPos)) {
-                setupOnClickCallbackAt(originPos);
-                setupOnClickCallbackAt(modifiedPos);
-                break;
-            }
-        }
-    }
+function tableChangedCallback(tableData) {
+    if (!tableData.ownerLastMove || !tableData.ownerMove) { return; }
 
+    let ownerLastMove = tableData.ownerLastMove;
+    let ownerMove = tableData.ownerMove;
+    let arrLastMove = ownerLastMove.split("_");
+    let arrMove = ownerMove.split("_");
+
+    let lastMove = new Vector(Number(arrLastMove[1], Number[arrLastMove[2]]));
+    let move = new Vector(Number(arrMove[1], Number[arrMove[2]]));
+
+    setupOnClickCallbackAt(lastMove);
+    setupOnClickCallbackAt(move);
 }

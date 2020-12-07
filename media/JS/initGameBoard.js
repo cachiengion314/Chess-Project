@@ -111,6 +111,9 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
         } else {
             if (pos.isPositionInLegalMoves()) {
                 setupOnClickCallbackAt(pos);
+                if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+                    updateToFirestoreData();
+                }
             } else {
                 if (pos.isPositionHasPiece()) {
                     Visualize.cannotAttackPieceEffect($chessPiece[0]);
@@ -186,6 +189,15 @@ export function logicMovePieceTo(nextPos) {
             if (piece.name == arr[0]) {
                 piece.id = AssignedVar.$selectedPiece.id;
                 piece.currentPos = nextPos;
+
+                let lastMoveId = `${piece.name}_${currentPos.convertToId()}`;
+                if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+                    Firebase.updateMove(Firebase.curretnTableId, lastMoveId, piece.id, () => {
+                        console.log(`move done! tableId, move`, Firebase.curretnTableId, piece.id);
+                    });
+                }
+
+                break;
             }
         }
     } else {
@@ -193,10 +205,17 @@ export function logicMovePieceTo(nextPos) {
             if (piece.name == arr[0]) {
                 piece.id = AssignedVar.$selectedPiece.id;
                 piece.currentPos = nextPos;
+
+                let lastMoveId = `${piece.name}_${currentPos.convertToId()}`;
+                if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+                    Firebase.updateMove(Firebase.curretnTableId, lastMoveId, piece.id, () => {
+                        console.log(`move done! tableId, move`, Firebase.curretnTableId, piece.id);
+                    });
+                }
+                break;
             }
         }
     }
-
 
     Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
@@ -207,10 +226,6 @@ export function changePlayerTurn() {
         AssignedVar.currentGame.currentPlayer = Game.blackPlayer;
     } else {
         AssignedVar.currentGame.currentPlayer = Game.whitePlayer;
-    }
-
-    if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
-        updateToFirestoreData();
     }
 }
 

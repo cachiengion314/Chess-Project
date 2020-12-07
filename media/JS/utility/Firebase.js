@@ -15,7 +15,7 @@ let _databaseCollectionUser;
 let _databaseCollectionTables;
 
 let _unSubcribeSnapshot;
-let _dbCurrentGameData;
+let _dbCurrentTableData;
 let _currentTableId = -1;
 
 export default class Firebase {
@@ -32,7 +32,7 @@ export default class Firebase {
         return _unSubcribeSnapshot;
     }
     static get dbCurrentGameData() {
-        return _dbCurrentGameData;
+        return _dbCurrentTableData;
     }
     static set curretnTableId(value) {
         _currentTableId = value;
@@ -107,12 +107,12 @@ export default class Firebase {
             completedCallback(documents);
         });
     }
-    static onSnapshotWithId(id = `id`, changedCallback = (gameObjData) => { }) {
+    static onSnapshotWithId(id = `id`, changedCallback = (tableData) => { }) {
         _unSubcribeSnapshot = Firebase.dbTalbes.doc(id)
             .onSnapshot((doc) => {
                 if (doc.exists) {
-                    _dbCurrentGameData = Firebase.restoreGameObj(doc.data());
-                    changedCallback(_dbCurrentGameData);
+                    _dbCurrentTableData = doc.data();
+                    changedCallback(_dbCurrentTableData);
                 }
             });
     }
@@ -144,7 +144,7 @@ export default class Firebase {
     static updateEnemyAcc(tableId, enemyAcc, resolveCallback = () => { }) {
         let ref = Firebase.dbTalbes.doc(tableId);
         ref.update({
-            "enemyAcc": Firebase.convertCustomObjToGenericObj(enemyAcc),
+            "enemyAcc": enemyAcc,
         })
             .then(() => {
                 resolveCallback();
@@ -153,11 +153,33 @@ export default class Firebase {
 
             });
     }
-    static updateUserAcc(tableId, userAcc, resolveCallback = () => { }) {
+
+    static updateTableProperty(tableId, propertyObj, resolveCallback = () => { }) {
         let ref = Firebase.dbTalbes.doc(tableId);
-        ref.update({
-            "userAcc": Firebase.convertCustomObjToGenericObj(userAcc),
-        })
+        ref.update(propertyObj)
+            .then(() => {
+                resolveCallback();
+            })
+            .catch((error) => {
+
+            });
+    }
+
+    static updateMove(tableId, pieceLastMove, pieceMove, resolveCallback = () => { }) {
+        let obj = {};
+        let move = "ownerMove";
+        let lastMove = "ownerLastMove";
+        let mytableId = `table-` + User.getUserSignInId();
+        if (tableId != mytableId) {
+            move = "opponentMove";
+            lastMove = "opponentLastMove";
+        }
+
+        obj[move] = pieceMove;
+        obj[lastMove] = pieceLastMove;
+
+        let ref = Firebase.dbTalbes.doc(tableId);
+        ref.update(obj)
             .then(() => {
                 resolveCallback();
             })
@@ -169,20 +191,16 @@ export default class Firebase {
         let p = Firebase.dbTalbes.doc(tableId).get();
         p.then((doc) => {
             if (doc.exists) {
-                _dbCurrentGameData = Firebase.restoreGameObj(doc.data());
-                resolveCallback(_dbCurrentGameData);
-            } else {
-
+                _dbCurrentTableData = doc.data();
+                resolveCallback(_dbCurrentTableData);
             }
         })
             .catch((error) => {
                 failCallback(error);
             });
     }
-    static setTable(tableId, gameRawObj, resolveCallback = () => { }, failCallback = (error) => { }) {
-        let gameInfo = Firebase.simptifyGameObj(gameRawObj);
-
-        let p = Firebase.dbTalbes.doc(tableId).set(gameInfo);
+    static setTable(tableId, tableObj, resolveCallback = () => { }, failCallback = (error) => { }) {
+        let p = Firebase.dbTalbes.doc(tableId).set(tableObj);
         p.then(() => {
             resolveCallback();
         })
@@ -191,6 +209,22 @@ export default class Firebase {
             });
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /////// old function
     static restoreGameObj(rawDataObj) {
         if (!rawDataObj) return;
         let r;
