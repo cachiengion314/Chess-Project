@@ -4,6 +4,12 @@ import User from "./gameplay/User.js";
 import Firebase from "./utility/Firebase.js";
 import Game from "./gameplay/Game.js";
 import PopUp from "./utility/PopUp.js";
+import Vector from "./utility/Vector.js";
+
+import {
+    subscribeSelectedPieceAt, changePlayerTurn, logicMovePieceTo, logicDestroyEnemyPiece,
+    unSubscribeSelectedPiece, setupOnClickCallbackAt, updateToFirestoreData
+} from "./initGameBoard.js";
 
 export default function initLobby() {
     Firebase.queryAllTable((allGames) => {
