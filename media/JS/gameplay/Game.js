@@ -57,14 +57,18 @@ export default class Game {
         Game.blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
         Game.whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
     }
-    setCurrentPlayer() {
-        this.currentPlayer = Game.whitePlayer;
-        this.whitePlayer = Game.whitePlayer;
-        this.blackPlayer = Game.blackPlayer;
-        this.userAcc.controllingColor = AssignedVar.WHITE;
-        if (this.enemyAcc) {
-            this.enemyAcc.controllingColor = AssignedVar.BLACK;
+    setCurrentPlayer(isGoFirst = true) {
+        if (isGoFirst) {
+            this.currentPlayer = Game.whitePlayer;
+            this.whitePlayer = Game.whitePlayer;
+            this.blackPlayer = Game.blackPlayer;
+
+        }else{
+            this.currentPlayer = Game.blackPlayer;
+            this.whitePlayer = Game.whitePlayer;
+            this.blackPlayer = Game.blackPlayer;
         }
+
     }
     createNewChessBoard() {
         Game.showChessBoardAndHideLobby();

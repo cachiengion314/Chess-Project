@@ -42,7 +42,7 @@ function onclickWaitingTable() {
 
     PopUp.showLoading(() => {
         AssignedVar.currentGame.createNewChessBoard();
-        AssignedVar.currentGame.setCurrentPlayer();
+        AssignedVar.currentGame.setCurrentPlayer(false);
         AssignedVar.IsUserInLobby = false;
 
         Firebase.updateTableProperty(Firebase.curretnTableId, propertyObj, () => {
