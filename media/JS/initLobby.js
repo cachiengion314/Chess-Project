@@ -53,6 +53,12 @@ function onclickWaitingTable() {
     });
 }
 function tableChangedCallback(firebaseGameObjData) {
+    AssignedVar.currentGame.userAcc = firebaseGameObjData.userAcc;
+    AssignedVar.currentGame.enemyAcc = firebaseGameObjData.enemyAcc
+    if (AssignedVar.IsUserAndEnemyReady) {
+        AssignedVar.currentGame.letPlayerControlChessPiece();
+    }
+
     if (firebaseGameObjData.currentPlayer.id == 0) {
         for (let i = 0; i < firebaseGameObjData.whitePlayer.alivePieces.length; ++i) {
             let modifiedPos = firebaseGameObjData.whitePlayer.alivePieces[i].currentPos;
@@ -80,4 +86,5 @@ function tableChangedCallback(firebaseGameObjData) {
             }
         }
     }
+
 }

@@ -240,9 +240,12 @@ function onclickReadyBtn() {
             AssignedVar.currentGame.enemyAcc.isReady = true;
         }
 
+        if (AssignedVar.IsUserAndEnemyReady) {
+            AssignedVar.currentGame.letPlayerControlChessPiece();
+        }
+
         Firebase.updataAccIsReady(Firebase.curretnTableId, AssignedVar.currentGame.userAcc.isReady, AssignedVar.currentGame.enemyAcc.isReady, () => {
             console.log(`updataAccIsReady success!`);
-
         });
     });
 }
@@ -289,6 +292,12 @@ function onclickChangeThemeBtn() {
 // for sign in feature
 // onSnapshot change for the server side
 function tableChangedCallback(firebaseGameObjData) {
+    AssignedVar.currentGame.userAcc = firebaseGameObjData.userAcc;
+    AssignedVar.currentGame.enemyAcc = firebaseGameObjData.enemyAcc
+    if (AssignedVar.IsUserAndEnemyReady) {
+        AssignedVar.currentGame.letPlayerControlChessPiece();
+    }
+
     if (firebaseGameObjData.currentPlayer.id == 0) {
         for (let i = 0; i < firebaseGameObjData.whitePlayer.alivePieces.length; ++i) {
             let modifiedPos = firebaseGameObjData.whitePlayer.alivePieces[i].currentPos;
@@ -317,15 +326,6 @@ function tableChangedCallback(firebaseGameObjData) {
         }
     }
 
-    AssignedVar.currentGame = firebaseGameObjData;
-    Visualize.logInfo();
-    console.log(`user.isReady:`, AssignedVar.currentGame.userAcc.isReady);
-    if (AssignedVar.currentGame.enemyAcc)
-        console.log(`enemy.isReady:`, AssignedVar.currentGame.enemyAcc.isReady);
-    if (AssignedVar.IsUserAndEnemyReady) {
-        console.log(`let player control chess pieces!`);
-        AssignedVar.currentGame.letPlayerControlChessPiece();
-    }
 }
 
 function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {
