@@ -11,12 +11,14 @@ let _blackPlayer;
 let _whitePlayer;
 
 export default class Game {
-    constructor(userId, userAcc, gameMode) {
-        this.id = userId;
+    constructor(userAcc, gameMode) {
         this.userAcc = userAcc;
         this.gameMode = gameMode;
         this.chessBoard = [];
-        this.enemyAcc = null;
+    }
+    static initLogicPlayer() {
+        Game.blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
+        Game.whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
     }
     static get TablesCount() {
         return _tablesCount;
@@ -53,22 +55,12 @@ export default class Game {
             AssignedVar.isLetPlayerControlPiece = true;
         }
     }
-    static initLogicPlayer() {
-        Game.blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
-        Game.whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
-    }
     setCurrentPlayer(isGoFirst = true) {
         if (isGoFirst) {
             this.currentPlayer = Game.whitePlayer;
-            this.whitePlayer = Game.whitePlayer;
-            this.blackPlayer = Game.blackPlayer;
-
-        }else{
+        } else {
             this.currentPlayer = Game.blackPlayer;
-            this.whitePlayer = Game.whitePlayer;
-            this.blackPlayer = Game.blackPlayer;
         }
-
     }
     createNewChessBoard() {
         Game.showChessBoardAndHideLobby();
@@ -78,10 +70,7 @@ export default class Game {
         initGameBoard();
     }
     isUserTurn() {
-        if (this.currentPlayer.color == this.userAcc.controllingColor) {
-            return true;
-        }
-        return false;
+
     }
     resetGameBoard() {
         AssignedVar.isLetPlayerControlPiece = false;

@@ -106,12 +106,18 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     let $chessPiece = $(`#${AssignedVar.currentGame.chessBoard[fixedPosition.x][fixedPosition.y].id}`);
     $chessPiece.on(`click`, () => {
         let pos = Vector.convertIdToVector($chessPiece[0].id);
+        let userAccControlingColor = AssignedVar.currentGame.userAcc.controllingColor;
+        if (AssignedVar.currentGame.currentPlayer.color != userAccControlingColor) {
+            if (pos.isPositionHasPiece()) {
+                Visualize.cannotAttackPieceEffect($chessPiece[0]);
+            }
+            return;
+        }
         if (AssignedVar.currentGame.currentPlayer.id == $chessPiece[0].controlbyplayerid) {
             setupOnClickCallbackAt(pos);
         } else {
             if (pos.isPositionInLegalMoves()) {
                 setupOnClickCallbackAt(pos);
-
             } else {
                 if (pos.isPositionHasPiece()) {
                     Visualize.cannotAttackPieceEffect($chessPiece[0]);
@@ -128,8 +134,8 @@ export function onclickMovePieceAt(pos) {
             logicDestroyEnemyPiece(pieceAtPos);
             logicMovePieceTo(pos);
             unSubscribeSelectedPiece();
-            changePlayerTurn()
-                ;
+            changePlayerTurn();
+            ;
         } else {
             subscribeSelectedPieceAt(pos);
         }

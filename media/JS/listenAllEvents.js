@@ -257,7 +257,8 @@ function onclickOnlineModeBtn() {
             default:
                 if (!AssignedVar.IsUserAndEnemyReady) {
                     let userAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
-                    AssignedVar.currentGame = new Game(User.getUserSignInId(), userAcc, AssignedVar.ONLINE);
+                    userAcc.controllingColor = AssignedVar.WHITE;
+                    AssignedVar.currentGame = new Game(userAcc, AssignedVar.ONLINE);
 
                     PopUp.showLoading(() => {
                         AssignedVar.currentGame.createNewChessBoard();
