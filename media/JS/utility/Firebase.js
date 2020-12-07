@@ -118,16 +118,28 @@ export default class Firebase {
     }
     static updataAccIsReady(tableId, userAccIsReady, enemyAccIsReady, resolveCallback = () => { }) {
         let ref = Firebase.dbTalbes.doc(tableId);
-        ref.update({
-            "userAcc.isReady": userAccIsReady,
-            "enemyAcc.isReady": enemyAccIsReady,
-        })
-            .then(() => {
-                resolveCallback();
+        if (enemyAccIsReady) {
+            ref.update({
+                "userAcc.isReady": userAccIsReady,
+                "enemyAcc.isReady": true,
             })
-            .catch((error) => {
+                .then(() => {
+                    resolveCallback();
+                })
+                .catch((error) => {
 
-            });
+                });
+        } else {
+            ref.update({
+                "userAcc.isReady": userAccIsReady,
+            })
+                .then(() => {
+                    resolveCallback();
+                })
+                .catch((error) => {
+
+                });
+        }
     }
     static updateEnemyAcc(tableId, enemyAcc, resolveCallback = () => { }) {
         let ref = Firebase.dbTalbes.doc(tableId);

@@ -247,8 +247,14 @@ function onclickReadyBtn() {
 
         if (AssignedVar.IsUserAndEnemyReady) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
-            Firebase.updataAccIsReady(Firebase.curretnTableId, AssignedVar.currentGame.userAcc.isReady, AssignedVar.currentGame.enemyAcc.isReady, () => {
-                console.log(`updataAccIsReady success!`);
+        }
+        if (AssignedVar.currentGame.userAcc) {
+            Firebase.updataAccIsReady(Firebase.curretnTableId, true, false, () => {
+                console.log(`updataAccIsReady success! true false`);
+            });
+        } else if (AssignedVar.currentGame.userAcc && AssignedVar.currentGame.enemyAcc) {
+            Firebase.updataAccIsReady(Firebase.curretnTableId, true, true, () => {
+                console.log(`updataAccIsReady success! true true`);
             });
         }
     });
