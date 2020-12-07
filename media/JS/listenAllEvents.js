@@ -23,7 +23,7 @@ export default function listenAllEvents() {
     onclickPlaySoloBtn();
     onclickQuitGameBtn();
     onclickOpenSignColBtn();
-    onclickReadyBtn(Firebase.curretnTableId);
+    onclickReadyBtn();
     onclickResignedBtn();
     onclickOfferADrawBtn();
     onclickChangeThemeBtn();
@@ -230,7 +230,7 @@ function onclickQuitGameBtn() {
     };
 }
 
-function onclickReadyBtn(tableId) {
+function onclickReadyBtn() {
     $(`#ready-btn`).click(function () {
         Game.hideReadyBtn();
         let yourAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
@@ -240,7 +240,7 @@ function onclickReadyBtn(tableId) {
             AssignedVar.currentGame.enemyAcc.isReady = true;
         }
 
-        Firebase.updataAccIsReady(tableId, AssignedVar.currentGame.userAcc.isReady, AssignedVar.currentGame.enemyAcc.isReady, () => {
+        Firebase.updataAccIsReady(Firebase.curretnTableId, AssignedVar.currentGame.userAcc.isReady, AssignedVar.currentGame.enemyAcc.isReady, () => {
             console.log(`updataAccIsReady success!`);
 
         });

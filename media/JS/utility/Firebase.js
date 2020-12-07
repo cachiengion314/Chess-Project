@@ -16,6 +16,7 @@ let _databaseCollectionTables;
 
 let _unSubcribeSnapshot;
 let _dbCurrentGameData;
+let _currentTableId = -1;
 
 export default class Firebase {
     static get db() {
@@ -33,11 +34,14 @@ export default class Firebase {
     static get dbCurrentGameData() {
         return _dbCurrentGameData;
     }
+    static set curretnTableId(value) {
+        _currentTableId = value;
+    }
     static get curretnTableId() {
-        if (_dbCurrentGameData) {
-            return `table-` + _dbCurrentGameData.id
+        if (_currentTableId == -1) {
+            return `table-` + User.getUserSignInId();
         }
-        return `table-` + User.getUserSignInId();
+        return _currentTableId;
     }
     static initialize() {
         firebase.initializeApp({
