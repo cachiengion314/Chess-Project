@@ -299,7 +299,7 @@ function onclickOnlineModeBtn() {
 // onSnapshot change for the server side
 function tableChangedCallback(tableData) {
     if (!tableData.opponentLastMove || !tableData.opponentMove) { return; }
-
+    console.log("tableData", tableData);
     let opponentLastMove = tableData.opponentLastMove;
     let opponentMove = tableData.opponentMove;
     let arrLastMove = opponentLastMove.split("_");

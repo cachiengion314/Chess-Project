@@ -58,7 +58,7 @@ function onclickWaitingTable() {
 
 function tableChangedCallback(tableData) {
     if (!tableData.ownerLastMove || !tableData.ownerMove) { return; }
-
+    console.log("tableData", tableData);
     let ownerLastMove = tableData.ownerLastMove;
     let ownerMove = tableData.ownerMove;
     let arrLastMove = ownerLastMove.split("_");
