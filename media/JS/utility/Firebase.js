@@ -154,14 +154,15 @@ export default class Firebase {
             });
     }
 
-    static updateTableProperty(tableId, propertyObj, resolveCallback = () => { }) {
+    static updateTableProperty(tableId, propertyObj, resolveCallback = () => { }, failCallback = (e) => { }) {
         let ref = Firebase.dbTalbes.doc(tableId);
         ref.update(propertyObj)
             .then(() => {
                 resolveCallback();
             })
             .catch((error) => {
-
+                failCallback(error);
+                console.log(`there an error:`, error);
             });
     }
 
