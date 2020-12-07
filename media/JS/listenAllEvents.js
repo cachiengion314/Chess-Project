@@ -240,7 +240,7 @@ function onclickReadyBtn() {
 
         if (AssignedVar.IsUserAndEnemyReady) {
         }
-       
+
     });
 }
 //////
@@ -299,19 +299,22 @@ function onclickOnlineModeBtn() {
 // onSnapshot change for the server side
 function tableChangedCallback(tableData) {
     if (!tableData.opponentLastMove || !tableData.opponentMove) { return; }
-    console.log("tableData", tableData);
+    console.log("tableData from listenAllevent", tableData);
+    console.log(`opponentLastMove`, tableData.opponentLastMove)
+    console.log(`opponentMove`, tableData.opponentMove)
     let opponentLastMove = tableData.opponentLastMove;
     let opponentMove = tableData.opponentMove;
     let arrLastMove = opponentLastMove.split("_");
     let arrMove = opponentMove.split("_");
-
+    console.log(`arrLastMove`, arrLastMove);
+    console.log(`arrMove`, arrMove);
     let lastMove = new Vector(Number(arrLastMove[1], Number[arrLastMove[2]]));
     let move = new Vector(Number(arrMove[1], Number[arrMove[2]]));
 
     setupOnClickCallbackAt(lastMove);
     setupOnClickCallbackAt(move);
 
-    console.log(`last move, move`, lastMove, move);
+    console.log(`lastMove, move`, lastMove, move);
 }
 
 function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {

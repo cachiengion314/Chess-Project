@@ -123,6 +123,35 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     });
 }
 
+export function movePiece(){
+    if (pos.isPositionHasPiece()) {
+        if (AssignedVar.selectedPiece) {
+            let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
+            if (pieceAtPos.controlByPlayerId == AssignedVar.currentGame.currentPlayer.id) {
+                unSubscribeSelectedPiece();
+            } else {
+                logicDestroyEnemyPiece(pieceAtPos);
+                logicMovePieceTo(pos);
+                unSubscribeSelectedPiece();
+                changePlayerTurn();
+            }
+        } else {
+            subscribeSelectedPieceAt(pos);
+        }
+    } else {
+        if (pos.isPositionInLegalMoves()) {
+            logicMovePieceTo(pos);
+            unSubscribeSelectedPiece();
+            changePlayerTurn();
+        } else {
+            if (AssignedVar.selectedPiece) {
+                unSubscribeSelectedPiece();
+            }
+        }
+    }
+
+}
+
 export function setupOnClickCallbackAt(pos) {
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {

@@ -58,17 +58,20 @@ function onclickWaitingTable() {
 
 function tableChangedCallback(tableData) {
     if (!tableData.ownerLastMove || !tableData.ownerMove) { return; }
-    console.log("tableData", tableData);
+    console.log("tableData from innitlobby", tableData);
+    console.log(`ownerLastMove`, tableData.ownerLastMove)
+    console.log(`ownerMove`, tableData.ownerMove)
     let ownerLastMove = tableData.ownerLastMove;
     let ownerMove = tableData.ownerMove;
     let arrLastMove = ownerLastMove.split("_");
     let arrMove = ownerMove.split("_");
-
+    console.log(`arrLastMove`, arrLastMove);
+    console.log(`arrMove`, arrMove);
     let lastMove = new Vector(Number(arrLastMove[1], Number[arrLastMove[2]]));
     let move = new Vector(Number(arrMove[1], Number[arrMove[2]]));
 
     setupOnClickCallbackAt(lastMove);
     setupOnClickCallbackAt(move);
 
-    console.log(`last move, move`, lastMove, move);
+    console.log(`lastMove, move`, lastMove, move);
 }
