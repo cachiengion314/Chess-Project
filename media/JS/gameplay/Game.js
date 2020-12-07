@@ -41,13 +41,16 @@ export default class Game {
         _whitePlayer = val;
     }
     letPlayerControlChessPiece() {
-        for (let x = 0; x < 8; ++x) {
-            for (let y = 0; y < 8; ++y) {
-                let pos = new Vector(x, y);
-                if (this.chessBoard[x][y].type == AssignedVar.PIECE) {
-                    onclickSelectedChessPieceAt(pos);
+        if (!AssignedVar.isLetPlayerControlPiece) {
+            for (let x = 0; x < 8; ++x) {
+                for (let y = 0; y < 8; ++y) {
+                    let pos = new Vector(x, y);
+                    if (this.chessBoard[x][y].type == AssignedVar.PIECE) {
+                        onclickSelectedChessPieceAt(pos);
+                    }
                 }
             }
+            AssignedVar.isLetPlayerControlPiece = true;
         }
     }
     static initLogicPlayer() {

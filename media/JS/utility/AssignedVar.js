@@ -3,6 +3,7 @@ import Firebase from "./Firebase.js";
 
 let _isUserAndEnemyReady = false;
 let _isUserInLobby = true;
+let _isGameStart = false;
 
 let _bKnight;
 let _bBishop;
@@ -27,6 +28,14 @@ export default class AssignedVar {
     static userAcc = null;
     static currentGame = null;
     static haveUsedSignColButton = false;
+    static isLetPlayerControlPiece = false;
+
+    static get IsGameStart(){
+        return _isGameStart;
+    }
+    static set IsGameStart(val){
+        _isGameStart = val;
+    }
 
     static get IsUserAndEnemyReady() {
         _isUserAndEnemyReady = false;
