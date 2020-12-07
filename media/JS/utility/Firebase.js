@@ -30,10 +30,13 @@ export default class Firebase {
     static get UnSubcribeSnapshot() {
         return _unSubcribeSnapshot;
     }
-    static get dbCurretnGameData() {
+    static get dbCurrentGameData() {
         return _dbCurrentGameData;
     }
     static get curretnTableId() {
+        if (_dbCurrentGameData) {
+            return `table-` + _dbCurrentGameData.id
+        }
         return `table-` + User.getUserSignInId();
     }
     static initialize() {
@@ -104,9 +107,60 @@ export default class Firebase {
         _unSubcribeSnapshot = Firebase.dbTalbes.doc(id)
             .onSnapshot((doc) => {
                 if (doc.exists) {
-                    _dbCurrentGameData = doc.data();
-                    changedCallback(Firebase.restoreGameObj(doc.data()));
+                    _dbCurrentGameData = Firebase.restoreGameObj(doc.data());
+                    changedCallback(_dbCurrentGameData);
                 }
+            });
+    }
+    static updataAccIsReady(tableId, userAccIsReady, enemyAccIsReady, resolveCallback = () => { }) {
+        let ref = Firebase.dbTalbes.doc(tableId);
+        ref.update({
+            "userAcc.isReady": userAccIsReady,
+            "enemyAcc.isReady": enemyAccIsReady,
+        })
+            .then(() => {
+                resolveCallback();
+            })
+            .catch((error) => {
+
+            });
+    }
+    static updateEnemyAcc(tableId, enemyAcc, resolveCallback = () => { }) {
+        let ref = Firebase.dbTalbes.doc(tableId);
+        ref.update({
+            "enemyAcc": Firebase.convertCustomObjToGenericObj(enemyAcc),
+        })
+            .then(() => {
+                resolveCallback();
+            })
+            .catch((error) => {
+
+            });
+    }
+    static updateUserAcc(tableId, userAcc, resolveCallback = () => { }) {
+        let ref = Firebase.dbTalbes.doc(tableId);
+        ref.update({
+            "userAcc": Firebase.convertCustomObjToGenericObj(userAcc),
+        })
+            .then(() => {
+                resolveCallback();
+            })
+            .catch((error) => {
+
+            });
+    }
+    static getTable(tableId, resolveCallback = (docData) => { }, failCallback = (e) => { }) {
+        let p = Firebase.dbTalbes.doc(tableId).get();
+        p.then((doc) => {
+            if (doc.exists) {
+                _dbCurrentGameData = Firebase.restoreGameObj(doc.data());
+                resolveCallback(_dbCurrentGameData);
+            } else {
+
+            }
+        })
+            .catch((error) => {
+                failCallback(error);
             });
     }
     static setTable(tableId, gameRawObj, resolveCallback = () => { }, failCallback = (error) => { }) {

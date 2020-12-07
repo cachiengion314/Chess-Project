@@ -151,7 +151,7 @@ export function setupOnClickCallbackAt(pos) {
 
 export function updateToFirestoreData() {
     Firebase.setTable(Firebase.curretnTableId, AssignedVar.currentGame, () => {
-        console.log(`updateToFirestoreData`);
+        console.log(`updateToFirestoreData success!`);
     });
 }
 

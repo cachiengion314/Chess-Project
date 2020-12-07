@@ -59,15 +59,15 @@ export default class Game {
         this.whitePlayer = Game.whitePlayer;
         this.blackPlayer = Game.blackPlayer;
         this.userAcc.controllingColor = AssignedVar.WHITE;
-        // this.enemyAcc.controllingColor = AssignedVar.BLACK;
+        if (this.enemyAcc) {
+            this.enemyAcc.controllingColor = AssignedVar.BLACK;
+        }
     }
     createNewChessBoard() {
         Game.showChessBoardAndHideLobby();
         $chessBoard = document.createElement(`chess-board`);
         $(`#board-package`).append(Game.$ChessBoard);
         Game.showReadyBtn();
-        Game.initLogicPlayer();
-        this.setCurrentPlayer();
         initGameBoard();
     }
     isUserTurn() {

@@ -23,7 +23,7 @@ export default function listenAllEvents() {
     onclickPlaySoloBtn();
     onclickQuitGameBtn();
     onclickOpenSignColBtn();
-    onclickReadyBtn();
+
     onclickResignedBtn();
     onclickOfferADrawBtn();
     onclickChangeThemeBtn();
@@ -173,13 +173,16 @@ function onclickPlaySoloBtn() {
             AssignedVar.currentGame = new Game(0, new User("cachiengion314", "dfsdf", "sdfsdf"), AssignedVar.OFFLINE);
             AssignedVar.currentGame.enemyAcc = new User("sdfsdf", "dfsdf", "sdfsdf");
             AssignedVar.currentGame.createNewChessBoard();
+            AssignedVar.currentGame.setCurrentPlayer();
             AssignedVar.IsUserInLobby = false;
         } else {
             PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
         }
     };
 }
-
+//////
+/////
+////
 function onclickOnlineModeBtn() {
     let $createTableBtn = $(`#mode-group-btn button`)[0];
     $createTableBtn.onclick = () => {
@@ -196,11 +199,13 @@ function onclickOnlineModeBtn() {
 
                     PopUp.showLoading(() => {
                         AssignedVar.currentGame.createNewChessBoard();
+                        AssignedVar.currentGame.setCurrentPlayer();
+                        onclickReadyBtn(Firebase.curretnTableId);
+
                         Firebase.setTable(Firebase.curretnTableId, userOwnGame, () => {
                             AssignedVar.IsUserInLobby = false;
                             PopUp.closeModal(`#notification-modal`);
                             Firebase.onSnapshotWithId(Firebase.curretnTableId, tableChangedCallback);
-
                         }, (errorCode) => {
                             PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
                             AssignedVar.currentGame = null;
@@ -213,7 +218,8 @@ function onclickOnlineModeBtn() {
         }
     };
 }
-
+///////
+////////
 function onclickQuitGameBtn() {
     let $quitGameBtn = $(`#function-col button`)[1];
     $quitGameBtn.onclick = () => {
@@ -225,20 +231,21 @@ function onclickQuitGameBtn() {
     };
 }
 
-function onclickReadyBtn() {
+function onclickReadyBtn(tableId) {
     $(`#ready-btn`).click(function () {
         Game.hideReadyBtn();
-        AssignedVar.currentGame.userAcc.isReady = true;
-        createFakeEnemy();
-        if (AssignedVar.IsUserAndEnemyReady) {
-            AssignedVar.currentGame.letPlayerControlChessPiece();
+        let yourAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
+        if (AssignedVar.currentGame.userAcc.name == yourAcc.name) {
+            AssignedVar.currentGame.userAcc.isReady = true;
+        } else if (AssignedVar.currentGame.enemyAcc.name == yourAcc.name) {
+            AssignedVar.currentGame.enemyAcc.isReady = true;
         }
-    });
-}
 
-function createFakeEnemy(){
-    AssignedVar.currentGame.enemyAcc = Firebase.convertCustomObjToGenericObj(new User(`fakeEnemy`, `123`, `123`));
-    AssignedVar.currentGame.enemyAcc.isReady = true;
+        Firebase.updataAccIsReady(tableId, AssignedVar.currentGame.userAcc.isReady, AssignedVar.currentGame.enemyAcc.isReady, () => {
+            console.log(`updataAccIsReady success!`);
+            
+        });
+    });
 }
 
 function onclickResignedBtn() {
@@ -281,9 +288,9 @@ function onclickChangeThemeBtn() {
 }
 // utility functions and callbacks section
 // for sign in feature
-// onSnapshot change in server side
+// onSnapshot change for the server side
 function tableChangedCallback(firebaseGameObjData) {
-    if (AssignedVar.currentGame.currentPlayer.id == 0) {
+    if (firebaseGameObjData.currentPlayer.id == 0) {
         for (let i = 0; i < firebaseGameObjData.whitePlayer.alivePieces.length; ++i) {
             let modifiedPos = firebaseGameObjData.whitePlayer.alivePieces[i].currentPos;
             let originPos = new Vector(modifiedPos.x, modifiedPos.y);
@@ -311,6 +318,15 @@ function tableChangedCallback(firebaseGameObjData) {
         }
     }
 
+    AssignedVar.currentGame = firebaseGameObjData;
+    Visualize.logInfo();
+    console.log(`user.isReady:`, AssignedVar.currentGame.userAcc.isReady);
+    if (AssignedVar.currentGame.enemyAcc)
+        console.log(`enemy.isReady:`, AssignedVar.currentGame.enemyAcc.isReady);
+    if (AssignedVar.IsUserAndEnemyReady) {
+        console.log(`let player control chess pieces!`);
+        AssignedVar.currentGame.letPlayerControlChessPiece();
+    }
 }
 
 function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {
