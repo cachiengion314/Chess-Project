@@ -107,7 +107,7 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     $chessPiece.on(`click`, () => {
         let pos = Vector.convertIdToVector($chessPiece[0].id);
         let userAccControlingColor = AssignedVar.currentGame.userAcc.controllingColor;
-        if (AssignedVar.currentGame.currentPlayer.color != userAccControlingColor) {
+        if (AssignedVar.currentGame.currentPlayer.color != userAccControlingColor && AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
             if (pos.isPositionHasPiece()) {
                 Visualize.cannotAttackPieceEffect($chessPiece[0]);
             }
