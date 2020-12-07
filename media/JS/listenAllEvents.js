@@ -8,7 +8,7 @@ import Vector from "./utility/Vector.js";
 
 import {
     subscribeSelectedPieceAt, changePlayerTurn, logicMovePieceTo, logicDestroyEnemyPiece,
-    unSubscribeSelectedPiece, setupOnClickCallbackAt, updateToFirestoreData, onclickMovePieceAt
+    unSubscribeSelectedPiece, setupOnClickCallbackAt, onclickMovePieceAt
 } from "./initGameBoard.js";
 
 export default function listenAllEvents() {

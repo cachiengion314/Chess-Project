@@ -210,7 +210,7 @@ export function logicMovePieceTo(nextPos) {
                 let lastMoveId = `${piece.name}_${currentPos.convertToId()}`;
                 if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
                     Firebase.updateMove(Firebase.curretnTableId, lastMoveId, piece.id, () => {
-                        console.log(`move done! tableId, move`, Firebase.curretnTableId, piece.id);
+                        console.log(`logicMove! lastMoveId, move`,lastMoveId, piece.id);
                     });
                 }
 
@@ -226,7 +226,7 @@ export function logicMovePieceTo(nextPos) {
                 let lastMoveId = `${piece.name}_${currentPos.convertToId()}`;
                 if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
                     Firebase.updateMove(Firebase.curretnTableId, lastMoveId, piece.id, () => {
-                        console.log(`move done! tableId, move`, Firebase.curretnTableId, piece.id);
+                        console.log(`logicMove! lastMoveId, move`, lastMoveId, piece.id);
                     });
                 }
                 break;
