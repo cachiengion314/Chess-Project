@@ -248,7 +248,7 @@ function onclickReadyBtn() {
         if (AssignedVar.IsUserAndEnemyReady) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
         }
-        if (AssignedVar.currentGame.userAcc) {
+        if (AssignedVar.currentGame.userAcc && !AssignedVar.currentGame.enemyAcc) {
             Firebase.updataAccIsReady(Firebase.curretnTableId, true, false, () => {
                 console.log(`updataAccIsReady success! true false`);
             });
