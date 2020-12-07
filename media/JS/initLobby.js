@@ -26,7 +26,7 @@ function createWaitingTableWith(index, createdUserName, id) {
     let $table = document.createElement(`waiting-table`);
     $(`#waiting-tables`).append($table);
     $table.name = "waiting-table-" + index + "-" + createdUserName;
-    $table.id = `table-` + id;
+    $table.id = id;
     $table.onclick = onclickWaitingTable;
     return $table;
 }
