@@ -123,11 +123,11 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     });
 }
 
-export function movePiece(){
+export function onclickMovePieceAt(){
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {
             let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
-            if (pieceAtPos.controlByPlayerId == AssignedVar.currentGame.currentPlayer.id) {
+            if (false) {
                 unSubscribeSelectedPiece();
             } else {
                 logicDestroyEnemyPiece(pieceAtPos);
