@@ -35,7 +35,7 @@ function onclickWaitingTable() {
     Firebase.curretnTableId = this.id;
     console.log(`click, firebaseCurrentTalbeId:`, Firebase.curretnTableId);
     let acc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
-    AssignedVar.currentGame = new Game(User.getUserSignInId(), userAcc, AssignedVar.ONLINE);
+    AssignedVar.currentGame = new Game(User.getUserSignInId(), acc, AssignedVar.ONLINE);
     let propertyObj = {
         opponent: acc,
     }
