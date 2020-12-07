@@ -235,15 +235,15 @@ function onclickReadyBtn(tableId) {
     $(`#ready-btn`).click(function () {
         Game.hideReadyBtn();
         let yourAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
-        if (AssignedVar.currentGame.userAcc.name == yourAcc.name) {
+        if (AssignedVar.currentGame.userAcc && AssignedVar.currentGame.userAcc.name == yourAcc.name) {
             AssignedVar.currentGame.userAcc.isReady = true;
-        } else if (AssignedVar.currentGame.enemyAcc.name == yourAcc.name) {
+        } else if (AssignedVar.currentGame.enemyAcc && AssignedVar.currentGame.enemyAcc.name == yourAcc.name) {
             AssignedVar.currentGame.enemyAcc.isReady = true;
         }
 
         Firebase.updataAccIsReady(tableId, AssignedVar.currentGame.userAcc.isReady, AssignedVar.currentGame.enemyAcc.isReady, () => {
             console.log(`updataAccIsReady success!`);
-            
+
         });
     });
 }
