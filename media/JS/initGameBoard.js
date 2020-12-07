@@ -197,7 +197,8 @@ export function logicDestroyEnemyPiece(logicEnemyPiece) {
     console.log(`logicDestroyEnemyPiece. logicEnemyPieces:`, logicEnemyPiece);
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
 }
-export function noUpdateFirebaseLogicMovePieceTo(nextPos) {
+
+function noUpdateFirebaseLogicMovePieceTo(nextPos) {
     let currentPos = AssignedVar.selectedPiece.currentPos;
     AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
     AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y] = AssignedVar.selectedPiece;
@@ -208,6 +209,7 @@ export function noUpdateFirebaseLogicMovePieceTo(nextPos) {
     Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }
+
 export function logicMovePieceTo(nextPos) {
     let currentPos = AssignedVar.selectedPiece.currentPos;
     AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
@@ -223,7 +225,7 @@ export function logicMovePieceTo(nextPos) {
             console.log(`logicMove! lastMoveId, move`, lastMoveId, AssignedVar.$selectedPiece.id);
         });
     }
-   
+
     Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }

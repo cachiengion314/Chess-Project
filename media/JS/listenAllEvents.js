@@ -249,48 +249,47 @@ function onclickReadyBtn() {
 function onclickOnlineModeBtn() {
     let $createTableBtn = $(`#mode-group-btn button`)[0];
     $createTableBtn.onclick = () => {
-        let id = User.getUserSignInId();
-        switch (id) {
-            case -1:
-                PopUp.show(`You have to sign in to enable this feature!`);
-                break;
-            default:
-                if (!AssignedVar.IsUserAndEnemyReady) {
-                    let userAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
-                    userAcc.controllingColor = AssignedVar.WHITE;
-                    AssignedVar.currentGame = new Game(userAcc, AssignedVar.ONLINE);
-
-                    PopUp.showLoading(() => {
-                        AssignedVar.currentGame.createNewChessBoard();
-                        AssignedVar.currentGame.setCurrentPlayer();
-
-                        let newTable = {
-                            tableId: Firebase.currentTableId,
-                            owner: userAcc,
-                            ownerLastMove: null,
-                            ownerMove: null,
-
-                            opponent: null,
-                            opponentLastMove: null,
-                            opponentMove: null,
-
-                            lastTurn: `owner`,
-                        }
-
-                        Firebase.setTable(Firebase.currentTableId, newTable, () => {
-                            AssignedVar.IsUserInLobby = false;
-                            PopUp.closeModal(`#notification-modal`);
-                            Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
-                        }, (errorCode) => {
-                            PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
-                            AssignedVar.currentGame = null;
-                        });
-                    }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
-
-                } else {
-                    PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
-                }
+        if (User.getUserSignInId() == -1) {
+            PopUp.show(`You have to sign in to enable this feature!`);
+            return;
         }
+
+        if (!AssignedVar.IsUserAndEnemyReady) {
+            let userAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
+            userAcc.controllingColor = AssignedVar.WHITE;
+            AssignedVar.currentGame = new Game(userAcc, AssignedVar.ONLINE);
+
+            PopUp.showLoading(() => {
+                AssignedVar.currentGame.createNewChessBoard();
+                AssignedVar.currentGame.setCurrentPlayer();
+
+                let newTable = {
+                    tableId: Firebase.currentTableId,
+                    owner: userAcc,
+                    ownerLastMove: null,
+                    ownerMove: null,
+
+                    opponent: null,
+                    opponentLastMove: null,
+                    opponentMove: null,
+
+                    lastTurn: `owner`,
+                }
+
+                Firebase.setTable(Firebase.currentTableId, newTable, () => {
+                    AssignedVar.IsUserInLobby = false;
+                    PopUp.closeModal(`#notification-modal`);
+                    Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
+                }, (errorCode) => {
+                    PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
+                    AssignedVar.currentGame = null;
+                });
+            }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
+
+        } else {
+            PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
+        }
+
     };
 }
 ///////
@@ -299,23 +298,19 @@ function onclickOnlineModeBtn() {
 // for sign in feature
 // onSnapshot change for the server side
 function tableChangedCallback(tableData) {
+    // the condition below will prevent this callback execute the last opponent move
     if (tableData.lastTurn == AssignedVar.OWNER || !tableData.opponentLastMove || !tableData.opponentMove) { return; }
-    console.log("tableData from listenAllevent", tableData);
-    console.log(`opponentLastMove`, tableData.opponentLastMove)
-    console.log(`opponentMove`, tableData.opponentMove)
+    // the line of codes below only execute opponent move
     let opponentLastMove = tableData.opponentLastMove;
     let opponentMove = tableData.opponentMove;
     let arrLastMove = opponentLastMove.split("_");
     let arrMove = opponentMove.split("_");
-    console.log(`arrLastMove`, arrLastMove);
-    console.log(`arrMove`, arrMove);
+
     let lastMove = new Vector(Number(arrLastMove[1]), Number(arrLastMove[2]));
     let move = new Vector(Number(arrMove[1]), Number(arrMove[2]));
 
     onclickMovePieceAt(lastMove);
     onclickMovePieceAt(move);
-
-    console.log(`lastMove, move`, lastMove, move);
 }
 
 function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {

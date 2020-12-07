@@ -32,6 +32,11 @@ function createWaitingTableWith(index, createdUserName, id) {
 }
 
 function onclickWaitingTable() {
+    if (User.getUserSignInId() == -1) {
+        PopUp.show(`You have to sign in to enable this feature!`);
+        return;
+    }
+
     Firebase.currentTableId = this.id;
     console.log(`click, firebaseCurrentTalbeId:`, Firebase.currentTableId);
     let acc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
@@ -59,22 +64,17 @@ function onclickWaitingTable() {
 }
 
 function tableChangedCallback(tableData) {
+    // the condition below will prevent this callback execute the last owner move
     if (tableData.lastTurn == AssignedVar.OPPONENT || !tableData.ownerLastMove || !tableData.ownerMove) { return; }
-
-    console.log("tableData from innitlobby", tableData);
-    console.log(`ownerLastMove`, tableData.ownerLastMove)
-    console.log(`ownerMove`, tableData.ownerMove)
+    // the line of codes below only execute owner move
     let ownerLastMove = tableData.ownerLastMove;
     let ownerMove = tableData.ownerMove;
     let arrLastMove = ownerLastMove.split("_");
     let arrMove = ownerMove.split("_");
-    console.log(`arrLastMove`, arrLastMove);
-    console.log(`arrMove`, arrMove);
+
     let lastMove = new Vector(Number(arrLastMove[1]), Number(arrLastMove[2]));
     let move = new Vector(Number(arrMove[1]), Number(arrMove[2]));
 
     onclickMovePieceAt(lastMove);
     onclickMovePieceAt(move);
-
-    console.log(`lastMove, move`, lastMove, move);
 }
