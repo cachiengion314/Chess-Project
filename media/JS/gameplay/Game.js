@@ -80,6 +80,7 @@ export default class Game {
         return false;
     }
     resetGameBoard() {
+        AssignedVar.isLetPlayerControlPiece = false;
         if (Game.$ChessBoard) {
             $($chessBoard).empty();
         }

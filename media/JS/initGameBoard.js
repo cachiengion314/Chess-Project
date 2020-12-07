@@ -180,6 +180,13 @@ export function logicMovePieceTo(nextPos) {
     AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id = AssignedVar.selectedPiece.getId();
     AssignedVar.$selectedPiece.id = AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id;
 
+    let arr = AssignedVar.$selectedPiece.id.split("_");
+    for (let piece of AssignedVar.currentGame.currentPlayer.alivePieces) {
+        if (piece.name == arr[0]) {
+            piece.id = AssignedVar.$selectedPiece.id;
+        }
+    }
+
     Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }
