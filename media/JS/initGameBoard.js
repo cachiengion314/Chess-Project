@@ -181,11 +181,20 @@ export function logicMovePieceTo(nextPos) {
     AssignedVar.$selectedPiece.id = AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id;
 
     let arr = AssignedVar.$selectedPiece.id.split("_");
-    for (let piece of AssignedVar.currentGame.currentPlayer.alivePieces) {
-        if (piece.name == arr[0]) {
-            piece.id = AssignedVar.$selectedPiece.id;
+    if (AssignedVar.currentGame.currentPlayer.id == 0) {
+        for (let piece of AssignedVar.currentGame.whitePlayer.alivePieces) {
+            if (piece.name == arr[0]) {
+                piece.id = AssignedVar.$selectedPiece.id;
+            }
+        }
+    } else {
+        for (let piece of AssignedVar.currentGame.blackPlayer.alivePieces) {
+            if (piece.name == arr[0]) {
+                piece.id = AssignedVar.$selectedPiece.id;
+            }
         }
     }
+
 
     Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
