@@ -33,28 +33,27 @@ function createWaitingTableWith(index, createdUserName, id) {
 
 function onclickWaitingTable() {
     Firebase.curretnTableId = this.id;
-    Firebase.getTable(this.id, (tableData) => {
-        let userAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
-        AssignedVar.currentGame = new Game(User.getUserSignInId(), userAcc, AssignedVar.ONLINE);
-        
-        let propertyObj = {
-            opponent: acc,
-        }
+    console.log(`click, firebaseCurrentTalbeId:`, Firebase.curretnTableId);
+    let userAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
+    AssignedVar.currentGame = new Game(User.getUserSignInId(), userAcc, AssignedVar.ONLINE);
+    let propertyObj = {
+        opponent: acc,
+    }
 
-        PopUp.showLoading(() => {
-            AssignedVar.currentGame.createNewChessBoard();
-            AssignedVar.currentGame.setCurrentPlayer();
-            AssignedVar.IsUserInLobby = false;
+    PopUp.showLoading(() => {
+        AssignedVar.currentGame.createNewChessBoard();
+        AssignedVar.currentGame.setCurrentPlayer();
+        AssignedVar.IsUserInLobby = false;
 
-            Firebase.updateTableProperty(Firebase.curretnTableId, propertyObj, () => {
-                PopUp.closeModal(`#notification-modal`);
-                Firebase.onSnapshotWithId(Firebase.curretnTableId, tableChangedCallback);
-            }, (errorCode) => {
-                PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
-                AssignedVar.currentGame = null;
-            });
-        }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
-    });
+        Firebase.updateTableProperty(Firebase.curretnTableId, propertyObj, () => {
+            PopUp.closeModal(`#notification-modal`);
+            Firebase.onSnapshotWithId(Firebase.curretnTableId, tableChangedCallback);
+        }, (errorCode) => {
+            PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
+            AssignedVar.currentGame = null;
+        });
+    }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
+
 }
 
 function tableChangedCallback(tableData) {
