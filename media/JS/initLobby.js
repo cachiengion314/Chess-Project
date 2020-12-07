@@ -34,8 +34,9 @@ function createWaitingTableWith(index, createdUserName, id) {
 function onclickWaitingTable() {
     Firebase.curretnTableId = this.id;
     Firebase.getTable(this.id, (tableData) => {
-        let acc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
-
+        let userAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
+        AssignedVar.currentGame = new Game(User.getUserSignInId(), userAcc, AssignedVar.ONLINE);
+        
         let propertyObj = {
             opponent: acc,
         }
