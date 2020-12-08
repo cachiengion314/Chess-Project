@@ -46,25 +46,25 @@
         <div class="custom-modal-content">
             <!-- Modal Header -->
             <div class="custom-modal-header mb-4">
-                <h4>Please sign in</h4>
+                <h4>Xin chào bạn! Hãy tạo tài khoản nào</h4>
             </div>
             <!-- Modal body -->
             <div class="custom-modal-body mb-4">
                 <div class="align-col-center" style="width: 50%;">
                     <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
-                        <div class="txt mb-1 ml-1">your name</div>
+                        <div class="txt mb-1 ml-1">Tên của bạn</div>
                         <input type="text" style="height: 30px;">
                     </div>
                     <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
-                        <div class="txt mb-1 ml-1">your email</div>
+                        <div class="txt mb-1 ml-1">Email của bạn</div>
                         <input type="text" style="height: 30px;">
                     </div>
                     <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
-                        <div class="txt mb-1 ml-1">your password</div>
+                        <div class="txt mb-1 ml-1">Password</div>
                         <input type="text" style="height: 30px;">
                     </div>
                     <div class="txt-input" style="height: fit-content; width: 100%;">
-                        <div class="txt mb-1 ml-1">type your password again</div>
+                        <div class="txt mb-1 ml-1">Password xác minh</div>
                         <input type="text" style="height: 30px;">
                     </div>
                 </div>
@@ -72,8 +72,8 @@
             </div>
             <!-- Modal footer -->
             <div class="custom-modal-footer">
-                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Cancel</button>
-                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Sign Up</button>
+                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Hủy</button>
+                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Đăng ký</button>
             </div>
         </div>
     </div>
@@ -128,19 +128,19 @@
                 </div>
 
                 <h4 class="text-center font-size-vw-big">
-                    Wellcome to chess club online! Please log in!
+                    Chào mừng đến với Chess club online
                 </h4>
 
 
                 <div class="btn-group-vertical " style="height: 17%; width: 100%;">
                     <button id="sign-in-btn" class="custom-btn mb-1" style="height: 32%;">
-                        Sign In
+                        Đăng nhập
                     </button>
                     <button id="sign-up-btn" class="custom-btn mb-1" style="height: 32%;">
-                        Sign Up
+                        Đăng ký
                     </button>
                     <button id="sign-out-btn" class="custom-btn " style="height: 32%;">
-                        Sign Out
+                        Đăng xuất
                     </button>
                 </div>
 
@@ -206,12 +206,12 @@
                     <div id="table-txt" class="text-primary ml-2">Table 2</div>
                 </div>
                 <!-- player 1 row  -->
-                <div id="enemy-block" class="d-flex bg-info position-relative" style="height: 8%;">
+                <div id="enemy-block" class="display-flex bg-info position-relative" style="height: 8%;">
                     <img src=" ./media/Image/avatar_6.png " class="avatar-sm avatar-sm ml-2 mr-2"
                         style="width: 8vh; height:8vh;"></img>
                     <div class="d-block bg-danger" style="width: 150px;">
                         <div class="text-center bg-success font-size-vh-sm w-100 h-50">title enemy</div>
-                        <div class="ready-bg align-row-center font-size-vh-sm w-100 h-50">Ready</div>
+                        <div class="ready-bg align-row-center font-size-vh-sm w-100 h-50">Sẵn sàng</div>
                     </div>
                     <div class="align-end">
                         <div class="font-size-vh-ssm">wins: 0</div>
@@ -221,19 +221,19 @@
                 </div>
 
                 <div id="board-package" class=" position-relative" style="height:80%;">
-                    <button id="ready-btn" class="custom-btn">Ready</button>
+                    <button id="ready-btn" class="custom-btn">Sẵn sàng</button>
                     <!-- <chess-board></chess-board> -->
                 </div>
 
                 <!-- player 2 row  -->
-                <div id="user-block" class="d-flex bg-info position-relative" style="height: 8%;">
+                <div id="user-block" class="display-flex bg-info position-relative" style="height: 8%;">
 
                     <img src=" ./media/Image/avatar_2.png " class="avatar-sm ml-2 mr-2"
                         style="width: 8vh; height:8vh;"></img>
 
                     <div class="d-block bg-danger" style="width: 150px;">
                         <div class="text-center text-white bg-success font-size-vh-sm w-100 h-50">Current player</div>
-                        <div class="ready-bg align-row-center font-size-vh-sm w-100 h-50">Ready</div>
+                        <div class="ready-bg align-row-center font-size-vh-sm w-100 h-50">Sẵn sàng</div>
                     </div>
 
                     <div class="align-end">
@@ -254,28 +254,27 @@
             </div>
 
             <button class="custom-btn-sm font-size-vw-sm mb-1" style="height: 5%;">
-                Quit game
+                Thoát game
             </button>
 
             <div id="mode-group-btn" style="height: 30%">
                 <button class="custom-btn font-size-vw-big mb-1" style=" height: 50%; ">
-                    Create a table
+                    Tạo bàn
                 </button>
                 <button class="custom-btn font-size-vw-big" style=" height: 40%; ">
-                    Solo mode
+                    Chơi đơn
                 </button>
             </div>
 
             <div id="gameplay-group-btn" class="btn-group-vertical" style="height: 20%;">
                 <button class="custom-btn-sm font-size-vh-sm mb-1" style="height: 32%;">
-                    Offer a
-                    draw
+                    Cầu hòa
                 </button>
                 <button class="custom-btn-sm font-size-vh-sm mb-1" style="height: 32%;">
-                    Resigned for player 1
+                    Đầu hàng 1
                 </button>
                 <button class="custom-btn-sm font-size-vh-sm" style="height: 32%;">
-                    Resigned for player 2
+                    Đầu hàng 2
                 </button>
             </div>
 

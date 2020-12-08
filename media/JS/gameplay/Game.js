@@ -92,6 +92,8 @@ export default class Game {
         Game.initLogicPlayer();
         this.setCurrentPlayer();
         initGameBoard();
+
+        Game.saveUserStatistic();
     }
 
     static quitEventInvokeForOpponent() {
@@ -111,7 +113,41 @@ export default class Game {
         ownerAcc.isReady = false;
         User.setUserSignIn(ownerAcc);
     }
-
+    static saveUserStatistic() {
+        let acc;
+        if (User.isTableOwner()) {
+            acc = AssignedVar.currentTable.owner;
+        } else {
+            acc = AssignedVar.currentTable.opponent;
+        }
+        User.setUserSignIn(acc);
+        Firebase.setCurrentUserData(User.getUserSignInId(), acc, () => {
+            console.log(`saved in db success:`, acc);
+        }, (e) => {
+            console.log(`error when save: "${e}"`);
+        });
+    }
+    static resetTempStatus() {
+        let propObj = {};
+        let user = User.getUserSignIn();
+        user.tempLoses = 0;
+        user.tempWins = 0;
+        propObj.tempLoses = 0;
+        propObj.tempWins = 0;
+        User.setUserSignIn(user);
+        Firebase.updateCurrentUserData(User.getUserSignInId(), propObj, () => {
+            console.log(`reset temp in db success:`);
+        }, (e) => {
+            console.log(`error when reset temp: "${e}"`);
+        });
+    }
+    static showOpponentBlock() {
+        $(`#enemy-block`).show();
+    }
+    static hideOpponentBlock() {
+        console.log(`hideOpponentBlock`);
+        $(`#enemy-block`).hide();
+    }
     static showChessBoardAndHideLobby() {
         // Game.emptyWaitingTables();
 
@@ -138,7 +174,7 @@ export default class Game {
         $(`#gameplay-group-btn`).show(`fast`);
         let secondBtn = $(`#gameplay-group-btn button`)[1];
         let thirdBtn = $(`#gameplay-group-btn button`)[2];
-        $(secondBtn).text(`Resigned`);
+        $(secondBtn).text(`Đầu hàng`);
         $(thirdBtn).hide();
     }
     static showSoloGroupBtn() {
@@ -146,8 +182,8 @@ export default class Game {
         $(`#gameplay-group-btn`).show(`fast`);
         let $secondBtn = $(`#gameplay-group-btn button`)[1];
         let $thirdBtn = $(`#gameplay-group-btn button`)[2];
-        $($secondBtn).text(`Resigned for player 1`);
-        $($thirdBtn).text(`Resigned for player 2`);
+        $($secondBtn).text(`Đầu hàng cho người chơi 1`);
+        $($thirdBtn).text(`Đầu hàng cho người chơi 2`);
         $($thirdBtn).show();
     }
     static emptyWaitingTables() {
@@ -200,11 +236,13 @@ export default class Game {
     static setReadyBgOn(BLOCK_ID = `#user-block`) {
         $(`${BLOCK_ID} .ready-bg`).css({
             "background-color": "green",
+            "color": "white",
         });
     }
     static setReadyBgOff(BLOCK_ID = `#user-block`) {
         $(`${BLOCK_ID} .ready-bg`).css({
             "background-color": "red",
+            "color": "black",
         });
     }
 }

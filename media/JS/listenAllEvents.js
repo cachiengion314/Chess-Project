@@ -19,7 +19,7 @@ export default function listenAllEvents() {
     onclickSignInBtn();
     onclickSignUpBtn();
     onclickSignOutBtn();
-    onclickOnlineModeBtn();
+    onclickCreateATableBtn();
     onclickPlaySoloBtn();
     onclickQuitGameBtn();
     onclickOpenSignColBtn();
@@ -34,7 +34,7 @@ function onclickSignInBtn() {
     let $signInBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[0];
     $signInBtn.onclick = () => {
         if (AssignedVar.IsUserAndEnemyReady) {
-            PopUp.show(`You cannot sign in when playing`);
+            PopUp.show(`Bạn không thể đăng nhập khi đang chơi game!`);
             return;
         }
         PopUp.showSignIn(() => {
@@ -44,11 +44,11 @@ function onclickSignInBtn() {
             let $password1 = $(`#sign-modal .txt`)[2];
             if (hasRedTxtShouldAppear($yourNameInput.value, $yourName) |
                 hasRedTxtShouldAppear($password1Input.value, $password1)) {
-                PopUp.show(`You should correct your informations!`, PopUp.angryImgUrl);
+                PopUp.show(`Bạn nên điền đúng thông tin!`, PopUp.angryImgUrl);
             } else {
                 PopUp.showLoading(() => {
                     Firebase.authenticateUser($yourNameInput.value, $password1Input.value, authenticateUserCompletedCallback);
-                }, "Please waiting...! the sytem is authenticating user data from our database!", AssignedVar.FAKE_LOADING_TIME);
+                }, "Làm ơn đợi chút cho hệ thống xác minh lại dữ liệu!", AssignedVar.FAKE_LOADING_TIME);
             }
         }, clearInputvalue);
     }
@@ -58,7 +58,7 @@ function onclickSignUpBtn() {
     let $signUpBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[1];
     $signUpBtn.onclick = () => {
         if (AssignedVar.IsUserAndEnemyReady) {
-            PopUp.show(`You cannot sign up when playing`);
+            PopUp.show(`Bạn không thể đăng ký khi đang chơi game!`);
             return;
         }
         PopUp.showSignUp(() => {
@@ -75,15 +75,15 @@ function onclickSignUpBtn() {
                 hasRedTxtShouldAppear($yourEmailInput.value, $yourEmail) |
                 hasRedTxtShouldAppear($password1Input.value, $password1) |
                 hasRedTxtShouldAppear($password2Input.value, $password2)) {
-                PopUp.show(`You should correct your informations!`, PopUp.angryImgUrl);
+                PopUp.show(`Dường như có thông tin chưa được điền hoặc bị điền sai!`, PopUp.angryImgUrl);
             } else {
                 if ($password1Input.value == $password2Input.value) {
                     PopUp.showLoading(() => {
                         Firebase.findNameAndEmailDuplicate($yourNameInput.value, $yourEmailInput.value, $password1Input.value, findNameAndEmailDuplicateCompletedCallback)
-                    }, "Please waiting...! the sytem is authenticating user data from our database!", AssignedVar.FAKE_LOADING_TIME);
+                    }, "Làm ơn đợi hệ thống xác minh!", AssignedVar.FAKE_LOADING_TIME);
                 } else {
                     hasRedTxtShouldAppear($password2Input.value, $password2, $password1Input.value);
-                    PopUp.show(`Your "clarify password" doesn't match upper password`, PopUp.jokeImgUrl);
+                    PopUp.show(`Cái "clarify password" của bạn không khớp với password chính!`, PopUp.jokeImgUrl);
                 }
             }
         }, clearInputvalue);
@@ -93,7 +93,7 @@ function onclickSignUpBtn() {
 function onclickSignOutBtn() {
     let $signOutBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[2];
     $signOutBtn.onclick = () => {
-        PopUp.showYesNo(`Are you sure want to sign out?`, PopUp.questionImgUrl, () => {
+        PopUp.showYesNo(`Bạn có chắc muốn thoát đăng xuất!`, PopUp.questionImgUrl, () => {
             User.signOut();
             PopUp.show(`You have been sign out!`);
         });
@@ -170,9 +170,9 @@ function onclickResignedBtn() {
     let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
     $resignedBtn.onclick = () => {
         if (AssignedVar.IsUserAndEnemyReady) {
-            PopUp.showYesNo(`Are you sure want to resign?`, PopUp.questionImgUrl, loseGameResult);
+            PopUp.showYesNo(`Bạn có chắc muốn đầu hàng ngay bây giờ?`, PopUp.questionImgUrl, loseGameResult);
         } else {
-            PopUp.show(`The game have to in playing stage in order to resign the enemy!`, PopUp.sadImgUrl);
+            PopUp.show(`Bạn phải chơi game thì mới đầu hàng được!`, PopUp.sadImgUrl);
         }
     };
 }
@@ -183,9 +183,9 @@ function onclickOfferADrawBtn() {
         switch (AssignedVar.currentGame.gameMode) {
             case AssignedVar.ONLINE:
                 if (AssignedVar.IsUserAndEnemyReady) {
-                    PopUp.show(`you have send a draw request to the enemy!`);
+                    PopUp.show(`Gửi thành công lời cầu hòa`);
                 } else {
-                    PopUp.show(`The game have to in playing stage in order to send a draw request to the enemy!`, PopUp.sadImgUrl);
+                    PopUp.show(`Game phải đang chơi thì mới gửi lời cầu hòa được`, PopUp.sadImgUrl);
                 }
                 break;
             case AssignedVar.OFFLINE:
@@ -225,7 +225,7 @@ function onclickReadyBtn() {
             }
 
             Firebase.updateTableProperty(Firebase.currentTableId, propertyObj, () => {
-                console.log(`ready is update in db!`);
+                console.log(`ready stage is already updated in db!`);
             }, (errorCode) => {
                 PopUp.show(`Sorry! There an error: "${errorCode}" in this onSnapshot action`, PopUp.sadImgUrl);
             });
@@ -245,19 +245,15 @@ function onclickReadyBtn() {
 function onclickPlaySoloBtn() {
     let $playSoloBtn = $(`#mode-group-btn button`)[1];
     $playSoloBtn.onclick = () => {
-        if (!AssignedVar.IsUserAndEnemyReady) {
-            let userAcc = User.getUserSignIn();
-            userAcc.controllingColor = AssignedVar.WHITE;
-            let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
-            AssignedVar.currentTable = newTable;
-            AssignedVar.currentGame = new Game(AssignedVar.OFFLINE);
-            AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("guest", "guest@gmail.com", "123"));
-            AssignedVar.currentGame.createNewChessBoard();
-            AssignedVar.currentGame.setCurrentPlayer();
-            AssignedVar.IsUserInLobby = false;
-        } else {
-            PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
-        }
+        let userAcc = User.getUserSignIn();
+        userAcc.controllingColor = AssignedVar.WHITE;
+        let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
+        AssignedVar.currentTable = newTable;
+        AssignedVar.currentGame = new Game(AssignedVar.OFFLINE);
+        AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("guest", "guest@gmail.com", "123"));
+        AssignedVar.currentGame.createNewChessBoard();
+        AssignedVar.currentGame.setCurrentPlayer();
+        AssignedVar.IsUserInLobby = false;
     };
 }
 
@@ -279,7 +275,7 @@ function onclickQuitGameBtn() {
                             }, (errorCode) => {
                                 console.log(`onclickQuitGameBtn.updateTableProperty error: !${errorCode}!`);
                             });
-                    }, `Please wait for quiting`, AssignedVar.FAKE_LOADING_TIME);
+                    }, `Làm ơn đợi xíu!`, AssignedVar.FAKE_LOADING_TIME);
 
                     return;
                 }
@@ -292,13 +288,15 @@ function onclickQuitGameBtn() {
                     }, (e) => {
                         console.log(`onclickQuitGameBtn.deleteTable.error: "${e}"!`);
                     });
-                }, `Please wait for server remove table!`, AssignedVar.FAKE_LOADING_TIME);
+                }, `Làm ơn đợi hệ thống xóa bàn`, AssignedVar.FAKE_LOADING_TIME);
 
             } else {
                 AssignedVar.IsUserInLobby = true;
             }
+
+            Game.resetTempStatus();
         } else {
-            PopUp.show(`You cannot quit when the game is still playing!`, PopUp.sadImgUrl);
+            PopUp.show(`Bạn không thể thoát game khi đang chơi! Hãy đầu hàng hoặc đánh bại đối thủ để thoát!`, PopUp.sadImgUrl);
         }
     };
 }
@@ -306,40 +304,39 @@ function onclickQuitGameBtn() {
 //////
 /////
 ////
-function onclickOnlineModeBtn() {
+function onclickCreateATableBtn() {
     let $createTableBtn = $(`#mode-group-btn button`)[0];
     $createTableBtn.onclick = () => {
         if (User.getUserSignInId() == -1) {
-            PopUp.show(`You have to sign in to enable this feature!`);
+            PopUp.show(`Bạn phải đăng nhập để có thể sử dụng được chức năng này!`);
             return;
         }
+        let acc = User.getUserSignIn();
+        acc.tempLoses = 0;
+        acc.tempWins = 0;
+        acc.controllingColor = AssignedVar.WHITE;
+        let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, acc);
+        AssignedVar.currentTable = newTable;
+        AssignedVar.currentGame = new Game(AssignedVar.ONLINE);
 
-        if (!AssignedVar.IsUserAndEnemyReady) {
-            let userAcc = User.getUserSignIn();
-            userAcc.controllingColor = AssignedVar.WHITE;
-            let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
-            AssignedVar.currentTable = newTable;
-            AssignedVar.currentGame = new Game(AssignedVar.ONLINE);
+        PopUp.showLoading(() => {
+            AssignedVar.currentGame.createNewChessBoard();
+            AssignedVar.currentGame.setCurrentPlayer();
 
-            PopUp.showLoading(() => {
-                AssignedVar.currentGame.createNewChessBoard();
-                AssignedVar.currentGame.setCurrentPlayer();
-
-                Firebase.setTable(Firebase.currentTableId, newTable, () => {
-                    AssignedVar.IsUserInLobby = false;
-                    PopUp.closeModal(`#notification-modal`, () => {
-                        Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
-                    });
-                }, (errorCode) => {
-                    PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
-                    AssignedVar.currentGame = null;
+            Firebase.setTable(Firebase.currentTableId, newTable, () => {
+                AssignedVar.IsUserInLobby = false;
+                Game.hideOpponentBlock();
+                PopUp.closeModal(`#notification-modal`, () => {
+                    Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
+                    PopUp.showLoading(() => {
+                        PopUp.show(`Hướng dẫn! Khi nhìn thấy đối thủ vào phòng! Hãy nhấn sẵn sàng! Khi cả hai cùng sẵn sàng, trận đấu sẽ được bắt đầu!`);
+                    }, `Hệ thống đang load hướng dẫn chơi!`, AssignedVar.FAKE_LOADING_TIME);
                 });
-            }, `Please waiting server to create a table!`, AssignedVar.FAKE_LOADING_TIME);
-
-        } else {
-            PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
-        }
-
+            }, (errorCode) => {
+                PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
+                AssignedVar.currentGame = null;
+            });
+        }, `Làm ơn chờ đợi hệ thống tạo bàn!`, AssignedVar.FAKE_LOADING_TIME);
     };
 }
 ///////
@@ -355,16 +352,21 @@ function controlAllOpponentActionForThisAcc() {
 
     opponentJoinTable();
     noOpponentInTable();
+
+    if (!AssignedVar.isOpponentExists) return;
+
+    resetBoardWhenOpponentResigned();
     controlChessPiece();
     controlOpponentMove();
 }
 
 function opponentJoinTable() {
-    if (AssignedVar.currentTable.opponent && !AssignedVar.currentTable.lastTurn
+    if (AssignedVar.currentTable.opponent && !AssignedVar.currentTable.lastTurn && AssignedVar.currentTable.opponent.tempLoses == 0
         && !AssignedVar.currentTable.owner.isReady && !AssignedVar.currentTable.opponent.isReady) {
 
-        PopUp.show(`An opponent have just join the table!`, PopUp.happierImgUrl);
+        PopUp.show(`Một đối thủ vừa mới gia nhập bàn của bạn!`, PopUp.happierImgUrl);
         AssignedVar.isOpponentExists = true;
+        Game.showOpponentBlock();
     }
 }
 
@@ -372,20 +374,29 @@ function noOpponentInTable() {
     if (!AssignedVar.currentTable.opponent) {
         if (AssignedVar.isOpponentExists) {
             AssignedVar.isOpponentExists = false;
-            PopUp.show(`Your opponent have just leave the table!`, PopUp.sadImgUrl);
-
-
+            PopUp.show(`Đối thủ vừa thoát khỏi bàn chơi!`, PopUp.sadImgUrl);
+            Game.hideOpponentBlock();
+            Game.resetTempStatus();
+            oTempLoses = 0;
         } else {
             if (AssignedVar.currentTable.owner.isReady) return;
             // line of codes below show empty opponent event
-            console.log(`new table initialize!`);
+            console.log(`new table have initialized!`);
+
         }
+    }
+}
+let oTempLoses = 0;
+function resetBoardWhenOpponentResigned() {
+    if (oTempLoses < AssignedVar.currentTable.opponent.tempLoses) {
+        console.log(`opponent have just resigned!`);
+        PopUp.show(`Xin chúc mừng! Đối thủ vừa đầu hàng bạn! Trận đấu đã tự động được reset!`);
+        oTempLoses = AssignedVar.currentTable.opponent.tempLoses;
+        AssignedVar.currentGame.resetGameBoard();
     }
 }
 
 function controlChessPiece() {
-    if (!AssignedVar.isOpponentExists) return;
-
     if (AssignedVar.currentTable.opponent && AssignedVar.currentTable.opponent.isReady) {
         Game.setReadyBgOn(`#enemy-block`);
         if (AssignedVar.IsUserAndEnemyReady) {
@@ -395,10 +406,8 @@ function controlChessPiece() {
 }
 
 function controlOpponentMove() {
-    if (!AssignedVar.isOpponentExists) return;
-
     // the condition below will prevent this callback execute from the last opponent move
-    if (AssignedVar.currentTable.lastTurn == AssignedVar.OWNER
+    if (AssignedVar.currentTable.lastTurn != AssignedVar.OPPONENT
         || !AssignedVar.currentTable.opponentLastMove || !AssignedVar.currentTable.opponentMove) { return; }
     // the line of codes below will only mimic the opponent move
     let opponentLastMove = AssignedVar.currentTable.opponentLastMove;
@@ -413,33 +422,72 @@ function controlOpponentMove() {
     onclickMovePieceAt(move);
 }
 
+function loseGameResult() {
+    let ownerAcc = AssignedVar.currentTable.owner;
+    let opponentAcc = AssignedVar.currentTable.opponent;
+    let user = ownerAcc;
+
+    let propObj = {};
+
+    let USER_LOSES = "owner.loses";
+    let USER_TEMPLOSES = "owner.tempLoses";
+    let USER_ELO = "owner.elo";
+    let USER_ISREADY = "owner.isReady";
+
+    if (!User.isTableOwner()) {
+        USER_LOSES = "opponent.loses";
+        USER_TEMPLOSES = "opponent.tempLoses";
+        USER_ELO = "opponent.elo";
+        user = opponentAcc
+    }
+    let LOSER_NAME = user.name;
+
+    propObj[USER_LOSES] = ++user.loses;
+    propObj[USER_TEMPLOSES] = ++user.tempLoses;
+    propObj[USER_ELO] = user.elo -= 15;
+    // let $winsTxt = $(`#enemy-block .align-end div`)[0];
+    // $winsTxt.textContent = `Wins: ${AssignedVar.currentTable.opponent.tempWins}`;
+    let updateObj = {
+        ...propObj,
+        opponentLastMove: null, opponentMove: null, lastTurn: null,
+        ownerLastMove: null, ownerMove: null, "opponent.isReady": false, "owner.isReady": false,
+    }
+    Firebase.updateTableProperty(Firebase.currentTableId, updateObj, () => {
+        console.log(`your score is updated!`);
+        PopUp.show(`Bạn "${LOSER_NAME}" đã thua cuộc!`, PopUp.sadImgUrl);
+        AssignedVar.currentGame.resetGameBoard();
+    }, (e) => {
+        console.log(`loseGameResult update!: "${e}"`);
+    });
+}
+
 function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {
     if (userDataFromDb == AssignedVar.NO_USER) {
-        PopUp.show(`Sorry! Your info are not in our database!`, PopUp.questionImgUrl);
+        PopUp.show(`Xin lỗi! Tên đăng nhập của bạn không nằm trong cơ sở dữ liệu của chúng tôi`, PopUp.questionImgUrl);
     } else {
         if (isPasswordRight) {
             PopUp.closeModal(`#sign-modal`, () => {
-                PopUp.show(`Wellcome back "${userDataFromDb.name}"! Hope you have some funs!`, PopUp.cuteImgUrl);
+                PopUp.show(`Xin chào bạn "${userDataFromDb.name}"! Hy vọng bạn sẽ thấy thích thú với game của chúng tôi!`, PopUp.cuteImgUrl);
                 clearInputvalue();
                 User.signIn(userId, userDataFromDb);
             });
         } else {
-            PopUp.show(`Account "${userDataFromDb.name}" have different password! Please type the right one!`, PopUp.angryImgUrl);
+            PopUp.show(`Tài khoản "${userDataFromDb.name}" có password khác với cái bạn vừa nhập!`, PopUp.angryImgUrl);
         }
     }
 }
 // for sign up feature
 function findNameAndEmailDuplicateCompletedCallback(isNameDuplicate, isEmailDuplicate, userInfo) {
     if (isNameDuplicate && !isEmailDuplicate) {
-        PopUp.show(`your name is duplicate in our database! Please choose another one!`, PopUp.angryImgUrl);
+        PopUp.show(`Tên của bạn trùng với tên của người khác trong cơ sở dữ liệu! Xin vui lòng nhập tên khác!`, PopUp.angryImgUrl);
     } else if (!isNameDuplicate && isEmailDuplicate) {
-        PopUp.show(`your email is duplicate in our database! Please choose another one!`, PopUp.angryImgUrl);
+        PopUp.show(`Email của bạn trùng với tên của người khác trong cơ sở dữ liệu! Xin vui lòng nhập Email khác!`, PopUp.angryImgUrl);
     } else if (isNameDuplicate && isEmailDuplicate) {
-        PopUp.show(`your name and email is duplicate in our database! Please choose another one!`, PopUp.angryImgUrl);
+        PopUp.show(`Cả tên lẫn email của bạn trùng với của người khác trong cơ sở dữ liệu! Xin vui lòng nhập dữ liệu khác!`, PopUp.angryImgUrl);
     } else {
         Firebase.setUser(userInfo, (userId) => {
             PopUp.closeModal(`#sign-modal`, () => {
-                PopUp.show(`Congratulation! Your assignment is done!`);
+                PopUp.show(`Xin chúc mừng! Bạn đã đăng ký thành công!`);
                 clearInputvalue();
                 User.signIn(userId, userInfo);
             });
@@ -466,15 +514,6 @@ function responsiveSignColEventInvoke() {
             "width": "100%",
         });
     }
-}
-
-function loseGameResult() {
-    PopUp.show(`player "${AssignedVar.currentTable.owner.name}" have lost the game`, PopUp.sadImgUrl);
-    AssignedVar.currentTable.opponent.tempWins++;
-    let $winsTxt = $(`#enemy-block .align-end div`)[0];
-    $winsTxt.textContent = `Wins: ${AssignedVar.currentTable.opponent.tempWins}`;
-    AssignedVar.currentGame.resetGameBoard();
-    Game.showReadyBtn();
 }
 
 function hasRedTxtShouldAppear(inputVal, $txtDom, password1 = `i_dont_need_password`) {

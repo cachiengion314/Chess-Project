@@ -1,14 +1,5 @@
 import AssignedVar from "./AssignedVar.js";
 import User from "../gameplay/User.js";
-import Game from "../gameplay/Game.js";
-import Vector from "./Vector.js";
-import King from "../pieces/King.js";
-import Queen from "../pieces/Queen.js";
-import Bishop from "../pieces/Bishop.js";
-import Knight from "../pieces/Knight.js";
-import Rook from "../pieces/Rook.js";
-import Pawn from "../pieces/Pawn.js";
-import Empty from "../pieces/Empty.js";
 
 let _database;
 let _databaseCollectionUser;
@@ -152,6 +143,28 @@ export default class Firebase {
 
             });
     }
+
+    static updateCurrentUserData(userId, propObj, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
+        let ref = Firebase.dbTalbes.doc(userId);
+        ref.update(propObj)
+            .then(() => {
+                resolveCallback();
+            })
+            .catch((errorCode) => {
+                failCallback(errorCode);
+            });
+    }
+
+    static setCurrentUserData(userId, userObj, resolveCallback = (docData) => { }, failCallback = (errorCode) => { }) {
+        let p = Firebase.dbUsers.doc(userId).set(userObj);
+        p.then(() => {
+            resolveCallback();
+        })
+            .catch((errorCode) => {
+                failCallback(errorCode);
+            });
+    }
+
     static getTable(tableId, resolveCallback = (docData) => { }, failCallback = (errorCode) => { }) {
         let p = Firebase.dbTalbes.doc(tableId).get();
         p.then((doc) => {
@@ -175,7 +188,7 @@ export default class Firebase {
     }
     static deleteTable(tableId, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
         Firebase.updateTableProperty(tableId, { "tableId": -1 }, () => {
-            // delete code here
+            // actually delete code below here
             Firebase.dbTalbes.doc(tableId).delete()
                 .then(() => {
                     Firebase.unSubcribeSnapshot();
@@ -185,7 +198,7 @@ export default class Firebase {
                     failCallback(errorCode);
                 });
         }, (errorCode) => {
-            console.log(`can't update: ${errorCode}!`);
+            console.log(`can't update table -1: ${errorCode}!`);
         });
     }
 

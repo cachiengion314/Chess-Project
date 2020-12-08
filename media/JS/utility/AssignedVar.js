@@ -1,6 +1,7 @@
 import Game from "../gameplay/Game.js";
 import Firebase from "./Firebase.js";
 import initLobby from "../initLobby.js";
+import PopUp from "./PopUp.js";
 
 let _isUserAndEnemyReady = false;
 let _isUserInLobby = true;

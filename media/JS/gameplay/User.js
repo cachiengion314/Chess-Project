@@ -32,7 +32,7 @@ export default class User {
     }
     static setUserSignIn(user) {
         let updateChessClubOb = User.getChessClubObj();
-        updateChessClubOb[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId] = user;
+        updateChessClubOb[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()] = user;
         User.setChessClubObj(updateChessClubOb);
     }
     static signIn(id, userInfo) {
