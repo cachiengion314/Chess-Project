@@ -175,14 +175,19 @@ export default class Firebase {
             });
     }
     static deleteTable(tableId, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
-        let p = Firebase.dbTalbes.doc(tableId).delete();
-        p.then(() => {
-            Firebase.unSubcribeSnapshot();
-            resolveCallback();
+        Firebase.updateTableProperty(Firebase.currentTableId, { tableId: -1 }, () => {
+            // delete code here
+            let p = Firebase.dbTalbes.doc(tableId).delete();
+            p.then(() => {
+                Firebase.unSubcribeSnapshot();
+                resolveCallback();
+            })
+                .catch((errorCode) => {
+                    failCallback(errorCode);
+                });
+        }, (errorCode) => {
+            console.log(`can't update: ${errorCode}!`);
         })
-            .catch((errorCode) => {
-                failCallback(errorCode);
-            });
     }
 
     static isEmptyObj(obj) {

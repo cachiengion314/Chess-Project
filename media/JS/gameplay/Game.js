@@ -73,6 +73,7 @@ export default class Game {
         initGameBoard();
     }
     resetGameBoard() {
+        Game.showReadyBtn();
         _placeHolderAction = _letPlayerControlChessPiece;
         if (Game.$ChessBoard) {
             $($chessBoard).empty();
@@ -84,7 +85,9 @@ export default class Game {
         this.chessBoard = [];
         this.currentPlayer = null;
         AssignedVar.currentTable.owner.isReady = false;
-        AssignedVar.currentTable.opponent.isReady = false;
+        if (AssignedVar.currentTable.opponent) {
+            AssignedVar.currentTable.opponent.isReady = false;
+        }
 
         Game.initLogicPlayer();
         this.setCurrentPlayer();

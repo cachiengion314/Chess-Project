@@ -29,6 +29,7 @@ export default class AssignedVar {
     static haveUsedSignColButton = false;
     static isLetPlayerControlPiece = false;
     static currentTable = null;
+    static isOpponentExists = false;
 
     static get IsUserAndEnemyReady() {
         _isUserAndEnemyReady = false;
@@ -55,6 +56,7 @@ export default class AssignedVar {
     static set IsUserInLobby(val) {
         Game.hideChatbox();
         if (val) {
+            AssignedVar.isOpponentExists = false;
             Game.hideChessBoardAndShowLobby();
             Game.hideQuitGameBtn();
             initLobby();

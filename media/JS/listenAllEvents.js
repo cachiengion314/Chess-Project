@@ -267,19 +267,29 @@ function onclickQuitGameBtn() {
         if (!AssignedVar.IsUserAndEnemyReady) {
             if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
                 if (!User.isTableOwner()) {
-                    console.log(`you are guest and can freely leave that table!`);
-                    AssignedVar.IsUserInLobby = true;
+                    Firebase.updateTableProperty(Firebase.currentTableId, { opponent: null }, () => {
+                        AssignedVar.IsUserInLobby = true;
+                        AssignedVar.currentGame = null;
+                        AssignedVar.currentTable = null;
+                        AssignedVar.isOpponentExists = false;
+                    }, (errorCode) => {
+                        console.log(`error: !${errorCode}!`);
+                    });
                     return;
                 }
 
-                Firebase.deleteTable(Firebase.currentTableId, () => {
-                    PopUp.showLoading(() => {
+                PopUp.showLoading(() => {
+                    Firebase.deleteTable(Firebase.currentTableId, () => {
                         AssignedVar.IsUserInLobby = true;
                         PopUp.closeModal(`#notification-modal`);
-                    }, `Please wait for remove talbe`, AssignedVar.FAKE_LOADING_TIME);
-                }, (e) => {
-                    console.log(`delete fail: "${e}"!`);
-                });
+                        AssignedVar.currentGame.resetGameBoard();
+                        AssignedVar.currentGame = null;
+                        AssignedVar.currentTable = null;
+                    }, (e) => {
+                        console.log(`delete fail: "${e}"!`);
+                    });
+                }, `Please wait for server remove table!`, AssignedVar.FAKE_LOADING_TIME);
+
             } else {
                 AssignedVar.IsUserInLobby = true;
             }
@@ -313,13 +323,14 @@ function onclickOnlineModeBtn() {
 
                 Firebase.setTable(Firebase.currentTableId, newTable, () => {
                     AssignedVar.IsUserInLobby = false;
-                    PopUp.closeModal(`#notification-modal`);
-                    Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
+                    PopUp.closeModal(`#notification-modal`, () => {
+                        Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
+                    });
                 }, (errorCode) => {
                     PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
                     AssignedVar.currentGame = null;
                 });
-            }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
+            }, `Please waiting server to create a table!`, AssignedVar.FAKE_LOADING_TIME);
 
         } else {
             PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
@@ -331,7 +342,7 @@ function onclickOnlineModeBtn() {
 ////////
 // utility functions and callbacks section
 // for sign in feature
-// onSnapshot change for the server side
+// onSnapshot change on the server side
 function tableChangedCallback(tableData) {
     AssignedVar.currentTable = tableData;
     if (AssignedVar.currentTable.opponent && AssignedVar.currentTable.opponent.isReady) {
@@ -340,11 +351,46 @@ function tableChangedCallback(tableData) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
         }
     }
+    controlAllOpponentActionForThisAcc();
+}
+
+function controlAllOpponentActionForThisAcc() {
+    opponentJoinTable();
+    noOpponentInTable();
+    controlOpponentMove();
+}
+
+function opponentJoinTable() {
+    if (AssignedVar.currentTable.opponent && !AssignedVar.currentTable.lastTurn
+        && !AssignedVar.currentTable.owner.isReady && !AssignedVar.currentTable.opponent.isReady) {
+        PopUp.show(`The opponent have just join the table!`, PopUp.happierImgUrl);
+        AssignedVar.isOpponentExists = true;
+    }
+}
+
+function noOpponentInTable() {
+    if (!AssignedVar.currentTable.opponent && AssignedVar.currentTable.tableId != -1) {
+        if (AssignedVar.isOpponentExists) {
+            AssignedVar.isOpponentExists = false;
+            PopUp.show(`Your opponent have just leave the table!`, PopUp.sadImgUrl);
+            if (AssignedVar.currentGame) {
+                AssignedVar.currentGame.resetGameBoard();
+            }
+        } else {
+            if (AssignedVar.currentTable.owner.isReady) return;
+            // line of codes below show empty opponent event
+            console.log(`empty table!`);
+        }
+    }
+}
+
+function controlOpponentMove() {
     // the condition below will prevent this callback execute from the last opponent move
-    if (tableData.lastTurn == AssignedVar.OWNER || !tableData.opponentLastMove || !tableData.opponentMove) { return; }
-    // the line of codes below will only execute opponent move
-    let opponentLastMove = tableData.opponentLastMove;
-    let opponentMove = tableData.opponentMove;
+    if (AssignedVar.currentTable.lastTurn == AssignedVar.OWNER || AssignedVar.currentTable.tableId == -1
+        || !AssignedVar.currentTable.opponentLastMove || !AssignedVar.currentTable.opponentMove) { return; }
+    // the line of codes below will only mimic the opponent move
+    let opponentLastMove = AssignedVar.currentTable.opponentLastMove;
+    let opponentMove = AssignedVar.currentTable.opponentMove;
     let arrLastMove = opponentLastMove.split("_");
     let arrMove = opponentMove.split("_");
 

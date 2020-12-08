@@ -78,11 +78,32 @@ function tableChangedCallback(tableData) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
         }
     }
+    controlAllOwnerActionForThisAcc();
+}
+
+function controlAllOwnerActionForThisAcc() {
+    kickThisAccToLobbyWhenOwnerQuit();
+    controlOwnerMove();
+}
+
+function kickThisAccToLobbyWhenOwnerQuit() {
+    if (AssignedVar.currentTable.tableId == -1) {
+        if (!AssignedVar.IsUserInLobby) {
+            AssignedVar.IsUserInLobby = true;
+            PopUp.show(`Sorry, the owner of this table leave the game so you are no longer able to seat in that table anymore`, PopUp.sadImgUrl)
+        }
+    }
+}
+
+function controlOwnerMove() {
     // the condition below will prevent this callback execute from the last owner move
-    if (tableData.lastTurn == AssignedVar.OPPONENT || !tableData.ownerLastMove || !tableData.ownerMove) { return; }
+    if (AssignedVar.currentTable.lastTurn == AssignedVar.OPPONENT 
+        || !AssignedVar.currentTable.opponent
+        || AssignedVar.currentTable.tableId == -1
+        || !AssignedVar.currentTable.ownerLastMove || !AssignedVar.currentTable.ownerMove) { return; }
     // the line of codes below will only execute owner move
-    let ownerLastMove = tableData.ownerLastMove;
-    let ownerMove = tableData.ownerMove;
+    let ownerLastMove = AssignedVar.currentTable.ownerLastMove;
+    let ownerMove = AssignedVar.currentTable.ownerMove;
     let arrLastMove = ownerLastMove.split("_");
     let arrMove = ownerMove.split("_");
 
