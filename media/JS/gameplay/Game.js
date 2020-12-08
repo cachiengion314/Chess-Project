@@ -94,6 +94,24 @@ export default class Game {
         initGameBoard();
     }
 
+    static quitEventInvokeForOpponent() {
+        AssignedVar.isOpponentExists = false;
+        AssignedVar.currentGame = null;
+        AssignedVar.currentTable = null;
+        let user = User.getUserSignIn();
+        user.isReady = false;
+        User.setUserSignIn(user);
+        Firebase.unSubcribeSnapshot();
+    }
+    static quitEventInvokeForOwner() {
+        AssignedVar.isOpponentExists = false;
+        AssignedVar.currentGame = null;
+        AssignedVar.currentTable = null;
+        let ownerAcc = User.getUserSignIn();
+        ownerAcc.isReady = false;
+        User.setUserSignIn(ownerAcc);
+    }
+
     static showChessBoardAndHideLobby() {
         // Game.emptyWaitingTables();
 

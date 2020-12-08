@@ -63,8 +63,10 @@ function onclickWaitingTable() {
             PopUp.closeModal(`#notification-modal`);
             Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
         }, (errorCode) => {
-            PopUp.show(`Sorry! There an error: "${errorCode}" in this onSnapshot action`, PopUp.sadImgUrl);
-            AssignedVar.currentGame = null;
+            console.log(`onclickWaitingTable: ${errorCode}`);
+            PopUp.show(`There is no table or that table have been deleted by owner!`, PopUp.sadImgUrl);
+            Game.quitEventInvokeForOpponent();
+            AssignedVar.IsUserInLobby = true;
         });
     }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
 
@@ -72,17 +74,14 @@ function onclickWaitingTable() {
 
 function tableChangedCallback(tableData) {
     AssignedVar.currentTable = tableData;
-    if (AssignedVar.currentTable.owner.isReady) {
-        Game.setReadyBgOn(`#user-block`);
-        if (AssignedVar.IsUserAndEnemyReady) {
-            AssignedVar.currentGame.letPlayerControlChessPiece();
-        }
-    }
     controlAllOwnerActionForThisAcc();
 }
 
 function controlAllOwnerActionForThisAcc() {
     kickThisAccToLobbyWhenOwnerQuit();
+
+    if (AssignedVar.currentTable.tableId == -1 || !AssignedVar.currentTable.opponent) return;
+    controlChessPiece();
     controlOwnerMove();
 }
 
@@ -95,13 +94,20 @@ function kickThisAccToLobbyWhenOwnerQuit() {
     }
 }
 
+function controlChessPiece() {
+    if (AssignedVar.currentTable.owner.isReady) {
+        Game.setReadyBgOn(`#user-block`);
+        if (AssignedVar.IsUserAndEnemyReady) {
+            AssignedVar.currentGame.letPlayerControlChessPiece();
+        }
+    }
+}
+
 function controlOwnerMove() {
     // the condition below will prevent this callback execute from the last owner move
-    if (AssignedVar.currentTable.lastTurn == AssignedVar.OPPONENT 
-        || !AssignedVar.currentTable.opponent
-        || AssignedVar.currentTable.tableId == -1
+    if (AssignedVar.currentTable.lastTurn == AssignedVar.OPPONENT
         || !AssignedVar.currentTable.ownerLastMove || !AssignedVar.currentTable.ownerMove) { return; }
-    // the line of codes below will only execute owner move
+    // the line of codes below will mimic owner move
     let ownerLastMove = AssignedVar.currentTable.ownerLastMove;
     let ownerMove = AssignedVar.currentTable.ownerMove;
     let arrLastMove = ownerLastMove.split("_");

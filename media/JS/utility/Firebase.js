@@ -123,8 +123,7 @@ export default class Firebase {
                 resolveCallback();
             })
             .catch((errorCode) => {
-                failCallback(error);
-                console.log(`there an error:`, errorCode);
+                failCallback(errorCode);
             });
     }
 
@@ -175,19 +174,19 @@ export default class Firebase {
             });
     }
     static deleteTable(tableId, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
-        Firebase.updateTableProperty(Firebase.currentTableId, { tableId: -1 }, () => {
+        Firebase.updateTableProperty(tableId, { "tableId": -1 }, () => {
             // delete code here
-            let p = Firebase.dbTalbes.doc(tableId).delete();
-            p.then(() => {
-                Firebase.unSubcribeSnapshot();
-                resolveCallback();
-            })
+            Firebase.dbTalbes.doc(tableId).delete()
+                .then(() => {
+                    Firebase.unSubcribeSnapshot();
+                    resolveCallback();
+                })
                 .catch((errorCode) => {
                     failCallback(errorCode);
                 });
         }, (errorCode) => {
             console.log(`can't update: ${errorCode}!`);
-        })
+        });
     }
 
     static isEmptyObj(obj) {
