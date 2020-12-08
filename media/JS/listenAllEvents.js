@@ -166,32 +166,6 @@ function listenResizeEvent() {
     });
 }
 
-function onclickPlaySoloBtn() {
-    let $playSoloBtn = $(`#mode-group-btn button`)[1];
-    $playSoloBtn.onclick = () => {
-        if (!AssignedVar.IsUserAndEnemyReady) {
-            AssignedVar.currentGame = new Game(0, new User("cachiengion314", "dfsdf", "sdfsdf"), AssignedVar.OFFLINE);
-            AssignedVar.currentGame.enemyAcc = new User("sdfsdf", "dfsdf", "sdfsdf");
-            AssignedVar.currentGame.createNewChessBoard();
-            AssignedVar.currentGame.setCurrentPlayer();
-            AssignedVar.IsUserInLobby = false;
-        } else {
-            PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
-        }
-    };
-}
-
-function onclickQuitGameBtn() {
-    let $quitGameBtn = $(`#function-col button`)[1];
-    $quitGameBtn.onclick = () => {
-        if (!AssignedVar.IsUserAndEnemyReady) {
-            AssignedVar.IsUserInLobby = true;
-        } else {
-            PopUp.show(`You cannot quit when the game is still playing!`, PopUp.sadImgUrl);
-        }
-    };
-}
-
 function onclickResignedBtn() {
     let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
     $resignedBtn.onclick = () => {
@@ -231,18 +205,90 @@ function onclickChangeThemeBtn() {
     });
 }
 
-
 function onclickReadyBtn() {
     $(`#ready-btn`).click(function () {
         Game.hideReadyBtn();
-        let yourAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
-        AssignedVar.currentGame.letPlayerControlChessPiece();
 
-        if (AssignedVar.IsUserAndEnemyReady) {
+        if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+            let prop = AssignedVar.OWNER;
+            let propertyObj = {};
+
+            if (User.isTableOwner()) {
+                AssignedVar.currentTable.owner.isReady = true;
+                Game.setReadyBgOn(`#user-block`);
+                propertyObj[prop] = AssignedVar.currentTable.owner;
+            } else {
+                AssignedVar.currentTable.opponent.isReady = true;
+                Game.setReadyBgOn(`#enemy-block`);
+                prop = AssignedVar.OPPONENT;
+                propertyObj[prop] = AssignedVar.currentTable.opponent;
+            }
+
+            Firebase.updateTableProperty(Firebase.currentTableId, propertyObj, () => {
+                console.log(`ready is update in db!`);
+            }, (errorCode) => {
+                PopUp.show(`Sorry! There an error: "${errorCode}" in this onSnapshot action`, PopUp.sadImgUrl);
+            });
+        } else {
+            AssignedVar.currentTable.owner.isReady = true;
+            Game.setReadyBgOn(`#user-block`);
+            AssignedVar.currentTable.opponent.isReady = true;
+            Game.setReadyBgOn(`#enemy-block`);
         }
 
+        if (AssignedVar.IsUserAndEnemyReady) {
+            AssignedVar.currentGame.letPlayerControlChessPiece();
+        }
     });
 }
+
+function onclickPlaySoloBtn() {
+    let $playSoloBtn = $(`#mode-group-btn button`)[1];
+    $playSoloBtn.onclick = () => {
+        if (!AssignedVar.IsUserAndEnemyReady) {
+            let userAcc = User.getUserSignIn();
+            userAcc.controllingColor = AssignedVar.WHITE;
+            let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
+            AssignedVar.currentTable = newTable;
+            AssignedVar.currentGame = new Game(AssignedVar.OFFLINE);
+            AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("guest", "guest@gmail.com", "123"));
+            AssignedVar.currentGame.createNewChessBoard();
+            AssignedVar.currentGame.setCurrentPlayer();
+            AssignedVar.IsUserInLobby = false;
+        } else {
+            PopUp.show(`You cannot play more than "1" game`, PopUp.sadImgUrl);
+        }
+    };
+}
+
+function onclickQuitGameBtn() {
+    let $quitGameBtn = $(`#function-col button`)[1];
+    $quitGameBtn.onclick = () => {
+        if (!AssignedVar.IsUserAndEnemyReady) {
+            if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+                if (!User.isTableOwner()) {
+                    console.log(`you are guest and can freely leave that table!`);
+                    AssignedVar.IsUserInLobby = true;
+                    return;
+                }
+
+                Firebase.deleteTable(Firebase.currentTableId, () => {
+                    PopUp.showLoading(() => {
+                        AssignedVar.IsUserInLobby = true;
+                        PopUp.closeModal(`#notification-modal`);
+                    }, `Please wait for remove talbe`, AssignedVar.FAKE_LOADING_TIME);
+                }, (e) => {
+                    console.log(`delete fail: "${e}"!`);
+                });
+            } else {
+                AssignedVar.IsUserInLobby = true;
+            }
+        } else {
+            PopUp.show(`You cannot quit when the game is still playing!`, PopUp.sadImgUrl);
+        }
+    };
+}
+
 //////
 /////
 ////
@@ -255,26 +301,15 @@ function onclickOnlineModeBtn() {
         }
 
         if (!AssignedVar.IsUserAndEnemyReady) {
-            let userAcc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
+            let userAcc = User.getUserSignIn();
             userAcc.controllingColor = AssignedVar.WHITE;
-            AssignedVar.currentGame = new Game(userAcc, AssignedVar.ONLINE);
+            let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
+            AssignedVar.currentTable = newTable;
+            AssignedVar.currentGame = new Game(AssignedVar.ONLINE);
 
             PopUp.showLoading(() => {
                 AssignedVar.currentGame.createNewChessBoard();
                 AssignedVar.currentGame.setCurrentPlayer();
-
-                let newTable = {
-                    tableId: Firebase.currentTableId,
-                    owner: userAcc,
-                    ownerLastMove: null,
-                    ownerMove: null,
-
-                    opponent: null,
-                    opponentLastMove: null,
-                    opponentMove: null,
-
-                    lastTurn: `owner`,
-                }
 
                 Firebase.setTable(Firebase.currentTableId, newTable, () => {
                     AssignedVar.IsUserInLobby = false;
@@ -298,9 +333,16 @@ function onclickOnlineModeBtn() {
 // for sign in feature
 // onSnapshot change for the server side
 function tableChangedCallback(tableData) {
-    // the condition below will prevent this callback execute the last opponent move
+    AssignedVar.currentTable = tableData;
+    if (AssignedVar.currentTable.opponent && AssignedVar.currentTable.opponent.isReady) {
+        Game.setReadyBgOn(`#enemy-block`);
+        if (AssignedVar.IsUserAndEnemyReady) {
+            AssignedVar.currentGame.letPlayerControlChessPiece();
+        }
+    }
+    // the condition below will prevent this callback execute from the last opponent move
     if (tableData.lastTurn == AssignedVar.OWNER || !tableData.opponentLastMove || !tableData.opponentMove) { return; }
-    // the line of codes below only execute opponent move
+    // the line of codes below will only execute opponent move
     let opponentLastMove = tableData.opponentLastMove;
     let opponentMove = tableData.opponentMove;
     let arrLastMove = opponentLastMove.split("_");
@@ -369,10 +411,10 @@ function responsiveSignColEventInvoke() {
 }
 
 function loseGameResult() {
-    PopUp.show(`player "${AssignedVar.currentGame.userAcc.name}" have lost the game`, PopUp.sadImgUrl);
-    AssignedVar.currentGame.enemyAcc.tempWins++;
+    PopUp.show(`player "${AssignedVar.currentTable.owner.name}" have lost the game`, PopUp.sadImgUrl);
+    AssignedVar.currentTable.opponent.tempWins++;
     let $winsTxt = $(`#enemy-block .align-end div`)[0];
-    $winsTxt.textContent = `Wins: ${AssignedVar.currentGame.enemyAcc.tempWins}`;
+    $winsTxt.textContent = `Wins: ${AssignedVar.currentTable.opponent.tempWins}`;
     AssignedVar.currentGame.resetGameBoard();
     Game.showReadyBtn();
 }

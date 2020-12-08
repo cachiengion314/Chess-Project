@@ -1,9 +1,9 @@
 import Game from "../gameplay/Game.js";
 import Firebase from "./Firebase.js";
+import initLobby from "../initLobby.js";
 
 let _isUserAndEnemyReady = false;
 let _isUserInLobby = true;
-let _isGameStart = false;
 
 let _bKnight;
 let _bBishop;
@@ -25,17 +25,10 @@ let _wRook2;
 let _wPawns = [];
 
 export default class AssignedVar {
-    static userAcc = null;
     static currentGame = null;
     static haveUsedSignColButton = false;
     static isLetPlayerControlPiece = false;
-
-    static get IsGameStart() {
-        return _isGameStart;
-    }
-    static set IsGameStart(val) {
-        _isGameStart = val;
-    }
+    static currentTable = null;
 
     static get IsUserAndEnemyReady() {
         _isUserAndEnemyReady = false;
@@ -45,14 +38,14 @@ export default class AssignedVar {
         }
         switch (AssignedVar.currentGame.gameMode) {
             case AssignedVar.ONLINE:
-                if (!AssignedVar.currentGame.enemyAcc) {
+                if (!AssignedVar.currentTable.opponent) {
                     _isUserAndEnemyReady = false;
-                } else if (AssignedVar.currentGame.enemyAcc.isReady && AssignedVar.currentGame.userAcc.isReady) {
+                } else if (AssignedVar.currentTable.opponent.isReady && AssignedVar.currentTable.owner.isReady) {
                     _isUserAndEnemyReady = true;
                 }
                 break;
             case AssignedVar.OFFLINE:
-                if (AssignedVar.currentGame.userAcc.isReady) {
+                if (AssignedVar.currentTable.owner.isReady) {
                     _isUserAndEnemyReady = true;
                 }
                 break;
@@ -64,6 +57,7 @@ export default class AssignedVar {
         if (val) {
             Game.hideChessBoardAndShowLobby();
             Game.hideQuitGameBtn();
+            initLobby();
         } else {
             Game.showChessBoardAndHideLobby();
             Game.showQuitGameBtn();
@@ -75,6 +69,19 @@ export default class AssignedVar {
     }
     static get IsUserInLobby() {
         return _isUserInLobby;
+    }
+    static getDefaultTable(tableId, owner) {
+        let _defaultTable = {};
+        _defaultTable.tableId = tableId;
+        _defaultTable.owner = owner;
+        _defaultTable.ownerLastMove = null;
+        _defaultTable.ownerMove = null;
+        _defaultTable.opponent = null;
+        _defaultTable.opponentLastMove = null;
+        _defaultTable.opponentMove = null;
+        _defaultTable.lastTurn = null;
+
+        return _defaultTable;
     }
 
     static selectedPiece = null;

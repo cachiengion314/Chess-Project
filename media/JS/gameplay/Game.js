@@ -10,9 +10,23 @@ let _tablesCount = 0;
 let _blackPlayer;
 let _whitePlayer;
 
+let _placeHolderAction;
+let _emptyAction = () => { }
+let _letPlayerControlChessPiece = () => {
+    for (let x = 0; x < 8; ++x) {
+        for (let y = 0; y < 8; ++y) {
+            let pos = new Vector(x, y);
+            if (AssignedVar.currentGame.chessBoard[x][y].type == AssignedVar.PIECE) {
+                onclickSelectedChessPieceAt(pos);
+            }
+        }
+    }
+    _placeHolderAction = _emptyAction;
+}
+_placeHolderAction = _letPlayerControlChessPiece;
+
 export default class Game {
-    constructor(userAcc, gameMode) {
-        this.userAcc = userAcc;
+    constructor(gameMode) {
         this.gameMode = gameMode;
         this.chessBoard = [];
     }
@@ -29,7 +43,6 @@ export default class Game {
     static get $ChessBoard() {
         return $chessBoard;
     }
-
     static get blackPlayer() {
         return _blackPlayer;
     }
@@ -43,17 +56,7 @@ export default class Game {
         _whitePlayer = val;
     }
     letPlayerControlChessPiece() {
-        if (!AssignedVar.isLetPlayerControlPiece) {
-            for (let x = 0; x < 8; ++x) {
-                for (let y = 0; y < 8; ++y) {
-                    let pos = new Vector(x, y);
-                    if (this.chessBoard[x][y].type == AssignedVar.PIECE) {
-                        onclickSelectedChessPieceAt(pos);
-                    }
-                }
-            }
-            AssignedVar.isLetPlayerControlPiece = true;
-        }
+        _placeHolderAction();
     }
     setCurrentPlayer(isGoFirst = true) {
         if (isGoFirst) {
@@ -69,11 +72,8 @@ export default class Game {
         Game.showReadyBtn();
         initGameBoard();
     }
-    isUserTurn() {
-
-    }
     resetGameBoard() {
-        AssignedVar.isLetPlayerControlPiece = false;
+        _placeHolderAction = _letPlayerControlChessPiece;
         if (Game.$ChessBoard) {
             $($chessBoard).empty();
         }
@@ -83,8 +83,8 @@ export default class Game {
         AssignedVar.legalMovesOfSelectedPiece = [];
         this.chessBoard = [];
         this.currentPlayer = null;
-        AssignedVar.currentGame.userAcc.isReady = false;
-        AssignedVar.currentGame.enemyAcc.isReady = false;
+        AssignedVar.currentTable.owner.isReady = false;
+        AssignedVar.currentTable.opponent.isReady = false;
 
         Game.initLogicPlayer();
         this.setCurrentPlayer();
@@ -166,11 +166,24 @@ export default class Game {
         }, "fast", () => { $($readyBtn).hide(); completedCallback(); });
     }
     static showReadyBtn() {
+        Game.setReadyBgOff(`#user-block`);
+        Game.setReadyBgOff(`#enemy-block`);
+
         let $readyBtn = $(`#ready-btn`);
         $($readyBtn).show();
         $($readyBtn).css({
             "left": "50%",
             "opacity": "1",
+        });
+    }
+    static setReadyBgOn(BLOCK_ID = `#user-block`) {
+        $(`${BLOCK_ID} .ready-bg`).css({
+            "background-color": "green",
+        });
+    }
+    static setReadyBgOff(BLOCK_ID = `#user-block`) {
+        $(`${BLOCK_ID} .ready-bg`).css({
+            "background-color": "red",
         });
     }
 }

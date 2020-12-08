@@ -10,6 +10,7 @@ import Pawn from "./pieces/Pawn.js";
 import Visualize from "./utility/Visualize.js";
 import Game from "./gameplay/Game.js";
 import Firebase from "./utility/Firebase.js";
+import User from "./gameplay/User.js";
 
 export function initGameBoard() {
     initLogicPieces();
@@ -106,13 +107,20 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     let $chessPiece = $(`#${AssignedVar.currentGame.chessBoard[fixedPosition.x][fixedPosition.y].id}`);
     $chessPiece.on(`click`, () => {
         let pos = Vector.convertIdToVector($chessPiece[0].id);
-        let userAccControlingColor = AssignedVar.currentGame.userAcc.controllingColor;
-        if (AssignedVar.currentGame.currentPlayer.color != userAccControlingColor && AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
-            if (pos.isPositionHasPiece()) {
-                Visualize.cannotAttackPieceEffect($chessPiece[0]);
+
+        if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+            let accControlingColor = AssignedVar.currentTable.opponent.controllingColor;
+            if (User.isTableOwner()) {
+                accControlingColor = AssignedVar.currentTable.owner.controllingColor;
             }
-            return;
-        }
+            if (AssignedVar.currentGame.currentPlayer.color != accControlingColor) {
+                if (pos.isPositionHasPiece()) {
+                    Visualize.cannotAttackPieceEffect($chessPiece[0]);
+                }
+                return;
+            }
+        } 
+
         if (AssignedVar.currentGame.currentPlayer.id == $chessPiece[0].controlbyplayerid) {
             setupOnClickCallbackAt(pos);
         } else {

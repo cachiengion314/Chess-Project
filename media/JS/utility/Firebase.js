@@ -15,7 +15,6 @@ let _databaseCollectionUser;
 let _databaseCollectionTables;
 
 let _unSubcribeSnapshot;
-let _dbCurrentTableData;
 let _currentTableId = -1;
 
 export default class Firebase {
@@ -28,11 +27,11 @@ export default class Firebase {
     static get dbTalbes() {
         return _databaseCollectionTables;
     }
-    static get UnSubcribeSnapshot() {
-        return _unSubcribeSnapshot;
-    }
-    static get dbCurrentGameData() {
-        return _dbCurrentTableData;
+    static get unSubcribeSnapshot() {
+        if (_unSubcribeSnapshot) {
+            return _unSubcribeSnapshot;
+        }
+        return console.log(`You don't subcribe any snapshots!`);
     }
     static set currentTableId(value) {
         _currentTableId = value;
@@ -111,21 +110,21 @@ export default class Firebase {
         _unSubcribeSnapshot = Firebase.dbTalbes.doc(id)
             .onSnapshot((doc) => {
                 if (doc.exists) {
-                    _dbCurrentTableData = doc.data();
-                    changedCallback(_dbCurrentTableData);
+                    AssignedVar.currentTable = doc.data();
+                    changedCallback(AssignedVar.currentTable);
                 }
             });
     }
-  
-    static updateTableProperty(tableId, propertyObj, resolveCallback = () => { }, failCallback = (e) => {}) {
+
+    static updateTableProperty(tableId, propertyObj, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
         let ref = Firebase.dbTalbes.doc(tableId);
         ref.update(propertyObj)
             .then(() => {
                 resolveCallback();
             })
-            .catch((error) => {
+            .catch((errorCode) => {
                 failCallback(error);
-                console.log(`there an error:`, error);
+                console.log(`there an error:`, errorCode);
             });
     }
 
@@ -145,31 +144,40 @@ export default class Firebase {
         obj[lastMove] = pieceLastMove;
         obj["lastTurn"] = lastTurn;
 
-        console.log(`firebase update move obj`, obj);
         let ref = Firebase.dbTalbes.doc(tableId);
         ref.update(obj)
             .then(() => {
                 resolveCallback();
             })
-            .catch((error) => {
+            .catch((errorCode) => {
 
             });
     }
-    static getTable(tableId, resolveCallback = (docData) => { }, failCallback = (e) => { }) {
+    static getTable(tableId, resolveCallback = (docData) => { }, failCallback = (errorCode) => { }) {
         let p = Firebase.dbTalbes.doc(tableId).get();
         p.then((doc) => {
             if (doc.exists) {
-                _dbCurrentTableData = doc.data();
-                resolveCallback(_dbCurrentTableData);
+                AssignedVar.currentTable = doc.data();
+                resolveCallback(AssignedVar.currentTable);
             }
         })
-            .catch((error) => {
-                failCallback(error);
+            .catch((errorCode) => {
+                failCallback(errorCode);
             });
     }
     static setTable(tableId, tableObj, resolveCallback = () => { }, failCallback = (error) => { }) {
         let p = Firebase.dbTalbes.doc(tableId).set(tableObj);
         p.then(() => {
+            resolveCallback();
+        })
+            .catch((errorCode) => {
+                failCallback(errorCode);
+            });
+    }
+    static deleteTable(tableId, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
+        let p = Firebase.dbTalbes.doc(tableId).delete();
+        p.then(() => {
+            Firebase.unSubcribeSnapshot();
             resolveCallback();
         })
             .catch((errorCode) => {

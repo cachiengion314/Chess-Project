@@ -1,4 +1,5 @@
 import AssignedVar from "../utility/AssignedVar.js";
+import Firebase from "../utility/Firebase.js";
 
 export default class User {
     constructor(name, email, password) {
@@ -14,10 +15,25 @@ export default class User {
         this.tempLoses = 0;
         this.isReady = false;
         this.controllingColor = AssignedVar.EMPTY;
-
         this.themeIndex = 0;
         let d = new Date();
         this.accDateCreated = d.toLocaleDateString() + "_" + `${d.getHours()}-${d.getMinutes()}`;
+    }
+    static isTableOwner() {
+        let owner = AssignedVar.currentTable.owner;
+        let userName = User.getUserSignIn().name;
+        if (owner.name != userName) {
+            return false
+        }
+        return true;
+    }
+    static getUserSignIn() {
+        return Firebase.convertCustomObjToGenericObj(User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()]);
+    }
+    static setUserSignIn(user) {
+        let updateChessClubOb = User.getChessClubObj();
+        updateChessClubOb[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId] = user;
+        User.setChessClubObj(updateChessClubOb);
     }
     static signIn(id, userInfo) {
         let $signIn = $(`#sign-col .custom-btn`)[0];
@@ -95,7 +111,6 @@ export default class User {
     static showWelcomeTitle(content) {
         $(`#sign-col h4`).text(content);
     }
-
     static hideUserStatistic() {
         $(`#user-statistic`).hide();
     }

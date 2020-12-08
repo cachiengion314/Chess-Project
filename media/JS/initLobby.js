@@ -15,9 +15,17 @@ export default function initLobby() {
     Firebase.queryAllTable((allTables) => {
         Game.TablesCount = allTables.length;
         Game.hideChessBoardAndShowLobby();
-        for (let i = 0; i < Game.TablesCount; ++i) {
-            let tableIndex = i + 1;
-            createWaitingTableWith(tableIndex, allTables[i].data().owner.name, allTables[i].data().tableId);
+        if (Game.TablesCount == 0) {
+            let txt = `<h3 style="color: teal; opacity: .5; text-align: center; display: flex; justify-content: center; align-items: center;">
+                        There is no table! Please create one by simply click in the "Create a table" button
+                       </h3>`;
+            $(`#waiting-tables`).html(txt);
+        } else {
+            $(`#waiting-tables`).empty();
+            for (let i = 0; i < Game.TablesCount; ++i) {
+                let tableIndex = i + 1;
+                createWaitingTableWith(tableIndex, allTables[i].data().owner.name, allTables[i].data().tableId);
+            }
         }
     });
 }
@@ -38,11 +46,10 @@ function onclickWaitingTable() {
     }
 
     Firebase.currentTableId = this.id;
-    console.log(`click, firebaseCurrentTalbeId:`, Firebase.currentTableId);
     let acc = User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()];
     acc.controllingColor = AssignedVar.BLACK;
-    console.log(acc.controllingColor);
-    AssignedVar.currentGame = new Game(acc, AssignedVar.ONLINE);
+
+    AssignedVar.currentGame = new Game(AssignedVar.ONLINE);
     let propertyObj = {
         opponent: acc,
     }
@@ -56,7 +63,7 @@ function onclickWaitingTable() {
             PopUp.closeModal(`#notification-modal`);
             Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
         }, (errorCode) => {
-            PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
+            PopUp.show(`Sorry! There an error: "${errorCode}" in this onSnapshot action`, PopUp.sadImgUrl);
             AssignedVar.currentGame = null;
         });
     }, `Please waiting server to create table!`, AssignedVar.FAKE_LOADING_TIME);
@@ -64,9 +71,16 @@ function onclickWaitingTable() {
 }
 
 function tableChangedCallback(tableData) {
-    // the condition below will prevent this callback execute the last owner move
+    AssignedVar.currentTable = tableData;
+    if (AssignedVar.currentTable.owner.isReady) {
+        Game.setReadyBgOn(`#user-block`);
+        if (AssignedVar.IsUserAndEnemyReady) {
+            AssignedVar.currentGame.letPlayerControlChessPiece();
+        }
+    }
+    // the condition below will prevent this callback execute from the last owner move
     if (tableData.lastTurn == AssignedVar.OPPONENT || !tableData.ownerLastMove || !tableData.ownerMove) { return; }
-    // the line of codes below only execute owner move
+    // the line of codes below will only execute owner move
     let ownerLastMove = tableData.ownerLastMove;
     let ownerMove = tableData.ownerMove;
     let arrLastMove = ownerLastMove.split("_");
