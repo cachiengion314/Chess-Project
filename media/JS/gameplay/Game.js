@@ -92,34 +92,36 @@ export default class Game {
         Game.initLogicPlayer();
         this.setCurrentPlayer();
         initGameBoard();
-
-        Game.saveUserStatistic();
     }
 
-    static quitEventInvokeForOpponent() {
+    static saveAndUpdateScore() {
         AssignedVar.isOpponentExists = false;
-        AssignedVar.currentGame = null;
-        AssignedVar.currentTable = null;
-        let user = User.getUserSignIn();
-        user.isReady = false;
-        User.setUserSignIn(user);
-        Firebase.unSubcribeSnapshot();
+        let acc = User.getUserSignIn();
+        acc.isReady = false;
+        acc.tempWins = 0;
+        acc.tempLoses = 0;
+        User.setUserSignIn(acc);
+        Game.saveUserStatistic(acc);
+        if (!User.isTableOwner()) {
+            Firebase.unSubcribeSnapshot();
+        }
     }
-    static quitEventInvokeForOwner() {
-        AssignedVar.isOpponentExists = false;
-        AssignedVar.currentGame = null;
-        AssignedVar.currentTable = null;
-        let ownerAcc = User.getUserSignIn();
-        ownerAcc.isReady = false;
-        User.setUserSignIn(ownerAcc);
-    }
-    static saveUserStatistic() {
+
+    static quickSaveUserStatistic() {
         let acc;
         if (User.isTableOwner()) {
             acc = AssignedVar.currentTable.owner;
         } else {
-            acc = AssignedVar.currentTable.opponent;
+            if (AssignedVar.currentTable.opponent) {
+                acc = AssignedVar.currentTable.opponent;
+            } else {
+                acc = User.getUserSignIn();
+            }
         }
+        User.setUserSignIn(acc);
+    }
+
+    static saveUserStatistic(acc) {
         User.setUserSignIn(acc);
         Firebase.setCurrentUserData(User.getUserSignInId(), acc, () => {
             console.log(`saved in db success:`, acc);
@@ -127,20 +129,24 @@ export default class Game {
             console.log(`error when save: "${e}"`);
         });
     }
-    static resetTempStatus() {
+
+    static resetTempStatistic() {
         let propObj = {};
-        let user = User.getUserSignIn();
-        user.tempLoses = 0;
-        user.tempWins = 0;
-        propObj.tempLoses = 0;
-        propObj.tempWins = 0;
-        User.setUserSignIn(user);
-        Firebase.updateCurrentUserData(User.getUserSignInId(), propObj, () => {
-            console.log(`reset temp in db success:`);
+        let ACC_TEMPLOSES = "owner.tempLoses";
+        let ACC_TEMPWINS = "owner.tempWins";
+        if (!User.isTableOwner()) {
+            ACC_TEMPLOSES = "opponent.tempLoses";
+            ACC_TEMPWINS = "opponent.tempWins";
+        }
+        propObj[ACC_TEMPLOSES] = 0;
+        propObj[ACC_TEMPWINS] = 0;
+        Firebase.updateTableProperty(Firebase.currentTableId, propObj, () => {
+            console.log(`resetTempStatistic in db done!`);
         }, (e) => {
-            console.log(`error when reset temp: "${e}"`);
+            console.log(`resetTempStatistic in db fail! "${e}"`);
         });
     }
+
     static showOpponentBlock() {
         $(`#enemy-block`).show();
     }
@@ -238,11 +244,13 @@ export default class Game {
             "background-color": "green",
             "color": "white",
         });
+        $(`${BLOCK_ID} .ready-bg`).html(`Sẵn sàng!`)
     }
     static setReadyBgOff(BLOCK_ID = `#user-block`) {
         $(`${BLOCK_ID} .ready-bg`).css({
             "background-color": "red",
             "color": "black",
         });
+        $(`${BLOCK_ID} .ready-bg`).html(`Chưa sẵn sàng!`)
     }
 }

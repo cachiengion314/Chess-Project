@@ -5,6 +5,8 @@ import PopUp from "./PopUp.js";
 
 let _isUserAndEnemyReady = false;
 let _isUserInLobby = true;
+let _isOpponentExists = false;
+let _countMaxCurrentLoses = 0;
 
 let _bKnight;
 let _bBishop;
@@ -30,7 +32,23 @@ export default class AssignedVar {
     static haveUsedSignColButton = false;
     static isLetPlayerControlPiece = false;
     static currentTable = null;
-    static isOpponentExists = false;
+
+    static get countMaxCurrentLoses() {
+        if (AssignedVar.IsUserInLobby) {
+            _countMaxCurrentLoses = 0;
+        }
+        return _countMaxCurrentLoses;
+    }
+    static set countMaxCurrentLoses(val) {
+
+        _countMaxCurrentLoses = val;
+    }
+    static get isOpponentExists() {
+        return _isOpponentExists;
+    }
+    static set isOpponentExists(val) {
+        _isOpponentExists = val;
+    }
 
     static get IsUserAndEnemyReady() {
         _isUserAndEnemyReady = false;

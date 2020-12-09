@@ -183,13 +183,13 @@ function onclickOfferADrawBtn() {
         switch (AssignedVar.currentGame.gameMode) {
             case AssignedVar.ONLINE:
                 if (AssignedVar.IsUserAndEnemyReady) {
-                    PopUp.show(`Gửi thành công lời cầu hòa`);
+                    PopUp.show(`Chức năng chưa hoạt động! Hãy dùng nút đầu hàng!`);
                 } else {
-                    PopUp.show(`Game phải đang chơi thì mới gửi lời cầu hòa được`, PopUp.sadImgUrl);
+                    PopUp.show(`Chức năng chưa hoạt động! Hãy dùng nút đầu hàng!`, PopUp.sadImgUrl);
                 }
                 break;
             case AssignedVar.OFFLINE:
-                PopUp.show(`Hey we are in the offline mode!`);
+                PopUp.show(`Chức năng chưa hoạt động! Hãy dùng nút đầu hàng!`);
                 break;
         }
     };
@@ -267,9 +267,10 @@ function onclickQuitGameBtn() {
                         Firebase.updateTableProperty(Firebase.currentTableId,
                             {
                                 opponent: null, opponentLastMove: null, opponentMove: null, lastTurn: null,
-                                ownerLastMove: null, ownerMove: null, "owner.isReady": false,
+                                ownerLastMove: null, ownerMove: null, "owner.isReady": false, "owner.tempLoses": 0,
+                                "owner.tempWins": 0,
                             }, () => {
-                                Game.quitEventInvokeForOpponent();
+                                Game.saveAndUpdateScore();
                                 AssignedVar.IsUserInLobby = true;
                                 PopUp.closeModal(`#notification-modal`);
                             }, (errorCode) => {
@@ -283,7 +284,7 @@ function onclickQuitGameBtn() {
                 PopUp.showLoading(() => {
                     Firebase.deleteTable(Firebase.currentTableId, () => {
                         PopUp.closeModal(`#notification-modal`);
-                        Game.quitEventInvokeForOwner();
+                        Game.saveAndUpdateScore();
                         AssignedVar.IsUserInLobby = true;
                     }, (e) => {
                         console.log(`onclickQuitGameBtn.deleteTable.error: "${e}"!`);
@@ -293,8 +294,6 @@ function onclickQuitGameBtn() {
             } else {
                 AssignedVar.IsUserInLobby = true;
             }
-
-            Game.resetTempStatus();
         } else {
             PopUp.show(`Bạn không thể thoát game khi đang chơi! Hãy đầu hàng hoặc đánh bại đối thủ để thoát!`, PopUp.sadImgUrl);
         }
@@ -311,27 +310,28 @@ function onclickCreateATableBtn() {
             PopUp.show(`Bạn phải đăng nhập để có thể sử dụng được chức năng này!`);
             return;
         }
+
         let acc = User.getUserSignIn();
-        acc.tempLoses = 0;
-        acc.tempWins = 0;
         acc.controllingColor = AssignedVar.WHITE;
         let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, acc);
         AssignedVar.currentTable = newTable;
         AssignedVar.currentGame = new Game(AssignedVar.ONLINE);
 
         PopUp.showLoading(() => {
-            AssignedVar.currentGame.createNewChessBoard();
-            AssignedVar.currentGame.setCurrentPlayer();
-
             Firebase.setTable(Firebase.currentTableId, newTable, () => {
+                AssignedVar.currentGame.createNewChessBoard();
+                AssignedVar.currentGame.setCurrentPlayer();
                 AssignedVar.IsUserInLobby = false;
+                AssignedVar.isOpponentExists = false;
                 Game.hideOpponentBlock();
+
                 PopUp.closeModal(`#notification-modal`, () => {
                     Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
                     PopUp.showLoading(() => {
-                        PopUp.show(`Hướng dẫn! Khi nhìn thấy đối thủ vào phòng! Hãy nhấn sẵn sàng! Khi cả hai cùng sẵn sàng, trận đấu sẽ được bắt đầu!`);
-                    }, `Hệ thống đang load hướng dẫn chơi!`, AssignedVar.FAKE_LOADING_TIME);
+                        PopUp.show(`Hướng dẫn chơi! Khi nhìn thấy đối thủ vào phòng! Hãy nhấn "Sẵn sàng"! Khi cả hai cùng sẵn sàng, trận đấu sẽ được bắt đầu!`, PopUp.cuteImgUrl);
+                    }, `Đợi chút! Hệ thống đang tải hướng dẫn chơi!`, AssignedVar.FAKE_LOADING_TIME);
                 });
+
             }, (errorCode) => {
                 PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
                 AssignedVar.currentGame = null;
@@ -344,23 +344,30 @@ function onclickCreateATableBtn() {
 // onSnapshot change on the server side
 function tableChangedCallback(tableData) {
     AssignedVar.currentTable = tableData;
-    controlAllOpponentActionForThisAcc();
+    Game.quickSaveUserStatistic();
+    mimicAllOpponentActionForThisAcc();
 }
 
-function controlAllOpponentActionForThisAcc() {
+function mimicAllOpponentActionForThisAcc() {
+    // prevent code execute when you delete your own table
     if (AssignedVar.currentTable.tableId == -1) return;
-
     opponentJoinTable();
     noOpponentInTable();
-
+    // prevent code execute when opponent leave the table
     if (!AssignedVar.isOpponentExists) return;
-
     resetBoardWhenOpponentResigned();
-    controlChessPiece();
-    controlOpponentMove();
+    mimicChessPiece();
+    mimicOpponentMove();
 }
 
 function opponentJoinTable() {
+    try {
+        console.log(`log for opp join table:`, AssignedVar.currentTable.opponent, AssignedVar.currentTable.lastTurn,
+            AssignedVar.currentTable.opponent.tempLoses, AssignedVar.currentTable.owner.isReady, AssignedVar.currentTable.opponent.isReady);
+    } catch (e) {
+        console.log(e);
+    }
+
     if (AssignedVar.currentTable.opponent && !AssignedVar.currentTable.lastTurn && AssignedVar.currentTable.opponent.tempLoses == 0
         && !AssignedVar.currentTable.owner.isReady && !AssignedVar.currentTable.opponent.isReady) {
 
@@ -375,28 +382,28 @@ function noOpponentInTable() {
         if (AssignedVar.isOpponentExists) {
             AssignedVar.isOpponentExists = false;
             PopUp.show(`Đối thủ vừa thoát khỏi bàn chơi!`, PopUp.sadImgUrl);
+
+            AssignedVar.countMaxCurrentLoses = 0;
+            Game.saveAndUpdateScore();
             Game.hideOpponentBlock();
-            Game.resetTempStatus();
-            oTempLoses = 0;
         } else {
             if (AssignedVar.currentTable.owner.isReady) return;
             // line of codes below show empty opponent event
-            console.log(`new table have initialized!`);
+            console.log(`new table have just initialized!`);
 
         }
     }
 }
-let oTempLoses = 0;
+
 function resetBoardWhenOpponentResigned() {
-    if (oTempLoses < AssignedVar.currentTable.opponent.tempLoses) {
-        console.log(`opponent have just resigned!`);
-        PopUp.show(`Xin chúc mừng! Đối thủ vừa đầu hàng bạn! Trận đấu đã tự động được reset!`);
-        oTempLoses = AssignedVar.currentTable.opponent.tempLoses;
+    if (AssignedVar.countMaxCurrentLoses < AssignedVar.currentTable.opponent.tempLoses) {
+        PopUp.show(`Thật không thể tin nổi! Thật tuyệt vời! Đối thủ vừa "tự đầu hàng" nên bạn không cần phải đánh nữa!`, PopUp.jokeImgUrl);
+        AssignedVar.countMaxCurrentLoses = AssignedVar.currentTable.opponent.tempLoses;
         AssignedVar.currentGame.resetGameBoard();
     }
 }
 
-function controlChessPiece() {
+function mimicChessPiece() {
     if (AssignedVar.currentTable.opponent && AssignedVar.currentTable.opponent.isReady) {
         Game.setReadyBgOn(`#enemy-block`);
         if (AssignedVar.IsUserAndEnemyReady) {
@@ -405,11 +412,11 @@ function controlChessPiece() {
     }
 }
 
-function controlOpponentMove() {
+function mimicOpponentMove() {
     // the condition below will prevent this callback execute from the last opponent move
     if (AssignedVar.currentTable.lastTurn != AssignedVar.OPPONENT
         || !AssignedVar.currentTable.opponentLastMove || !AssignedVar.currentTable.opponentMove) { return; }
-    // the line of codes below will only mimic the opponent move
+
     let opponentLastMove = AssignedVar.currentTable.opponentLastMove;
     let opponentMove = AssignedVar.currentTable.opponentMove;
     let arrLastMove = opponentLastMove.split("_");
@@ -423,6 +430,13 @@ function controlOpponentMove() {
 }
 
 function loseGameResult() {
+    if (AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
+        let acc = User.getUserSignIn();
+        PopUp.show(`Bạn "${acc.name}" đã thua cuộc!`, PopUp.sadImgUrl);
+        AssignedVar.currentGame.resetGameBoard();
+        return;
+    }
+
     let ownerAcc = AssignedVar.currentTable.owner;
     let opponentAcc = AssignedVar.currentTable.opponent;
     let user = ownerAcc;
@@ -431,36 +445,49 @@ function loseGameResult() {
 
     let USER_LOSES = "owner.loses";
     let USER_TEMPLOSES = "owner.tempLoses";
-    let USER_ELO = "owner.elo";
-    let USER_ISREADY = "owner.isReady";
 
     if (!User.isTableOwner()) {
         USER_LOSES = "opponent.loses";
         USER_TEMPLOSES = "opponent.tempLoses";
-        USER_ELO = "opponent.elo";
-        user = opponentAcc
+        user = opponentAcc;
+
+        propObj["opponent.elo"] = opponentAcc.elo -= 15;
+
+        propObj["owner.elo"] = ownerAcc.elo += 15;
+        propObj["owner.wins"] = ++ownerAcc.wins;
+        propObj["owner.tempWins"] = ++ownerAcc.tempWins;
+    } else {
+        propObj["owner.elo"] = ownerAcc.elo -= 15;
+
+        propObj["opponent.elo"] = opponentAcc.elo += 15;
+        propObj["opponent.wins"] = ++opponentAcc.wins;
+        propObj["opponent.tempWins"] = ++opponentAcc.tempWins;
     }
     let LOSER_NAME = user.name;
-
     propObj[USER_LOSES] = ++user.loses;
     propObj[USER_TEMPLOSES] = ++user.tempLoses;
-    propObj[USER_ELO] = user.elo -= 15;
-    // let $winsTxt = $(`#enemy-block .align-end div`)[0];
-    // $winsTxt.textContent = `Wins: ${AssignedVar.currentTable.opponent.tempWins}`;
+
     let updateObj = {
         ...propObj,
         opponentLastMove: null, opponentMove: null, lastTurn: null,
         ownerLastMove: null, ownerMove: null, "opponent.isReady": false, "owner.isReady": false,
     }
-    Firebase.updateTableProperty(Firebase.currentTableId, updateObj, () => {
-        console.log(`your score is updated!`);
-        PopUp.show(`Bạn "${LOSER_NAME}" đã thua cuộc!`, PopUp.sadImgUrl);
-        AssignedVar.currentGame.resetGameBoard();
-    }, (e) => {
-        console.log(`loseGameResult update!: "${e}"`);
-    });
+    PopUp.showLoading(() => {
+        Firebase.updateTableProperty(Firebase.currentTableId, updateObj, () => {
+            console.log(`owner and enemy score in the table is updated!`);
+            PopUp.show(`Bạn "${LOSER_NAME}" đã thua cuộc!`, PopUp.sadImgUrl);
+            AssignedVar.currentGame.resetGameBoard();
+        }, (e) => {
+            console.log(`loseGameResultUpdate!: "${e}"`);
+        });
+    }, `Đợi chút! Hệ thống đang xử lý yêu cầu!`, AssignedVar.FAKE_LOADING_TIME);
 }
-
+/////////
+/////////
+/////////
+/////////
+/////////
+/////////
 function authenticateUserCompletedCallback(isPasswordRight, userId, userDataFromDb) {
     if (userDataFromDb == AssignedVar.NO_USER) {
         PopUp.show(`Xin lỗi! Tên đăng nhập của bạn không nằm trong cơ sở dữ liệu của chúng tôi`, PopUp.questionImgUrl);
