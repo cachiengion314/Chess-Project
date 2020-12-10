@@ -40,7 +40,6 @@ export default class AssignedVar {
         return _countMaxCurrentLoses;
     }
     static set countMaxCurrentLoses(val) {
-
         _countMaxCurrentLoses = val;
     }
     static get isOpponentExists() {
@@ -101,6 +100,9 @@ export default class AssignedVar {
         _defaultTable.opponentLastMove = null;
         _defaultTable.opponentMove = null;
         _defaultTable.lastTurn = null;
+        _defaultTable.playersNumber = 1;
+        _defaultTable.is_ownerRageQuit = false;
+        _defaultTable.is_opponentRageQuit = false;
 
         return _defaultTable;
     }

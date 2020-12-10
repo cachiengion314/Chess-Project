@@ -22,7 +22,7 @@ export default class PopUp {
 
         let $cancelBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[0]
         let $signInBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[1];
-        $signInBtn.textContent = `Sign In`;
+        $signInBtn.textContent = `Đăng nhập!`;
         $cancelBtn.onclick = () => {
             PopUp.closeModal(SIGN_MODAL_ID, cancelCallback);
         }
@@ -39,13 +39,13 @@ export default class PopUp {
         $($password2Block).hide();
 
         let yourName = $(`${SIGN_MODAL_ID} .txt`)[0];
-        yourName.textContent = `Your name`;
+        yourName.textContent = `Tên của bạn`;
         let yourPass = $(`${SIGN_MODAL_ID} .txt`)[2];
-        yourPass.textContent = `Your password`;
+        yourPass.textContent = `Password của bạn`;
         $(`${SIGN_MODAL_ID} .txt`).removeClass(`red`);
 
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happierImgUrl)
-        $(`${SIGN_MODAL_ID} h4`).html(`Wellcome back. Please sign in to enjoy the game!`);
+        $(`${SIGN_MODAL_ID} h4`).html(`Chào mừng bạn tới chess club online! Hãy đăng nhập nào!`);
     }
     static showSignUp(signUpCallback = () => { }, cancelCallback = () => { }) {
         let SIGN_MODAL_ID = `#sign-modal`;
@@ -53,7 +53,7 @@ export default class PopUp {
 
         let $cancelBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[0]
         let $signUpBtn = $(`${SIGN_MODAL_ID} .custom-modal-footer .close-btn`)[1];
-        $signUpBtn.textContent = `Sign Up`;
+        $signUpBtn.textContent = `Đăng ký!`;
         $cancelBtn.onclick = () => {
             PopUp.closeModal(SIGN_MODAL_ID, cancelCallback);
         }
@@ -71,17 +71,17 @@ export default class PopUp {
         $($password2Block).show();
 
         let yourName = $(`${SIGN_MODAL_ID} .txt`)[0];
-        yourName.textContent = `Your name`;
+        yourName.textContent = `Tên của bạn`;
         let yourEmail = $(`${SIGN_MODAL_ID} .txt`)[1];
-        yourEmail.textContent = `Your email`;
+        yourEmail.textContent = `Email của bạn`;
         let yourPass = $(`${SIGN_MODAL_ID} .txt`)[2];
-        yourPass.textContent = `Your password`;
+        yourPass.textContent = `Password của bạn`;
         let clarifyPass = $(`${SIGN_MODAL_ID} .txt`)[3];
-        clarifyPass.textContent = `Clarify password`;
+        clarifyPass.textContent = `Xác nhận lại password`;
         $(`${SIGN_MODAL_ID} .txt`).removeClass(`red`);
 
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happyImgUrl)
-        $(`${SIGN_MODAL_ID} h4`).html(`Sign Up`);
+        $(`${SIGN_MODAL_ID} h4`).html(`Chào mừng đến với Chess club online! Hãy đăng ký một tài khoản để chơi online nào!`);
     }
     static showLoading(closeConditionCallback, content = `Please stand by!`, fakeLoadingTime = 0) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
@@ -189,7 +189,7 @@ export default class PopUp {
     }
     static highlightContent(content) {
         let arr = content.split(`"`);
-        if (arr.length == 3) {
+        if (arr.length > 2) {
             let div0 = `<h4 style="font-size: 1em">${arr[0]} </h4>`
             let div1 = `<h4 id="user-name-txt" style="font-size: 1em">${arr[1]}</h4>`
             let div2 = `<h4 style="font-size: 1em"> ${arr[2]}</h4>`

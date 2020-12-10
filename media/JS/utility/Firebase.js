@@ -34,7 +34,7 @@ export default class Firebase {
         return _currentTableId;
     }
     static initialize() {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         firebase.initializeApp({
             apiKey: 'AIzaSyA8X5BGIHdic4rowTSnVhx_OrdHSkonngQ',
@@ -46,8 +46,8 @@ export default class Firebase {
         _databaseCollectionTables = Firebase.db.collection(`tables`);
     }
     static setUser(userInfo = {}, successCompletedCallback = (id) => { }, failCompletedCallback = (error) => { }) {
-        if(!Firebase.haveInternet()) return;
-        
+        if (!Firebase.haveInternet()) return;
+
         let customUser = new User(userInfo.name, userInfo.email, userInfo.password);
         let newUser = Firebase.convertCustomObjToGenericObj(customUser)
         let p = Firebase.dbUsers.add(newUser);
@@ -58,10 +58,10 @@ export default class Firebase {
                 failCompletedCallback(error);
             });
     }
-    // for sign in feature
+
     static authenticateUser(givenUserName = `phong`, givenPassword = `12345`, completedCallback = (isRight, id, userData) => { }) {
-        if(!Firebase.haveInternet()) return;
-        
+        if (!Firebase.haveInternet()) return;
+
         let isGivenPasswordRight = false;
         let p = Firebase.dbUsers.where(`name`, `==`, givenUserName).get();
         p.then((querySnapshot) => {
@@ -77,9 +77,9 @@ export default class Firebase {
             }
         });
     }
-    // for sign up feature
+
     static findNameAndEmailDuplicate(givenName = "phong", givenEmail = "fun@mail.com", givenPassword = `12345`, completedCallback = (isNR, isER, uInfo) => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         let isNameDuplicate = false;
         let isEmailDuplicate = false;
@@ -98,8 +98,9 @@ export default class Firebase {
             });
         });
     }
+
     static queryAllTable(completedCallback = (allTables) => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         let p = Firebase.dbTalbes.get();
         p.then((querySnapshot) => {
@@ -107,8 +108,9 @@ export default class Firebase {
             completedCallback(documents);
         });
     }
+
     static onSnapshotWithId(id = `id`, changedCallback = (tableData) => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         _unSubcribeSnapshot = Firebase.dbTalbes.doc(id)
             .onSnapshot((doc) => {
@@ -120,7 +122,7 @@ export default class Firebase {
     }
 
     static updateTableProperty(tableId, propertyObj, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         let ref = Firebase.dbTalbes.doc(tableId);
         ref.update(propertyObj)
@@ -133,7 +135,7 @@ export default class Firebase {
     }
 
     static updateMove(tableId, pieceLastMove, pieceMove, resolveCallback = () => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         let obj = {};
         let move = "ownerMove";
@@ -145,11 +147,9 @@ export default class Firebase {
             lastMove = "opponentLastMove";
             lastTurn = AssignedVar.OPPONENT;
         }
-
         obj[move] = pieceMove;
         obj[lastMove] = pieceLastMove;
         obj["lastTurn"] = lastTurn;
-
         let ref = Firebase.dbTalbes.doc(tableId);
         ref.update(obj)
             .then(() => {
@@ -161,7 +161,7 @@ export default class Firebase {
     }
 
     static updateCurrentUserData(userId, propObj, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         let ref = Firebase.dbTalbes.doc(userId);
         ref.update(propObj)
@@ -174,7 +174,7 @@ export default class Firebase {
     }
 
     static setCurrentUserData(userId, userObj, resolveCallback = (docData) => { }, failCallback = (errorCode) => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         let p = Firebase.dbUsers.doc(userId).set(userObj);
         p.then(() => {
@@ -186,7 +186,7 @@ export default class Firebase {
     }
 
     static getTable(tableId, resolveCallback = (docData) => { }, failCallback = (errorCode) => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         let p = Firebase.dbTalbes.doc(tableId).get();
         p.then((doc) => {
@@ -199,8 +199,9 @@ export default class Firebase {
                 failCallback(errorCode);
             });
     }
+
     static setTable(tableId, tableObj, resolveCallback = () => { }, failCallback = (error) => { }) {
-        if(!Firebase.haveInternet()) return;
+        if (!Firebase.haveInternet()) return;
 
         let p = Firebase.dbTalbes.doc(tableId).set(tableObj);
         p.then(() => {
@@ -210,10 +211,11 @@ export default class Firebase {
                 failCallback(errorCode);
             });
     }
-    static deleteTable(tableId, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
-        if(!Firebase.haveInternet()) return;
 
-        Firebase.updateTableProperty(tableId, { "tableId": -1, }, () => {
+    static deleteTable(tableId, isOwnerRageQuit = false, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
+        if (!Firebase.haveInternet()) return;
+
+        Firebase.updateTableProperty(tableId, { "tableId": -1, is_ownerRageQuit: isOwnerRageQuit }, () => {
             // actually delete code below here
             Firebase.dbTalbes.doc(tableId).delete()
                 .then(() => {

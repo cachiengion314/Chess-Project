@@ -4,14 +4,23 @@ import Vector from "../utility/Vector.js";
 import { initGameBoard, onclickSelectedChessPieceAt } from "../initGameBoard.js";
 import Firebase from "../utility/Firebase.js";
 import User from "./User.js";
+import PopUp from "../utility/PopUp.js";
 
 let $chessBoard;
-let _tablesCount = 0;
 let _blackPlayer;
 let _whitePlayer;
 
-let _placeHolderAction;
+let _placeHolder_letPlayerControlChessPiece;
+let _placeHolder_opponentJoinTable;
 let _emptyAction = () => { }
+
+let _opponentJoinTable = () => {
+    PopUp.show(`Một đối thủ vừa mới gia nhập bàn của bạn!`, PopUp.happierImgUrl);
+    AssignedVar.isOpponentExists = true;
+    Game.showOpponentBlock();
+    _placeHolder_opponentJoinTable = _emptyAction;
+}
+
 let _letPlayerControlChessPiece = () => {
     for (let x = 0; x < 8; ++x) {
         for (let y = 0; y < 8; ++y) {
@@ -21,24 +30,25 @@ let _letPlayerControlChessPiece = () => {
             }
         }
     }
-    _placeHolderAction = _emptyAction;
+    _placeHolder_letPlayerControlChessPiece = _emptyAction;
 }
-_placeHolderAction = _letPlayerControlChessPiece;
+_placeHolder_letPlayerControlChessPiece = _letPlayerControlChessPiece;
+_placeHolder_opponentJoinTable = _opponentJoinTable;
 
 export default class Game {
     constructor(gameMode) {
         this.gameMode = gameMode;
         this.chessBoard = [];
     }
+    static recharge_opponentJoinTable_invoker() {
+        _placeHolder_opponentJoinTable = _opponentJoinTable;
+    }
+    static opponentJoinTable_invoker() {
+        _placeHolder_opponentJoinTable();
+    }
     static initLogicPlayer() {
         Game.blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
         Game.whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
-    }
-    static get TablesCount() {
-        return _tablesCount;
-    }
-    static set TablesCount(val) {
-        _tablesCount = val;
     }
     static get $ChessBoard() {
         return $chessBoard;
@@ -56,10 +66,13 @@ export default class Game {
         _whitePlayer = val;
     }
     letPlayerControlChessPiece() {
-        _placeHolderAction();
+        _placeHolder_letPlayerControlChessPiece();
     }
-    setCurrentPlayer(isGoFirst = true) {
-        if (isGoFirst) {
+    recharge_letPlayerControlChessPiece() {
+        _placeHolder_letPlayerControlChessPiece = _letPlayerControlChessPiece;
+    }
+    setCurrentPlayer(isGoFirstByChessRule = true) {
+        if (isGoFirstByChessRule) {
             this.currentPlayer = Game.whitePlayer;
         } else {
             this.currentPlayer = Game.blackPlayer;
@@ -74,7 +87,7 @@ export default class Game {
     }
     resetGameBoard() {
         Game.showReadyBtn();
-        _placeHolderAction = _letPlayerControlChessPiece;
+        this.recharge_letPlayerControlChessPiece();
         if (Game.$ChessBoard) {
             $($chessBoard).empty();
         }
@@ -88,7 +101,6 @@ export default class Game {
         if (AssignedVar.currentTable.opponent) {
             AssignedVar.currentTable.opponent.isReady = false;
         }
-
         Game.initLogicPlayer();
         this.setCurrentPlayer();
         initGameBoard();
@@ -130,28 +142,10 @@ export default class Game {
         });
     }
 
-    static resetTempStatistic() {
-        let propObj = {};
-        let ACC_TEMPLOSES = "owner.tempLoses";
-        let ACC_TEMPWINS = "owner.tempWins";
-        if (!User.isTableOwner()) {
-            ACC_TEMPLOSES = "opponent.tempLoses";
-            ACC_TEMPWINS = "opponent.tempWins";
-        }
-        propObj[ACC_TEMPLOSES] = 0;
-        propObj[ACC_TEMPWINS] = 0;
-        Firebase.updateTableProperty(Firebase.currentTableId, propObj, () => {
-            console.log(`resetTempStatistic in db done!`);
-        }, (e) => {
-            console.log(`resetTempStatistic in db fail! "${e}"`);
-        });
-    }
-
     static showOpponentBlock() {
         $(`#enemy-block`).show();
     }
     static hideOpponentBlock() {
-        console.log(`hideOpponentBlock`);
         $(`#enemy-block`).hide();
     }
     static showChessBoardAndHideLobby() {
@@ -231,7 +225,6 @@ export default class Game {
     static showReadyBtn() {
         Game.setReadyBgOff(`#user-block`);
         Game.setReadyBgOff(`#enemy-block`);
-
         let $readyBtn = $(`#ready-btn`);
         $($readyBtn).show();
         $($readyBtn).css({

@@ -7,48 +7,67 @@ import PopUp from "./utility/PopUp.js";
 import Vector from "./utility/Vector.js";
 
 import {
-    subscribeSelectedPieceAt, changePlayerTurn, logicMovePieceTo, logicDestroyEnemyPiece,
-    unSubscribeSelectedPiece, setupOnClickCallbackAt, onclickMovePieceAt
+    onclickMovePieceAt
 } from "./initGameBoard.js";
 
 export default function initLobby() {
     Firebase.queryAllTable((allTables) => {
-        Game.TablesCount = allTables.length;
         Game.hideChessBoardAndShowLobby();
-        if (Game.TablesCount == 0) {
-            let txt = `<h3 style="color: teal; opacity: .5; text-align: center; display: flex; justify-content: center; align-items: center;">
-                        Không có bàn chơi nào! Vui lòng nhấn f5 để hệ thống tự động cập nhật bàn chơi mới!
-                        Lưu ý 1: Tạm thời, chỉ có chủ phòng cầm quân trắng và được đánh trước.
-                        Lưu ý 2: Không tự ý thoát ra ngoài khi đang chơi dở.
+        if (allTables.length == 0) {
+            let txt = `<h3 style="color: teal; opacity: .5; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <div>Thật khó tin, toàn server không hề có nổi một bàn chơi nào!</div>
+                        <div class="space-vertical"></div>
+                        <div>Xin hãy thử nhấn f5 để hệ thống tự động cập nhật bàn chơi mới xem sao!</div>
                        </h3>`;
             $(`#waiting-tables`).html(txt);
         } else {
             $(`#waiting-tables`).empty();
-            for (let i = 0; i < Game.TablesCount; ++i) {
-                let tableIndex = i + 1;
-                createWaitingTableWith(tableIndex, allTables[i].data().owner.name, allTables[i].data().tableId);
+            for (let i = 0; i < allTables.length; ++i) {
+                if (allTables[i].data().tableId != -1) {
+                    let tableIndex = i + 1;
+                    let table = createWaitingTableWith(tableIndex, allTables[i].data());
+                    User.tables[allTables[i].data().tableId] = table;
+                }
             }
+            User.checkRageQuit();
         }
     });
 }
 
-function createWaitingTableWith(index, createdUserName, id) {
+function createWaitingTableWith(index, data) {
     let $table = document.createElement(`waiting-table`);
     $(`#waiting-tables`).append($table);
-    $table.name = "waiting-table-" + index + "-" + createdUserName;
-    $table.id = id;
+    $table.id = data.tableId;
+    $table.owner = data.owner;
+    $table.ownerid = data.owner.id;
+    if (data.opponent) {
+        $table.opponentid = data.opponent.id;
+        $table.opponent = data.opponent;
+    }
+    $table.playersnumber = data.playersNumber;
+    $table.name = `Bàn số: ${index} | Chủ: ${data.owner.name} | số lượng: ${data.playersNumber}`;
     $table.onclick = onclickWaitingTable;
     return $table;
 }
 
 function onclickWaitingTable() {
     if (User.getUserSignInId() == -1) {
-        PopUp.show(`Bạn phải đăng nhập để có thể sử dụng được chức năng này!`);
+        PopUp.show(`Bạn phải đăng nhập để có thể sử dụng được chức năng này!`, PopUp.boringImgUrl);
+        return;
+    }
+    if (User.tables[this.id] && User.tables[this.id].playersnumber >= 2) {
+        PopUp.show(`Bàn này đã có đủ ${User.tables[this.id].playersnumber} người rồi! Chúng ta không nên vào phá!`, PopUp.boringImgUrl);
         return;
     }
     Firebase.currentTableId = this.id;
+    let playersNumber = ++User.tables[Firebase.currentTableId].playersnumber;
 
     let acc = User.getUserSignIn();
+    if (!acc) {
+        console.log(`user may accidently delete their own localStorage data!`);
+        PopUp.show(`you cannot join`);
+        return;
+    }
     acc.controllingColor = AssignedVar.BLACK;
     acc.tempLoses = 0;
     acc.isReady = false;
@@ -56,14 +75,15 @@ function onclickWaitingTable() {
     AssignedVar.countMaxCurrentLoses = 0;
     let propertyObj = {
         opponent: acc,
+        is_opponentRageQuit: false,
         "owner.tempLoses": 0,
         "owner.isReady": false,
         "ownerMove": null,
         "ownerLastMove": null,
         "opponentMove": null,
         "opponentLastMove": null,
+        "playersNumber": playersNumber,
     }
-
     PopUp.showLoading(() => {
         Firebase.updateTableProperty(Firebase.currentTableId, propertyObj, () => {
             AssignedVar.currentGame.createNewChessBoard();
@@ -73,12 +93,11 @@ function onclickWaitingTable() {
             Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
         }, (errorCode) => {
             console.log(`onclickWaitingTable: ${errorCode}`);
-            PopUp.show(`Rất tiếc! Bàn chơi đã bị chủ bàn tiêu hủy!`, PopUp.sadImgUrl);
+            PopUp.show(`Rất tiếc! Có thể bàn chơi đã bị chủ bàn hủy!`, PopUp.sadImgUrl);
             Game.saveAndUpdateScore();
             AssignedVar.IsUserInLobby = true;
         });
-    }, `Làm ơn đợi hệ thống làm việc!`, AssignedVar.FAKE_LOADING_TIME);
-
+    }, `Vui lòng đợi hệ thống làm việc!`, AssignedVar.FAKE_LOADING_TIME);
 }
 
 function tableChangedCallback(tableData) {
@@ -89,7 +108,6 @@ function tableChangedCallback(tableData) {
 
 function mimicAllOwnerActionForThisAcc() {
     kickThisAccToLobbyWhenOwnerQuit();
-    // prevent code execute when you being kick out of the table
     if (AssignedVar.currentTable.tableId == -1 || !AssignedVar.currentTable.opponent) return;
     resetBoardWhenOwnerResigned();
     mimicChessPiece();
@@ -100,7 +118,7 @@ function kickThisAccToLobbyWhenOwnerQuit() {
     if (AssignedVar.currentTable.tableId == -1) {
         if (!AssignedVar.IsUserInLobby) {
             AssignedVar.IsUserInLobby = true;
-            PopUp.show(`Wow! Chủ bàn chơi đã tự out nên bạn cũng đã bị kick ra khỏi bàn! Thật là vi diệu!`, PopUp.jokeImgUrl);
+            PopUp.show(`Wow! Chủ bàn đã tự out nên bạn cũng đã bị kick ra khỏi bàn! Thật là vi diệu!`, PopUp.jokeImgUrl);
             Game.saveAndUpdateScore();
         }
     }
@@ -108,7 +126,7 @@ function kickThisAccToLobbyWhenOwnerQuit() {
 
 function resetBoardWhenOwnerResigned() {
     if (AssignedVar.countMaxCurrentLoses < AssignedVar.currentTable.owner.tempLoses) {
-        PopUp.show(`Thật không thể tin được! Thật tuyệt vời! Đối thủ vừa "tự đầu hàng" nên bạn không cần phải vất vả đánh nữa!`, PopUp.happierImgUrl);
+        PopUp.show(`Thật không thể tin được! Chủ phòng vừa "tự đầu hàng" nên bạn không cần phải vất vả đánh nữa!`, PopUp.happierImgUrl);
         AssignedVar.countMaxCurrentLoses = AssignedVar.currentTable.owner.tempLoses;
         AssignedVar.currentGame.resetGameBoard();
     }
@@ -124,7 +142,6 @@ function mimicChessPiece() {
 }
 
 function mimicOwnerMove() {
-    // the condition below will prevent this callback execute from the last owner move
     if (AssignedVar.currentTable.lastTurn != AssignedVar.OWNER
         || !AssignedVar.currentTable.ownerLastMove || !AssignedVar.currentTable.ownerMove) { return; }
 

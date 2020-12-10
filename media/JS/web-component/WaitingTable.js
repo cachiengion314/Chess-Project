@@ -1,6 +1,7 @@
 class WaitingTable extends HTMLElement {
     constructor() {
         super();
+        this._playersnumber = 0;
         this.domStr = `
             <style>
                 .waiting-table-contents {
@@ -14,12 +15,12 @@ class WaitingTable extends HTMLElement {
                 .player-icon {
                     position: relative;
                     top: 25%;
-                    width: 20%;
-                    height: 20%;
+                    width: 25%;
+                    height: 40%;
                     background-color: bisque;
                 }
                 .table-icon {
-                    width: 60%;
+                    width: 50%;
                     height: 100%;
                     background-color: teal;
                 }
@@ -36,8 +37,8 @@ class WaitingTable extends HTMLElement {
            
             <div class="equal-height-pointer" style="padding-top: 100%;"></div>
             <div class="waiting-table-contents" style="width: 100%; height: 100%;">
-                <div id="table-title" style="height: 25%;">table: 1</div>
-                <div class="display-flex" style="width: 100%; height: 75%;">
+                <div id="table-title" style="height: 40%;">table: 1</div>
+                <div class="display-flex" style="width: 100%; height: 60%;">
                         <div class="player-icon"></div>
                         <div class="table-icon"></div>
                         <div class="player-icon"></div>
@@ -45,6 +46,39 @@ class WaitingTable extends HTMLElement {
             </div>
         `;
         this.shadowR = this.attachShadow({ mode: `open` });
+    }
+    set owner(val) {
+        this._owner = val;
+    }
+    get owner() {
+        return this._owner;
+    }
+    set opponent(val) {
+        this._opponent = val;
+    }
+    get opponent() {
+        return this._opponent;
+    }
+    set ownerid(val) {
+        this._ownerid = val;
+        this.setAttribute(`ownerid`, val);
+    }
+    get ownerid() {
+        return this._ownerid;
+    }
+    set opponentid(val) {
+        this._opponentid = val;
+        this.setAttribute(`opponentid`, val);
+    }
+    get opponentid() {
+        return this._opponentid;
+    }
+    set playersnumber(val) {
+        this._playersnumber = val;
+        this.setAttribute(`playersnumber`, val);
+    }
+    get playersnumber() {
+        return this._playersnumber;
     }
     set name(val) {
         this.setAttribute(`name`, val);
@@ -76,7 +110,7 @@ class WaitingTable extends HTMLElement {
         this.tableTitle = this.shadowR.getElementById(`table-title`);
     }
     static get observedAttributes() {
-        return [`name`];
+        return [`name`,];
     }
     attributeChangedCallback(attrName, oldVal, newVal) {
         switch (attrName) {

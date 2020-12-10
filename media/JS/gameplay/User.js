@@ -1,8 +1,11 @@
 import AssignedVar from "../utility/AssignedVar.js";
 import Firebase from "../utility/Firebase.js";
+import PopUp from "../utility/PopUp.js";
+import Game from "../gameplay/Game.js";
 
 export default class User {
     constructor(name, email, password) {
+        this.id = null;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -17,12 +20,12 @@ export default class User {
         this.controllingColor = AssignedVar.EMPTY;
         this.themeIndex = 0;
         let d = new Date();
-        this.accDateCreated = d.toLocaleDateString() + "_" + `${d.getHours()}-${d.getMinutes()}`;
+        this.accDateCreated = d.toLocaleDateString() + "_" + `${d.getHours()}:${d.getMinutes()}`;
     }
     static isTableOwner() {
         let owner = AssignedVar.currentTable.owner;
-        let userName = User.getUserSignIn().name;
-        if (owner.name != userName) {
+        let userId = User.getUserSignIn().id;
+        if (owner.id != userId) {
             return false
         }
         return true;
@@ -42,11 +45,11 @@ export default class User {
         $($signIn).hide();
         $($signUp).hide();
         $($signOut).show();
-        let userName = userInfo.name;
         let obj = User.getChessClubObj();
+        userInfo.id = id;
         obj[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][id] = userInfo;
         User.setChessClubObj(obj);
-        User.showWelcomeTitle(`Welcome ${userName} to chess club online!`);
+        User.showWelcomeTitle(`Xin chào bạn ${userInfo.name} đến với chess club online!`);
         AssignedVar.IsUserInLobby = true;
         User.showUserStatistic();
         User.setUserSignInId(id);
@@ -58,11 +61,47 @@ export default class User {
         $($signIn).show();
         $($signUp).show();
         $($signOut).hide();
-        User.showWelcomeTitle(`Welcome to chess club online! Please sign in`);
+        User.showWelcomeTitle(`Chào mừng đến với chess club online! Vui lòng đăng nhập!`);
         AssignedVar.IsUserInLobby = true;
         User.hideUserStatistic();
         User.setUserSignInId(-1);
     }
+    static opponent_quitAction(tableId = Firebase.currentTableId) {
+        PopUp.showLoading(() => {
+            User.tables[tableId].opponentid = null;
+            let cPlayersNumber = --User.tables[tableId].playersnumber;
+            if (AssignedVar.currentTable) {
+                cPlayersNumber = --AssignedVar.currentTable.playersNumber;
+            }
+            Firebase.updateTableProperty(tableId,
+                {
+                    playersNumber: cPlayersNumber,
+                    opponent: null, opponentLastMove: null, opponentMove: null, lastTurn: null,
+                    ownerLastMove: null, ownerMove: null, "owner.isReady": false, "owner.tempLoses": 0,
+                    "owner.tempWins": 0,
+                }, () => {
+                    Game.saveAndUpdateScore();
+                    AssignedVar.IsUserInLobby = true;
+                    PopUp.closeModal(`#notification-modal`);
+                }, (errorCode) => {
+                    console.log(`updateTableProperty: !${errorCode}!`);
+                    PopUp.closeModal(`#notification-modal`);
+                });
+        }, `Làm ơn đợi xíu!`, AssignedVar.FAKE_LOADING_TIME);
+    }
+    static owner_quitAction(tableId = Firebase.currentTableId) {
+        PopUp.showLoading(() => {
+            Firebase.deleteTable(tableId, false, () => {
+                PopUp.closeModal(`#notification-modal`);
+                Game.saveAndUpdateScore();
+                AssignedVar.IsUserInLobby = true;
+            }, (e) => {
+                console.log(`deleteTable: "${e}"!`);
+                PopUp.closeModal(`#notification-modal`);
+            });
+        }, `Làm ơn đợi hệ thống xóa bàn`, AssignedVar.FAKE_LOADING_TIME);
+    }
+
     static saveDataForTheFirstTime() {
         if (User.isFirstTime()) {
             User.setChessClubObj(AssignedVar.chessClubObj);
@@ -105,6 +144,23 @@ export default class User {
         }
         return id;
     }
+    static tables = {}
+    static checkRageQuit() {
+        if (User.getUserSignInId() == -1) return;
+        let accId = User.getUserSignInId();
+        console.log(`user.tables`, User.tables);
+        for (let prop in User.tables) {
+            if (User.tables[prop].ownerid == accId) {
+                console.log(`owner have just raged quit!`);
+                User.owner_rageQuitAction(prop);
+            } else if (User.tables[prop].opponentid && User.tables[prop].opponentid == accId && !AssignedVar.currentTable.is_ownerRageQuit) {
+                console.log(`opponent have just raged quit!`);
+                User.opponent_rageQuitAction(prop);
+            } else {
+                console.log(`just a normal reload!`);
+            }
+        }
+    }
     static showUserStatistic() {
         $(`#user-statistic`).show();
     }
@@ -113,5 +169,47 @@ export default class User {
     }
     static hideUserStatistic() {
         $(`#user-statistic`).hide();
+    }
+    static opponent_rageQuitAction(tableId) {
+        PopUp.showLoading(() => {
+            User.tables[tableId].opponentid = null;
+            let cPlayersNumber = --User.tables[tableId].playersnumber;
+            if (AssignedVar.currentTable) {
+                cPlayersNumber = --AssignedVar.currentTable.playersNumber;
+            }
+            let ownerWins = ++User.tables[tableId].owner.wins;
+            Firebase.updateTableProperty(tableId,
+                {
+                    playersNumber: cPlayersNumber, is_opponentRageQuit: true,
+                    opponent: null, opponentLastMove: null, opponentMove: null, lastTurn: null,
+                    ownerLastMove: null, ownerMove: null, "owner.isReady": false, "owner.tempLoses": 0,
+                    "owner.tempWins": 0, "owner.wins": ownerWins,
+                }, () => {
+                    let acc = User.getUserSignIn();
+                    acc.loses++;
+                    User.setUserSignIn(acc);
+                    Game.saveAndUpdateScore();
+                    AssignedVar.IsUserInLobby = true;
+                    PopUp.closeModal(`#notification-modal`);
+                }, (errorCode) => {
+                    console.log(`updateTableProperty: !${errorCode}!`);
+                    PopUp.closeModal(`#notification-modal`);
+                });
+        }, `Bạn vừa tự ý out khỏi bàn chơi! Hành vi này thật phi thể thao!`, AssignedVar.FAKE_LOADING_TIME);
+    }
+    static owner_rageQuitAction(tableId) {
+        PopUp.showLoading(() => {
+            Firebase.deleteTable(tableId, true, () => {
+                PopUp.closeModal(`#notification-modal`);
+                let acc = User.getUserSignIn();
+                acc.loses++;
+                User.setUserSignIn(acc);
+                Game.saveAndUpdateScore();
+                AssignedVar.IsUserInLobby = true;
+            }, (e) => {
+                console.log(`deleteTable: "${e}"!`);
+                PopUp.closeModal(`#notification-modal`);
+            });
+        }, `Bạn vừa tự ý out khỏi bàn chơi! Hành vi này thật phi thể thao!`, AssignedVar.FAKE_LOADING_TIME);
     }
 }

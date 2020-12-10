@@ -92,7 +92,7 @@ function initVisualizeBoard() {
         }
     }
     Visualize.initCoordinatedNumber();
-    Visualize.setThemeAt(0);
+    Visualize.setThemeAt(Visualize.randomNumberFromAToMax(0, 3));
 }
 
 function onclickSelectedEmptyAt(fixedPosition) {
@@ -119,7 +119,7 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
                 }
                 return;
             }
-        } 
+        }
 
         if (AssignedVar.currentGame.currentPlayer.id == $chessPiece[0].controlbyplayerid) {
             setupOnClickCallbackAt(pos);
@@ -230,7 +230,7 @@ export function logicMovePieceTo(nextPos) {
     let lastMoveId = name + "_" + currentPos.convertToId();
     if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
         Firebase.updateMove(Firebase.currentTableId, lastMoveId, AssignedVar.$selectedPiece.id, () => {
-            console.log(`logicMove! lastMoveId, move`, lastMoveId, AssignedVar.$selectedPiece.id);
+            console.log(`logicMovePieceTo: lastMoveId, moveId`, lastMoveId, AssignedVar.$selectedPiece.id);
         });
     }
 
