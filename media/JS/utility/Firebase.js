@@ -22,7 +22,8 @@ export default class Firebase {
         if (_unSubcribeSnapshot) {
             return _unSubcribeSnapshot;
         }
-        return console.log(`You don't subcribe any snapshots!`);
+        console.log(`you don't subcribe any snapshot!`);
+        return null;
     }
     static set currentTableId(value) {
         _currentTableId = value;
@@ -219,7 +220,6 @@ export default class Firebase {
             // actually delete code below here
             Firebase.dbTalbes.doc(tableId).delete()
                 .then(() => {
-                    Firebase.unSubcribeSnapshot();
                     resolveCallback();
                 })
                 .catch((errorCode) => {

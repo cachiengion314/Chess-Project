@@ -138,7 +138,7 @@ export default class Game {
         Firebase.setCurrentUserData(User.getUserSignInId(), acc, () => {
             console.log(`saved in db success:`, acc);
         }, (e) => {
-            console.log(`error when save: "${e}"`);
+            console.log(`setCurrentUserData error: "${e}"`);
         });
     }
 
@@ -245,5 +245,12 @@ export default class Game {
             "color": "black",
         });
         $(`${BLOCK_ID} .ready-bg`).html(`Chưa sẵn sàng!`)
+    }
+    static calculateElo(isAccWin, accElo = 1000, enemyElo = 1000) {
+        if (isAccWin) {
+            return 15;
+        } else {
+            return -15;
+        }
     }
 }

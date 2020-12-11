@@ -209,11 +209,9 @@ function onclickChangeThemeBtn() {
 function onclickReadyBtn() {
     $(`#ready-btn`).click(function () {
         Game.hideReadyBtn();
-
         if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
             let prop = AssignedVar.OWNER;
             let propertyObj = {};
-
             if (User.isTableOwner()) {
                 AssignedVar.currentTable.owner.isReady = true;
                 Game.setReadyBgOn(`#user-block`);
@@ -224,9 +222,8 @@ function onclickReadyBtn() {
                 prop = AssignedVar.OPPONENT;
                 propertyObj[prop] = AssignedVar.currentTable.opponent;
             }
-
             Firebase.updateTableProperty(Firebase.currentTableId, propertyObj, () => {
-                console.log(`ready stage is already updated in db!`);
+                console.log(`readyBtn is clicked by ${prop}! updated in db!`);
             }, (errorCode) => {
                 console.log(`error: "${errorCode}"!`);
             });
@@ -236,7 +233,6 @@ function onclickReadyBtn() {
             AssignedVar.currentTable.opponent.isReady = true;
             Game.setReadyBgOn(`#enemy-block`);
         }
-
         if (AssignedVar.IsUserAndEnemyReady) {
             AssignedVar.currentGame.letPlayerControlChessPiece();
         }
@@ -351,17 +347,21 @@ function noOpponentInTable() {
         if (AssignedVar.isOpponentExists) {
             AssignedVar.isOpponentExists = false;
             AssignedVar.countMaxCurrentLoses = 0;
-            Game.saveAndUpdateScore();
             Game.hideOpponentBlock();
-            if (AssignedVar.currentTable.isRageQuit) {
+            if (AssignedVar.currentTable.is_opponentRageQuit) {
                 PopUp.show(`Đối thủ vừa rage quit khỏi bàn chơi!`, PopUp.sadImgUrl);
+                let acc = User.getUserSignIn();
+                acc.elo += Game.calculateElo(true, acc.elo, 1000);
+                acc.wins++;
+                User.setUserSignIn(acc);
                 AssignedVar.currentGame.resetGameBoard();
             } else {
                 PopUp.show(`Đối thủ vừa thoát khỏi bàn chơi!`, PopUp.sadImgUrl);
             }
+            Game.saveAndUpdateScore();
         } else {
             if (AssignedVar.currentTable.owner.isReady) return;
-            console.log(`new table have been just initialized!`);
+            console.log(`new table have been just initialized or just an empty table!`);
 
         }
     }
@@ -422,15 +422,15 @@ function loseGameResult() {
         USER_TEMPLOSES = "opponent.tempLoses";
         user = opponentAcc;
 
-        propObj["opponent.elo"] = opponentAcc.elo -= 15;
+        propObj["opponent.elo"] = opponentAcc.elo += Game.calculateElo(false);
 
-        propObj["owner.elo"] = ownerAcc.elo += 15;
+        propObj["owner.elo"] = ownerAcc.elo += Game.calculateElo(true);
         propObj["owner.wins"] = ++ownerAcc.wins;
         propObj["owner.tempWins"] = ++ownerAcc.tempWins;
     } else {
-        propObj["owner.elo"] = ownerAcc.elo -= 15;
+        propObj["owner.elo"] = ownerAcc.elo += Game.calculateElo(false);
 
-        propObj["opponent.elo"] = opponentAcc.elo += 15;
+        propObj["opponent.elo"] = opponentAcc.elo += Game.calculateElo(true);
         propObj["opponent.wins"] = ++opponentAcc.wins;
         propObj["opponent.tempWins"] = ++opponentAcc.tempWins;
     }

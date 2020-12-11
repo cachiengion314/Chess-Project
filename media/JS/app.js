@@ -1,6 +1,5 @@
 import listenAllEvents from "./listenAllEvents.js";
 import Game from "./gameplay/Game.js";
-// import User from "./gameplay/User.js";
 
 import "./web-component/WaitingTable.js";
 import "./web-component/ChessPiece.js";

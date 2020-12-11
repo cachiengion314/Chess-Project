@@ -2,6 +2,7 @@ import AssignedVar from "../utility/AssignedVar.js";
 import Firebase from "../utility/Firebase.js";
 import PopUp from "../utility/PopUp.js";
 import Game from "../gameplay/Game.js";
+import initLobby from "../initLobby.js";
 
 export default class User {
     constructor(name, email, password) {
@@ -23,10 +24,14 @@ export default class User {
         this.accDateCreated = d.toLocaleDateString() + "_" + `${d.getHours()}:${d.getMinutes()}`;
     }
     static isTableOwner() {
-        let owner = AssignedVar.currentTable.owner;
-        let userId = User.getUserSignIn().id;
-        if (owner.id != userId) {
-            return false
+        if (AssignedVar.currentTable) {
+            let owner = AssignedVar.currentTable.owner;
+            let userId = User.getUserSignInId();
+            if (owner.id != userId) {
+                return false;
+            } else {
+                return true;
+            }
         }
         return true;
     }
@@ -68,8 +73,9 @@ export default class User {
     }
     static opponent_quitAction(tableId = Firebase.currentTableId) {
         PopUp.showLoading(() => {
-            User.tables[tableId].opponentid = null;
-            let cPlayersNumber = --User.tables[tableId].playersnumber;
+            User.tables[tableId].table.opponent = null;
+            let cPlayersNumber = --User.tables[tableId].table.playersNumber;
+            console.log(`table.playersNumber:`, User.tables[tableId].table.playersNumber);
             if (AssignedVar.currentTable) {
                 cPlayersNumber = --AssignedVar.currentTable.playersNumber;
             }
@@ -150,10 +156,10 @@ export default class User {
         let accId = User.getUserSignInId();
         console.log(`user.tables`, User.tables);
         for (let prop in User.tables) {
-            if (User.tables[prop].ownerid == accId) {
+            if (User.tables[prop].table.owner.id == accId) {
                 console.log(`owner have just raged quit!`);
                 User.owner_rageQuitAction(prop);
-            } else if (User.tables[prop].opponentid && User.tables[prop].opponentid == accId && !AssignedVar.currentTable.is_ownerRageQuit) {
+            } else if (User.tables[prop].table.opponent && User.tables[prop].table.opponent.id == accId && !User.tables[prop].table.is_ownerRageQuit) {
                 console.log(`opponent have just raged quit!`);
                 User.opponent_rageQuitAction(prop);
             } else {
@@ -172,12 +178,12 @@ export default class User {
     }
     static opponent_rageQuitAction(tableId) {
         PopUp.showLoading(() => {
-            User.tables[tableId].opponentid = null;
-            let cPlayersNumber = --User.tables[tableId].playersnumber;
+            User.tables[tableId].table.opponent.id = null;
+            let cPlayersNumber = --User.tables[tableId].table.playersNumber;
             if (AssignedVar.currentTable) {
                 cPlayersNumber = --AssignedVar.currentTable.playersNumber;
             }
-            let ownerWins = ++User.tables[tableId].owner.wins;
+            let ownerWins = ++User.tables[tableId].table.owner.wins;
             Firebase.updateTableProperty(tableId,
                 {
                     playersNumber: cPlayersNumber, is_opponentRageQuit: true,
@@ -186,6 +192,7 @@ export default class User {
                     "owner.tempWins": 0, "owner.wins": ownerWins,
                 }, () => {
                     let acc = User.getUserSignIn();
+                    acc.elo += Game.calculateElo(false, acc.elo, User.tables[tableId].table.owner.elo);
                     acc.loses++;
                     User.setUserSignIn(acc);
                     Game.saveAndUpdateScore();
@@ -202,6 +209,7 @@ export default class User {
             Firebase.deleteTable(tableId, true, () => {
                 PopUp.closeModal(`#notification-modal`);
                 let acc = User.getUserSignIn();
+                acc.elo += Game.calculateElo(false, acc.elo, 1000);
                 acc.loses++;
                 User.setUserSignIn(acc);
                 Game.saveAndUpdateScore();

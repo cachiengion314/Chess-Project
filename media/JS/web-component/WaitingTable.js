@@ -47,38 +47,11 @@ class WaitingTable extends HTMLElement {
         `;
         this.shadowR = this.attachShadow({ mode: `open` });
     }
-    set owner(val) {
-        this._owner = val;
+    set table(val) {
+        this._table = val;
     }
-    get owner() {
-        return this._owner;
-    }
-    set opponent(val) {
-        this._opponent = val;
-    }
-    get opponent() {
-        return this._opponent;
-    }
-    set ownerid(val) {
-        this._ownerid = val;
-        this.setAttribute(`ownerid`, val);
-    }
-    get ownerid() {
-        return this._ownerid;
-    }
-    set opponentid(val) {
-        this._opponentid = val;
-        this.setAttribute(`opponentid`, val);
-    }
-    get opponentid() {
-        return this._opponentid;
-    }
-    set playersnumber(val) {
-        this._playersnumber = val;
-        this.setAttribute(`playersnumber`, val);
-    }
-    get playersnumber() {
-        return this._playersnumber;
+    get table() {
+        return this._table;
     }
     set name(val) {
         this.setAttribute(`name`, val);

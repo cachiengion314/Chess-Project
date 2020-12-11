@@ -10,16 +10,17 @@ import {
     onclickMovePieceAt
 } from "./initGameBoard.js";
 
+let _txt = `<h3 style="color: teal; opacity: .5; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div>Thật khó tin, toàn server không hề có nổi một bàn chơi nào!</div>
+                <div class="space-vertical"></div>
+                <div>Xin hãy thử nhấn f5 để hệ thống tự động cập nhật bàn chơi mới xem sao!</div>
+        </h3>`;
+
 export default function initLobby() {
     Firebase.queryAllTable((allTables) => {
         Game.hideChessBoardAndShowLobby();
         if (allTables.length == 0) {
-            let txt = `<h3 style="color: teal; opacity: .5; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                        <div>Thật khó tin, toàn server không hề có nổi một bàn chơi nào!</div>
-                        <div class="space-vertical"></div>
-                        <div>Xin hãy thử nhấn f5 để hệ thống tự động cập nhật bàn chơi mới xem sao!</div>
-                       </h3>`;
-            $(`#waiting-tables`).html(txt);
+            $(`#waiting-tables`).html(_txt);
         } else {
             $(`#waiting-tables`).empty();
             for (let i = 0; i < allTables.length; ++i) {
@@ -27,6 +28,12 @@ export default function initLobby() {
                     let tableIndex = i + 1;
                     let table = createWaitingTableWith(tableIndex, allTables[i].data());
                     User.tables[allTables[i].data().tableId] = table;
+                } else {
+                    let deletedTableId = `table-` + allTables[i].data().owner.id;
+                    delete User.tables[deletedTableId];
+                    if (Firebase.isEmptyObj(User.tables)) {
+                        $(`#waiting-tables`).html(_txt);
+                    }
                 }
             }
             User.checkRageQuit();
@@ -37,14 +44,7 @@ export default function initLobby() {
 function createWaitingTableWith(index, data) {
     let $table = document.createElement(`waiting-table`);
     $(`#waiting-tables`).append($table);
-    $table.id = data.tableId;
-    $table.owner = data.owner;
-    $table.ownerid = data.owner.id;
-    if (data.opponent) {
-        $table.opponentid = data.opponent.id;
-        $table.opponent = data.opponent;
-    }
-    $table.playersnumber = data.playersNumber;
+    $table.table = data;
     $table.name = `Bàn số: ${index} | Chủ: ${data.owner.name} | số lượng: ${data.playersNumber}`;
     $table.onclick = onclickWaitingTable;
     return $table;
@@ -55,12 +55,12 @@ function onclickWaitingTable() {
         PopUp.show(`Bạn phải đăng nhập để có thể sử dụng được chức năng này!`, PopUp.boringImgUrl);
         return;
     }
-    if (User.tables[this.id] && User.tables[this.id].playersnumber >= 2) {
-        PopUp.show(`Bàn này đã có đủ ${User.tables[this.id].playersnumber} người rồi! Chúng ta không nên vào phá!`, PopUp.boringImgUrl);
+    if (User.tables[this.table.tableId] && User.tables[this.table.tableId].table.playersNumber >= 2) {
+        PopUp.show(`Bàn này đã có đủ ${User.tables[this.table.tableId].table.playersNumber} người rồi! Chúng ta không nên vào phá!`, PopUp.boringImgUrl);
         return;
     }
-    Firebase.currentTableId = this.id;
-    let playersNumber = ++User.tables[Firebase.currentTableId].playersnumber;
+    Firebase.currentTableId = this.table.tableId;
+    let playersNumber = ++User.tables[Firebase.currentTableId].table.playersNumber;
 
     let acc = User.getUserSignIn();
     if (!acc) {
@@ -71,13 +71,14 @@ function onclickWaitingTable() {
     acc.controllingColor = AssignedVar.BLACK;
     acc.tempLoses = 0;
     acc.isReady = false;
+    User.tables[Firebase.currentTableId].table.opponent = acc;
     AssignedVar.currentGame = new Game(AssignedVar.ONLINE);
     AssignedVar.countMaxCurrentLoses = 0;
     let propertyObj = {
         opponent: acc,
         is_opponentRageQuit: false,
         "owner.tempLoses": 0,
-        "owner.isReady": false,
+        // "owner.isReady": false,
         "ownerMove": null,
         "ownerLastMove": null,
         "opponentMove": null,
@@ -119,6 +120,12 @@ function kickThisAccToLobbyWhenOwnerQuit() {
         if (!AssignedVar.IsUserInLobby) {
             AssignedVar.IsUserInLobby = true;
             PopUp.show(`Wow! Chủ bàn đã tự out nên bạn cũng đã bị kick ra khỏi bàn! Thật là vi diệu!`, PopUp.jokeImgUrl);
+            if (AssignedVar.currentTable.is_ownerRageQuit) {
+                let acc = User.getUserSignIn();
+                acc.elo += Game.calculateElo(true);
+                acc.wins++;
+                User.setUserSignIn(acc);
+            }
             Game.saveAndUpdateScore();
         }
     }
