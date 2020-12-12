@@ -92,7 +92,7 @@ function initVisualizeBoard() {
         }
     }
     Visualize.initCoordinatedNumber();
-    Visualize.setThemeAt(Visualize.randomNumberFromAToMax(0, 3));
+    Visualize.setThemeAt(Visualize.randomNumberFromAToMax(0, Visualize.themes.length));
 }
 
 function onclickSelectedEmptyAt(fixedPosition) {

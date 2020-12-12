@@ -5,7 +5,6 @@ import PopUp from "./PopUp.js";
 
 let _isUserAndEnemyReady = false;
 let _isUserInLobby = true;
-let _isOpponentExists = false;
 let _countMaxCurrentLoses = 0;
 
 let _bKnight;
@@ -42,13 +41,6 @@ export default class AssignedVar {
     static set countMaxCurrentLoses(val) {
         _countMaxCurrentLoses = val;
     }
-    static get isOpponentExists() {
-        return _isOpponentExists;
-    }
-    static set isOpponentExists(val) {
-        _isOpponentExists = val;
-    }
-
     static get IsUserAndEnemyReady() {
         _isUserAndEnemyReady = false;
         if (!AssignedVar.currentGame) {
@@ -74,7 +66,6 @@ export default class AssignedVar {
     static set IsUserInLobby(val) {
         Game.hideChatbox();
         if (val) {
-            AssignedVar.isOpponentExists = false;
             Game.hideChessBoardAndShowLobby();
             Game.hideQuitGameBtn();
             initLobby();
@@ -103,7 +94,8 @@ export default class AssignedVar {
         _defaultTable.playersNumber = 1;
         _defaultTable.is_ownerRageQuit = false;
         _defaultTable.is_opponentRageQuit = false;
-
+        _defaultTable.ownerChat = null;
+        _defaultTable.opponentChat = null;
         return _defaultTable;
     }
 
@@ -129,14 +121,17 @@ export default class AssignedVar {
     static get OPPONENT() {
         return "opponent";
     }
-    static get SIGN_COL_ZINDEX() {
-        return "12";
+    static get CHATBOX_ZINDEX() {
+        return "5";
     }
-    static get NOTIFICATION_MODAL_ZINDEX() {
+    static get SIGN_COL_ZINDEX() {
         return "7";
     }
+    static get NOTIFICATION_MODAL_ZINDEX() {
+        return "9";
+    }
     static get CUSTOM_MODAL_ZINDEX() {
-        return "6";
+        return "8";
     }
     static get READY_BTN_ZINDEX() {
         return "5";

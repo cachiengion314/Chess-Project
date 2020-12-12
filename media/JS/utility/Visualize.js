@@ -5,6 +5,15 @@ export default class Visualize {
     static randomNumberFromAToMax(a, max) {
         return Math.floor(Math.random() * (max - a)) + a;
     }
+    static setupZIndex() {
+        $(`.chatbox`).css("z-index", AssignedVar.CHATBOX_ZINDEX);
+        $(`#sign-col`).css("z-index", AssignedVar.SIGN_COL_ZINDEX);
+        $(`#notification-modal`).css("z-index", AssignedVar.NOTIFICATION_MODAL_ZINDEX);
+        $(`.custom-modal`).css("z-index", AssignedVar.CUSTOM_MODAL_ZINDEX);
+        $(`#ready-btn`).css("z-index", AssignedVar.READY_BTN_ZINDEX);
+        $(`chess-piece`).css("z-index", AssignedVar.CHESS_PIECE_ZINDEX);
+        $(`chess-block`).css("z-index", AssignedVar.MIN_BLOCK_ZINDEX);
+    }
     static coordinatesNumbers = [8, 7, 6, 5, 4, 3, 2, 1];
     static coordinatesNames = ["a", "b", "c", "d", "e", "f", "g", "h"]
     static paleOpacityAnimate = {
@@ -40,32 +49,32 @@ export default class Visualize {
     }
     static currentThemeIndex = 0;
     static themes = [{
-            "chessboard-bg-color": "mediumpurple",
-            "position-block": `chartreuse`,
-            "highlight-block": `aqua`,
-            "attack-block": `tomato`,
-            "dark-block": `mediumspringgreen`,
-            "light-block": `gold`,
-            "coordinates-color": "blue",
-        },
-        {
-            "chessboard-bg-color": "rosybrown",
-            "position-block": "hotpink",
-            "highlight-block": "khaki",
-            "attack-block": "lime",
-            "dark-block": "lightsalmon",
-            "light-block": "orangered",
-            "coordinates-color": "greenyellow",
-        },
-        {
-            "chessboard-bg-color": "darkblue",
-            "position-block": "lightyellow",
-            "highlight-block": "lightskyblue",
-            "attack-block": "lightsalmon",
-            "dark-block": "lightyellow",
-            "light-block": "wheat",
-            "coordinates-color": "darkslateblue",
-        },
+        "chessboard-bg-color": "mediumpurple",
+        "position-block": `chartreuse`,
+        "highlight-block": `aqua`,
+        "attack-block": `tomato`,
+        "dark-block": `mediumspringgreen`,
+        "light-block": `gold`,
+        "coordinates-color": "blue",
+    },
+    {
+        "chessboard-bg-color": "rosybrown",
+        "position-block": "hotpink",
+        "highlight-block": "khaki",
+        "attack-block": "lime",
+        "dark-block": "lightsalmon",
+        "light-block": "orangered",
+        "coordinates-color": "greenyellow",
+    },
+    {
+        "chessboard-bg-color": "darkblue",
+        "position-block": "lightyellow",
+        "highlight-block": "lightskyblue",
+        "attack-block": "lightsalmon",
+        "dark-block": "lightyellow",
+        "light-block": "wheat",
+        "coordinates-color": "darkslateblue",
+    },
     ]
     static logInfo() {
         console.log(`------------------------------`);
@@ -199,7 +208,7 @@ export default class Visualize {
         AssignedVar.selectedPieceSpecialBlocks.splice(0);
     }
     static onBlockMouseEnterOf($block) {
-        $($block).mouseenter(function() {
+        $($block).mouseenter(function () {
             let currentPos = Vector.convertIdToVector($block.id);
             let upPos = currentPos.plusVector(new Vector(0, -1).multipliByNumber(.05));
             let effectAnimate = {
@@ -213,7 +222,7 @@ export default class Visualize {
         });
     }
     static onBlockMouseLeaveOf($block) {
-        $($block).mouseleave(function() {
+        $($block).mouseleave(function () {
             let currentPos = Vector.convertIdToVector($block.id);
             let normalEffectAnimate = {
                 ...Visualize.paleOpacityAnimate,
@@ -226,7 +235,7 @@ export default class Visualize {
         });
     }
     static onPieceMouseEnterOf($piece) {
-        $($piece).mouseenter(function() {
+        $($piece).mouseenter(function () {
             let currentPos = Vector.convertIdToVector($piece.id);
             let upPos = currentPos.plusVector(new Vector(0, -1).multipliByNumber(.07));
             let effectAnimate = {
@@ -238,7 +247,7 @@ export default class Visualize {
         });
     }
     static onPieceMouseLeaveOf($piece) {
-        $($piece).mouseleave(function() {
+        $($piece).mouseleave(function () {
             let currentPos = Vector.convertIdToVector($piece.id);
             let normalEffectAnimate = {
                 ...Visualize.normalAnimate,

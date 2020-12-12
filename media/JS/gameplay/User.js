@@ -23,6 +23,7 @@ export default class User {
         let d = new Date();
         this.accDateCreated = d.toLocaleDateString() + "_" + `${d.getHours()}:${d.getMinutes()}`;
     }
+
     static isTableOwner() {
         if (AssignedVar.currentTable) {
             let owner = AssignedVar.currentTable.owner;
@@ -35,14 +36,17 @@ export default class User {
         }
         return true;
     }
+
     static getUserSignIn() {
         return Firebase.convertCustomObjToGenericObj(User.getChessClubObj()[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()]);
     }
+
     static setUserSignIn(user) {
         let updateChessClubOb = User.getChessClubObj();
         updateChessClubOb[AssignedVar.KEY_ALL_ACCOUNTS_SIGN_UP][User.getUserSignInId()] = user;
         User.setChessClubObj(updateChessClubOb);
     }
+
     static signIn(id, userInfo) {
         let $signIn = $(`#sign-col .custom-btn`)[0];
         let $signUp = $(`#sign-col .custom-btn`)[1];
@@ -59,6 +63,7 @@ export default class User {
         User.showUserStatistic();
         User.setUserSignInId(id);
     }
+
     static signOut() {
         let $signIn = $(`#sign-col .custom-btn`)[0];
         let $signUp = $(`#sign-col .custom-btn`)[1];
@@ -71,6 +76,7 @@ export default class User {
         User.hideUserStatistic();
         User.setUserSignInId(-1);
     }
+
     static opponent_quitAction(tableId = Firebase.currentTableId) {
         PopUp.showLoading(() => {
             User.tables[tableId].table.opponent = null;
@@ -93,8 +99,9 @@ export default class User {
                     console.log(`updateTableProperty: !${errorCode}!`);
                     PopUp.closeModal(`#notification-modal`);
                 });
-        }, `Làm ơn đợi xíu!`, AssignedVar.FAKE_LOADING_TIME);
+        }, `Vui lòng đợi hệ thống làm việc!`, AssignedVar.FAKE_LOADING_TIME);
     }
+
     static owner_quitAction(tableId = Firebase.currentTableId) {
         PopUp.showLoading(() => {
             Firebase.deleteTable(tableId, false, () => {
@@ -105,7 +112,7 @@ export default class User {
                 console.log(`deleteTable: "${e}"!`);
                 PopUp.closeModal(`#notification-modal`);
             });
-        }, `Làm ơn đợi hệ thống xóa bàn`, AssignedVar.FAKE_LOADING_TIME);
+        }, `Vui lòng đợi hệ thống xóa bàn đấu trên cơ sở dữ liệu`, AssignedVar.FAKE_LOADING_TIME);
     }
 
     static saveDataForTheFirstTime() {
@@ -202,7 +209,7 @@ export default class User {
                     console.log(`updateTableProperty: !${errorCode}!`);
                     PopUp.closeModal(`#notification-modal`);
                 });
-        }, `Bạn vừa tự ý out khỏi bàn chơi! Hành vi này thật phi thể thao!`, AssignedVar.FAKE_LOADING_TIME);
+        }, `Bạn vừa tự ý out khỏi bàn chơi! Lần sau hãy nhấn thoát game!`, AssignedVar.FAKE_LOADING_TIME, PopUp.angryImgUrl);
     }
     static owner_rageQuitAction(tableId) {
         PopUp.showLoading(() => {
@@ -218,6 +225,6 @@ export default class User {
                 console.log(`deleteTable: "${e}"!`);
                 PopUp.closeModal(`#notification-modal`);
             });
-        }, `Bạn vừa tự ý out khỏi bàn chơi! Hành vi này thật phi thể thao!`, AssignedVar.FAKE_LOADING_TIME);
+        }, `Bạn vừa tự ý out khỏi bàn chơi! Lần sau hãy nhấn thoát game!`, AssignedVar.FAKE_LOADING_TIME, PopUp.angryImgUrl);
     }
 }

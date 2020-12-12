@@ -315,6 +315,31 @@ input:focus {
     display: flex;
 }
 
+#user-block .chatbox {
+    top: -40%;
+    left: 3%;
+}
+
+#enemy-block .chatbox {
+    top: 90%;
+    left: 3%;
+}
+
+.chatbox {
+    visibility: visible;
+    opacity: 0;
+    cursor: pointer;
+    width: fit-content;
+    height: fit-content;
+    background-color: white;
+    color: darkslategray;
+    text-align: center;
+    padding: 3px 5px;
+    border-radius: .5em;
+    position: absolute;
+    z-index: 5;
+}
+
 #function-col .box {
     color: black;
 }

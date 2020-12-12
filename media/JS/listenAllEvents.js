@@ -5,6 +5,7 @@ import Visualize from "./utility/Visualize.js";
 import PopUp from "./utility/PopUp.js";
 import Game from "./gameplay/Game.js";
 import Vector from "./utility/Vector.js";
+import ChatBox from "./utility/ChatBox.js";
 
 import {
     onclickMovePieceAt
@@ -94,9 +95,9 @@ function onclickSignOutBtn() {
             PopUp.show(`Bạn không thể đăng xuất khi đang chơi game!`);
             return;
         }
-        PopUp.showYesNo(`Bạn có chắc muốn thoát đăng xuất!`, PopUp.questionImgUrl, () => {
+        PopUp.showYesNo(`Bạn có chắc muốn đăng xuất?`, PopUp.questionImgUrl, () => {
             User.signOut();
-            PopUp.show(`You have been sign out!`);
+            PopUp.show(`Bạn đã đăng xuất thành công!`);
         });
     }
 }
@@ -234,7 +235,7 @@ function onclickReadyBtn() {
             Game.setReadyBgOn(`#enemy-block`);
         }
         if (AssignedVar.IsUserAndEnemyReady) {
-            AssignedVar.currentGame.letPlayerControlChessPiece();
+            AssignedVar.currentGame.letPlayerControlChessPiece_snapshot();
         }
     });
 }
@@ -247,6 +248,7 @@ function onclickPlaySoloBtn() {
         let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
         AssignedVar.currentTable = newTable;
         AssignedVar.currentGame = new Game(AssignedVar.OFFLINE);
+        Game.showOpponentBlock();
         AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("guest", "guest@gmail.com", "123"));
         AssignedVar.currentGame.createNewChessBoard();
         AssignedVar.currentGame.setCurrentPlayer();
@@ -285,20 +287,20 @@ function onclickCreateATableBtn() {
         let acc = User.getUserSignIn();
         if (!acc) {
             console.log(`user may accidently delete their own localStorage data!`);
-            PopUp.show(`you cannot create`);
+            PopUp.show(`Bạn không thể tạo bàn vì lý do kĩ thuật!`);
             return;
         }
         acc.controllingColor = AssignedVar.WHITE;
         let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, acc);
         AssignedVar.currentTable = newTable;
         AssignedVar.currentGame = new Game(AssignedVar.ONLINE);
+        Game.isTheFirstTimeCreateTable = true;
 
         PopUp.showLoading(() => {
             Firebase.setTable(Firebase.currentTableId, newTable, () => {
                 AssignedVar.currentGame.createNewChessBoard();
                 AssignedVar.currentGame.setCurrentPlayer();
                 AssignedVar.IsUserInLobby = false;
-                AssignedVar.isOpponentExists = false;
                 Game.hideOpponentBlock();
 
                 PopUp.closeModal(`#notification-modal`, () => {
@@ -312,7 +314,7 @@ function onclickCreateATableBtn() {
                 PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
                 AssignedVar.currentGame = null;
             });
-        }, `Làm ơn chờ đợi hệ thống tạo bàn!`, AssignedVar.FAKE_LOADING_TIME);
+        }, `Vui lòng chờ đợi hệ thống tạo bàn!`, AssignedVar.FAKE_LOADING_TIME);
     };
 }
 ///////
@@ -328,7 +330,8 @@ function mimicAllOpponentActionForThisAcc() {
     if (AssignedVar.currentTable.tableId == -1) return;
     opponentJoinTableEvent();
     noOpponentInTable();
-    if (!AssignedVar.isOpponentExists) return;
+
+    if (!AssignedVar.currentTable.opponent) return;
     resetBoardWhenOpponentResigned();
     mimicChessPiece();
     mimicOpponentMove();
@@ -336,34 +339,17 @@ function mimicAllOpponentActionForThisAcc() {
 
 function opponentJoinTableEvent() {
     if (AssignedVar.currentTable.opponent) {
-        Game.opponentJoinTable_invoker();
+        Game.opponentJoinTable_snapshot();
     } else {
-        Game.recharge_opponentJoinTable_invoker();
+        Game.recharge_opponentJoinTable_snapshot();
     }
 }
 
 function noOpponentInTable() {
     if (!AssignedVar.currentTable.opponent) {
-        if (AssignedVar.isOpponentExists) {
-            AssignedVar.isOpponentExists = false;
-            AssignedVar.countMaxCurrentLoses = 0;
-            Game.hideOpponentBlock();
-            if (AssignedVar.currentTable.is_opponentRageQuit) {
-                PopUp.show(`Đối thủ vừa rage quit khỏi bàn chơi!`, PopUp.sadImgUrl);
-                let acc = User.getUserSignIn();
-                acc.elo += Game.calculateElo(true, acc.elo, 1000);
-                acc.wins++;
-                User.setUserSignIn(acc);
-                AssignedVar.currentGame.resetGameBoard();
-            } else {
-                PopUp.show(`Đối thủ vừa thoát khỏi bàn chơi!`, PopUp.sadImgUrl);
-            }
-            Game.saveAndUpdateScore();
-        } else {
-            if (AssignedVar.currentTable.owner.isReady) return;
-            console.log(`new table have been just initialized or just an empty table!`);
-
-        }
+        Game.opponentLeftTable_snapshot();
+    } else {
+        Game.recharge_opponentLeftTable_snapshot();
     }
 }
 
@@ -379,7 +365,7 @@ function mimicChessPiece() {
     if (AssignedVar.currentTable.opponent && AssignedVar.currentTable.opponent.isReady) {
         Game.setReadyBgOn(`#enemy-block`);
         if (AssignedVar.IsUserAndEnemyReady) {
-            AssignedVar.currentGame.letPlayerControlChessPiece();
+            AssignedVar.currentGame.letPlayerControlChessPiece_snapshot();
         }
     }
 }
@@ -487,7 +473,7 @@ function findNameAndEmailDuplicateCompletedCallback(isNameDuplicate, isEmailDupl
                 User.signIn(userId, userInfo);
             });
         },
-            (errorCode) => { PopUp.show(`There is an error! "${errorCode}" in this!`, PopUp.sadImgUrl) }
+            (errorCode) => { PopUp.show(`Error! "${errorCode}"!`, PopUp.sadImgUrl) }
         );
     }
 }

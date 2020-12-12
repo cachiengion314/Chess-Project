@@ -1,5 +1,7 @@
 import AssignedVar from "./AssignedVar.js";
 
+let _unSubcribeTimeout;
+
 export default class PopUp {
     static sadImgUrl = "./media/Image/sad.png";
     static happyImgUrl = "./media/Image/happy.png";
@@ -83,9 +85,9 @@ export default class PopUp {
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happyImgUrl)
         $(`${SIGN_MODAL_ID} h4`).html(`Chào mừng đến với Chess club online! Hãy đăng ký một tài khoản để chơi online nào!`);
     }
-    static showLoading(closeConditionCallback, content = `Please stand by!`, fakeLoadingTime = 0) {
+    static showLoading(closeConditionCallback, content = `Please stand by!`, fakeLoadingTime = 0, imgUrl = PopUp.loadingImgUrl) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
-        PopUp.openModal(NOTIFICATION_MODAL_ID, PopUp.loadingImgUrl);
+        PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
 
         let $okBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[0];
         let $noBtn = $(`${NOTIFICATION_MODAL_ID} .custom-modal-footer .close-btn`)[1];
@@ -98,7 +100,8 @@ export default class PopUp {
         $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
 
-        setTimeout(closeConditionCallback, fakeLoadingTime)
+        clearTimeout(_unSubcribeTimeout);
+        _unSubcribeTimeout = setTimeout(closeConditionCallback, fakeLoadingTime);
     }
     static showYesNo(content = "yes or no", imgUrl = PopUp.sadImgUrl, yesCallback = () => { }, noCallback = () => { }) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;

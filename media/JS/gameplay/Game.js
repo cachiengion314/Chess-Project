@@ -5,23 +5,51 @@ import { initGameBoard, onclickSelectedChessPieceAt } from "../initGameBoard.js"
 import Firebase from "../utility/Firebase.js";
 import User from "./User.js";
 import PopUp from "../utility/PopUp.js";
+import ChatBox from "../utility/ChatBox.js";
 
 let $chessBoard;
 let _blackPlayer;
 let _whitePlayer;
+let _isGoFirstByChessRule = true;
+let _isTheFirstTimeCreateTable = true;
 
 let _placeHolder_letPlayerControlChessPiece;
 let _placeHolder_opponentJoinTable;
+let _placeHolder_opponentLeftTable;
 let _emptyAction = () => { }
+
+let _opponentLeftTalbe = () => {
+    AssignedVar.countMaxCurrentLoses = 0;
+    Game.hideOpponentBlock();
+    if (!AssignedVar.currentTable.is_opponentRageQuit) {
+        if (_isTheFirstTimeCreateTable) {
+            console.log(`the table have been initialized!`);
+        } else {
+            PopUp.show(`Đối thủ vừa thoát khỏi bàn chơi!`, PopUp.sadImgUrl);
+        }
+    } else {
+        PopUp.show(`Đối thủ vừa rage quit khỏi bàn chơi!`, PopUp.sadImgUrl);
+        let acc = User.getUserSignIn();
+        acc.elo += Game.calculateElo(true, acc.elo, 1000);
+        acc.wins++;
+        User.setUserSignIn(acc);
+        AssignedVar.currentGame.resetGameBoard();
+    }
+    Game.saveAndUpdateScore();
+    _isTheFirstTimeCreateTable = false;
+    _placeHolder_opponentLeftTable = _emptyAction;
+}
 
 let _opponentJoinTable = () => {
     PopUp.show(`Một đối thủ vừa mới gia nhập bàn của bạn!`, PopUp.happierImgUrl);
-    AssignedVar.isOpponentExists = true;
     Game.showOpponentBlock();
     _placeHolder_opponentJoinTable = _emptyAction;
 }
 
 let _letPlayerControlChessPiece = () => {
+    ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `TRẬN ĐẤU CHÍNH THỨC BẮT ĐẦU!`);
+    ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `TRẬN ĐẤU CHÍNH THỨC BẮT ĐẦU!`);
+
     for (let x = 0; x < 8; ++x) {
         for (let y = 0; y < 8; ++y) {
             let pos = new Vector(x, y);
@@ -34,16 +62,29 @@ let _letPlayerControlChessPiece = () => {
 }
 _placeHolder_letPlayerControlChessPiece = _letPlayerControlChessPiece;
 _placeHolder_opponentJoinTable = _opponentJoinTable;
+_placeHolder_opponentLeftTable = _opponentLeftTalbe;
 
 export default class Game {
     constructor(gameMode) {
         this.gameMode = gameMode;
         this.chessBoard = [];
     }
-    static recharge_opponentJoinTable_invoker() {
+    static get isTheFirstTimeCreateTable() {
+        return _isTheFirstTimeCreateTable;
+    }
+    static set isTheFirstTimeCreateTable(val) {
+        _isTheFirstTimeCreateTable = val;
+    }
+    static opponentLeftTable_snapshot() {
+        _placeHolder_opponentLeftTable();
+    }
+    static recharge_opponentLeftTable_snapshot() {
+        _placeHolder_opponentLeftTable = _opponentLeftTalbe;
+    }
+    static recharge_opponentJoinTable_snapshot() {
         _placeHolder_opponentJoinTable = _opponentJoinTable;
     }
-    static opponentJoinTable_invoker() {
+    static opponentJoinTable_snapshot() {
         _placeHolder_opponentJoinTable();
     }
     static initLogicPlayer() {
@@ -65,10 +106,10 @@ export default class Game {
     static set whitePlayer(val) {
         _whitePlayer = val;
     }
-    letPlayerControlChessPiece() {
+    letPlayerControlChessPiece_snapshot() {
         _placeHolder_letPlayerControlChessPiece();
     }
-    recharge_letPlayerControlChessPiece() {
+    recharge_letPlayerControlChessPiece_snapshot() {
         _placeHolder_letPlayerControlChessPiece = _letPlayerControlChessPiece;
     }
     setCurrentPlayer(isGoFirstByChessRule = true) {
@@ -77,6 +118,8 @@ export default class Game {
         } else {
             this.currentPlayer = Game.blackPlayer;
         }
+        _isGoFirstByChessRule = isGoFirstByChessRule;
+        return _isGoFirstByChessRule;
     }
     createNewChessBoard() {
         Game.showChessBoardAndHideLobby();
@@ -87,7 +130,7 @@ export default class Game {
     }
     resetGameBoard() {
         Game.showReadyBtn();
-        this.recharge_letPlayerControlChessPiece();
+        this.recharge_letPlayerControlChessPiece_snapshot();
         if (Game.$ChessBoard) {
             $($chessBoard).empty();
         }
@@ -107,7 +150,6 @@ export default class Game {
     }
 
     static saveAndUpdateScore() {
-        AssignedVar.isOpponentExists = false;
         let acc = User.getUserSignIn();
         acc.isReady = false;
         acc.tempWins = 0;

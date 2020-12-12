@@ -143,7 +143,7 @@ function mimicChessPiece() {
     if (AssignedVar.currentTable.owner.isReady) {
         Game.setReadyBgOn(`#user-block`);
         if (AssignedVar.IsUserAndEnemyReady) {
-            AssignedVar.currentGame.letPlayerControlChessPiece();
+            AssignedVar.currentGame.letPlayerControlChessPiece_snapshot();
         }
     }
 }
