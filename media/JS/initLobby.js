@@ -111,6 +111,7 @@ function mimicAllOwnerActionForThisAcc() {
     kickThisAccToLobbyWhenOwnerQuit();
     if (AssignedVar.currentTable.tableId == -1 || !AssignedVar.currentTable.opponent) return;
     resetBoardWhenOwnerResigned();
+    mimicOwnerChat();
     mimicChessPiece();
     mimicOwnerMove();
 }
@@ -127,6 +128,7 @@ function kickThisAccToLobbyWhenOwnerQuit() {
                 User.setUserSignIn(acc);
             }
             Game.saveAndUpdateScore();
+            Firebase.unSubcribeSnapshot();
         }
     }
 }
@@ -136,6 +138,13 @@ function resetBoardWhenOwnerResigned() {
         PopUp.show(`Thật không thể tin được! Chủ phòng vừa "tự đầu hàng" nên bạn không cần phải vất vả đánh nữa!`, PopUp.happierImgUrl);
         AssignedVar.countMaxCurrentLoses = AssignedVar.currentTable.owner.tempLoses;
         AssignedVar.currentGame.resetGameBoard();
+    }
+}
+
+function mimicOwnerChat() {
+    if (Game.tempChat != AssignedVar.currentTable.ownerChat) {
+        Game.tempChat = AssignedVar.currentTable.ownerChat;
+        Game.showNewOwnerChat();
     }
 }
 

@@ -333,6 +333,7 @@ function mimicAllOpponentActionForThisAcc() {
 
     if (!AssignedVar.currentTable.opponent) return;
     resetBoardWhenOpponentResigned();
+    mimicOpponentChat();
     mimicChessPiece();
     mimicOpponentMove();
 }
@@ -358,6 +359,13 @@ function resetBoardWhenOpponentResigned() {
         PopUp.show(`Thật không thể tin nổi! Đối thủ vừa "tự đầu hàng" nên bạn không cần phải vất vả đánh nữa!`, PopUp.jokeImgUrl);
         AssignedVar.countMaxCurrentLoses = AssignedVar.currentTable.opponent.tempLoses;
         AssignedVar.currentGame.resetGameBoard();
+    }
+}
+
+function mimicOpponentChat() {
+    if (Game.tempChat != AssignedVar.currentTable.opponentChat) {
+        Game.tempChat = AssignedVar.currentTable.opponentChat;
+        Game.showNewOpponentChat();
     }
 }
 

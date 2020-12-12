@@ -12,11 +12,21 @@ let _blackPlayer;
 let _whitePlayer;
 let _isGoFirstByChessRule = true;
 let _isTheFirstTimeCreateTable = true;
+let _tempChat;
 
 let _placeHolder_letPlayerControlChessPiece;
 let _placeHolder_opponentJoinTable;
 let _placeHolder_opponentLeftTable;
+let _placeHolder_showNewOpponentChat;
+let _placeHolder_showNewOwnerChat;
 let _emptyAction = () => { }
+
+let _showNewOpponentChat = () => {
+    ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, _tempChat);
+}
+let _showNewOwnerChat = () => {
+    ChatBox.show(ChatBox.OWNER_CHATBOX_ID, _tempChat);
+}
 
 let _opponentLeftTalbe = () => {
     AssignedVar.countMaxCurrentLoses = 0;
@@ -47,8 +57,8 @@ let _opponentJoinTable = () => {
 }
 
 let _letPlayerControlChessPiece = () => {
-    ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `TRẬN ĐẤU CHÍNH THỨC BẮT ĐẦU!`);
-    ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `TRẬN ĐẤU CHÍNH THỨC BẮT ĐẦU!`);
+    ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `Trận đấu bắt đầu!`);
+    ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `Trận đấu bắt đầu!`);
 
     for (let x = 0; x < 8; ++x) {
         for (let y = 0; y < 8; ++y) {
@@ -63,17 +73,31 @@ let _letPlayerControlChessPiece = () => {
 _placeHolder_letPlayerControlChessPiece = _letPlayerControlChessPiece;
 _placeHolder_opponentJoinTable = _opponentJoinTable;
 _placeHolder_opponentLeftTable = _opponentLeftTalbe;
+_placeHolder_showNewOpponentChat = _showNewOpponentChat;
+_placeHolder_showNewOwnerChat = _showNewOwnerChat;
 
 export default class Game {
     constructor(gameMode) {
         this.gameMode = gameMode;
         this.chessBoard = [];
     }
+    static get tempChat() {
+        return _tempChat;
+    }
+    static set tempChat(val) {
+        _tempChat = val;
+    }
     static get isTheFirstTimeCreateTable() {
         return _isTheFirstTimeCreateTable;
     }
     static set isTheFirstTimeCreateTable(val) {
         _isTheFirstTimeCreateTable = val;
+    }
+    static showNewOpponentChat() {
+        _placeHolder_showNewOpponentChat();
+    }
+    static showNewOwnerChat() {
+        _placeHolder_showNewOwnerChat();
     }
     static opponentLeftTable_snapshot() {
         _placeHolder_opponentLeftTable();
@@ -156,9 +180,6 @@ export default class Game {
         acc.tempLoses = 0;
         User.setUserSignIn(acc);
         Game.saveUserStatistic(acc);
-        if (!User.isTableOwner()) {
-            Firebase.unSubcribeSnapshot();
-        }
     }
 
     static quickSaveUserStatistic() {
@@ -185,14 +206,12 @@ export default class Game {
     }
 
     static showOpponentBlock() {
-        $(`#enemy-block`).show();
+        $(`#enemy-block`).css("visibility", "visible");
     }
     static hideOpponentBlock() {
-        $(`#enemy-block`).hide();
+        $(`#enemy-block`).css("visibility", "hidden");
     }
     static showChessBoardAndHideLobby() {
-        // Game.emptyWaitingTables();
-
         $(`#mode-group-btn`).hide(`fast`);
         $(`#gameplay-group-btn`).show(`fast`);
         $(`#gameplay`).show(`fast`);
