@@ -28,6 +28,7 @@ export default class ChatBox {
             } else {
                 ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, $_txtInput.value);
             }
+            $_txtInput.value = "";
         };
     }
 
@@ -46,12 +47,12 @@ export default class ChatBox {
                         console.log(`opponent sent ${$_txtInput.value} success!`);
                     });
                 }
+                $_txtInput.value = "";
             }
         }
     }
-    
+
     static show(BLOCK_ID = `#user-block`, content) {
-        $_txtInput.value = "";
         $(`${BLOCK_ID} .chatbox`).html(content);
         $(`${BLOCK_ID} .chatbox`).animate({
             "opacity": "1"
