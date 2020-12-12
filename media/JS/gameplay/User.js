@@ -79,6 +79,7 @@ export default class User {
 
     static opponent_quitAction(tableId = Firebase.currentTableId) {
         PopUp.showLoading(() => {
+            Firebase.unSubcribeSnapshot();
             User.tables[tableId].table.opponent = null;
             let cPlayersNumber = --User.tables[tableId].table.playersNumber;
             console.log(`table.playersNumber:`, User.tables[tableId].table.playersNumber);
@@ -104,6 +105,7 @@ export default class User {
 
     static owner_quitAction(tableId = Firebase.currentTableId) {
         PopUp.showLoading(() => {
+            Firebase.unSubcribeSnapshot();
             Firebase.deleteTable(tableId, false, () => {
                 PopUp.closeModal(`#notification-modal`);
                 Game.saveAndUpdateScore();
