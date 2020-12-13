@@ -11,7 +11,7 @@ import User from "./gameplay/User.js";
 import ChatBox from "./utility/ChatBox.js";
 import Visualize from "./utility/Visualize.js";
 
-// $(document).ready(whenDocumentFullyLoaded);
+$(document).ready(whenDocumentFullyLoaded);
 
 function whenDocumentFullyLoaded() {
     Visualize.setupZIndex();
