@@ -24,6 +24,32 @@ export default class User {
         this.accDateCreated = d.toLocaleDateString() + "_" + `${d.getHours()}:${d.getMinutes()}`;
     }
 
+    static isMyPiece(piece) {
+        if (User.isTableOwner()) {
+            if (User.isOwnerPiece(piece)) {
+                return true;
+            }
+            return false;
+        }
+        if (!User.isOwnerPiece(piece)) {
+            return true;
+        }
+        return false;
+    }
+
+    static isOwnerPiece(piece) {
+        if (piece.color == AssignedVar.WHITE) {
+            if (AssignedVar.currentTable.owner.controllingColor == AssignedVar.WHITE) {
+                return true;
+            }
+            return false;
+        }
+        if (AssignedVar.currentTable.owner.controllingColor == AssignedVar.BLACK) {
+            return true;
+        }
+        return false;
+    }
+
     static isTableOwner() {
         if (AssignedVar.currentTable) {
             let owner = AssignedVar.currentTable.owner;

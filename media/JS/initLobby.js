@@ -78,7 +78,6 @@ function onclickWaitingTable() {
         opponent: acc,
         is_opponentRageQuit: false,
         "owner.tempLoses": 0,
-        // "owner.isReady": false,
         "ownerMove": null,
         "ownerLastMove": null,
         "opponentMove": null,
@@ -135,7 +134,7 @@ function kickThisAccToLobbyWhenOwnerQuit() {
 
 function resetBoardWhenOwnerResigned() {
     if (AssignedVar.countMaxCurrentLoses < AssignedVar.currentTable.owner.tempLoses) {
-        PopUp.show(`Thật không thể tin được! Chủ phòng vừa "tự đầu hàng" nên bạn không cần phải vất vả đánh nữa!`, PopUp.happierImgUrl);
+        PopUp.show(`Xin chúc mừng! Bạn đã thắng!`, PopUp.happierImgUrl);
         AssignedVar.countMaxCurrentLoses = AssignedVar.currentTable.owner.tempLoses;
         AssignedVar.currentGame.resetGameBoard();
     }

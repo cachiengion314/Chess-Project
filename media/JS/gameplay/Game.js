@@ -28,7 +28,7 @@ let _showNewOwnerChat = () => {
     ChatBox.show(ChatBox.OWNER_CHATBOX_ID, _tempChat);
 }
 
-let _opponentLeftTalbe = () => {
+let _opponentLeftTable = () => {
     AssignedVar.countMaxCurrentLoses = 0;
     Game.hideOpponentBlock();
     if (!AssignedVar.currentTable.is_opponentRageQuit) {
@@ -72,7 +72,7 @@ let _letPlayerControlChessPiece = () => {
 }
 _placeHolder_letPlayerControlChessPiece = _letPlayerControlChessPiece;
 _placeHolder_opponentJoinTable = _opponentJoinTable;
-_placeHolder_opponentLeftTable = _opponentLeftTalbe;
+_placeHolder_opponentLeftTable = _opponentLeftTable;
 _placeHolder_showNewOpponentChat = _showNewOpponentChat;
 _placeHolder_showNewOwnerChat = _showNewOwnerChat;
 
@@ -103,7 +103,7 @@ export default class Game {
         _placeHolder_opponentLeftTable();
     }
     static recharge_opponentLeftTable_snapshot() {
-        _placeHolder_opponentLeftTable = _opponentLeftTalbe;
+        _placeHolder_opponentLeftTable = _opponentLeftTable;
     }
     static recharge_opponentJoinTable_snapshot() {
         _placeHolder_opponentJoinTable = _opponentJoinTable;
@@ -307,6 +307,60 @@ export default class Game {
         });
         $(`${BLOCK_ID} .ready-bg`).html(`Chưa sẵn sàng!`)
     }
+    static loseGameResult() {
+        if (AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
+            let accName = "khách vãng lai";
+            if (User.getUserSignInId() != -1) {
+                accName = User.getUserSignIn().name;
+            }
+            AssignedVar.currentGame.resetGameBoard();
+            PopUp.show(`Bạn "${accName}" đã thua cuộc!`, PopUp.sadImgUrl);
+            return;
+        }
+        let propObj = {};
+        let ownerAcc = AssignedVar.currentTable.owner;
+        let opponentAcc = AssignedVar.currentTable.opponent;
+        let user = ownerAcc;
+
+        let USER_LOSES = "owner.loses";
+        let USER_TEMPLOSES = "owner.tempLoses";
+        if (!User.isTableOwner()) {
+            USER_LOSES = "opponent.loses";
+            USER_TEMPLOSES = "opponent.tempLoses";
+            user = opponentAcc;
+
+            propObj["opponent.elo"] = opponentAcc.elo += Game.calculateElo(false);
+
+            propObj["owner.elo"] = ownerAcc.elo += Game.calculateElo(true);
+            propObj["owner.wins"] = ++ownerAcc.wins;
+            propObj["owner.tempWins"] = ++ownerAcc.tempWins;
+        } else {
+            propObj["owner.elo"] = ownerAcc.elo += Game.calculateElo(false);
+
+            propObj["opponent.elo"] = opponentAcc.elo += Game.calculateElo(true);
+            propObj["opponent.wins"] = ++opponentAcc.wins;
+            propObj["opponent.tempWins"] = ++opponentAcc.tempWins;
+        }
+        let LOSER_NAME = user.name;
+        propObj[USER_LOSES] = ++user.loses;
+        propObj[USER_TEMPLOSES] = ++user.tempLoses;
+
+        let updateObj = {
+            ...propObj,
+            opponentLastMove: null, opponentMove: null, lastTurn: null,
+            ownerLastMove: null, ownerMove: null, "opponent.isReady": false, "owner.isReady": false,
+        }
+        PopUp.showLoading(() => {
+            Firebase.updateTableProperty(Firebase.currentTableId, updateObj, () => {
+                console.log(`owner and enemy score in the table is updated!`);
+                PopUp.show(`Bạn "${LOSER_NAME}" đã thua cuộc!`, PopUp.sadImgUrl);
+                AssignedVar.currentGame.resetGameBoard();
+            }, (e) => {
+                console.log(`loseGameResultUpdate!: "${e}"`);
+            });
+        }, `Đợi chút! Hệ thống đang xử lý yêu cầu!`, AssignedVar.FAKE_LOADING_TIME);
+    }
+    
     static calculateElo(isAccWin, accElo = 1000, enemyElo = 1000) {
         if (isAccWin) {
             return 15;

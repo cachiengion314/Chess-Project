@@ -172,7 +172,7 @@ function onclickResignedBtn() {
     let $resignedBtn = $(`#function-col #gameplay-group-btn button`)[1];
     $resignedBtn.onclick = () => {
         if (AssignedVar.IsUserAndEnemyReady) {
-            PopUp.showYesNo(`Bạn có chắc muốn đầu hàng ngay bây giờ?`, PopUp.questionImgUrl, loseGameResult);
+            PopUp.showYesNo(`Bạn có chắc muốn đầu hàng ngay bây giờ?`, PopUp.questionImgUrl, Game.loseGameResult);
         } else {
             PopUp.show(`Bạn phải chơi game thì mới đầu hàng được!`, PopUp.sadImgUrl);
         }
@@ -356,7 +356,7 @@ function noOpponentInTable() {
 
 function resetBoardWhenOpponentResigned() {
     if (AssignedVar.countMaxCurrentLoses < AssignedVar.currentTable.opponent.tempLoses) {
-        PopUp.show(`Thật không thể tin nổi! Đối thủ vừa "tự đầu hàng" nên bạn không cần phải vất vả đánh nữa!`, PopUp.jokeImgUrl);
+        PopUp.show(`Xin chúc mừng! Bạn đã thắng!`, PopUp.jokeImgUrl);
         AssignedVar.countMaxCurrentLoses = AssignedVar.currentTable.opponent.tempLoses;
         AssignedVar.currentGame.resetGameBoard();
     }
@@ -392,60 +392,6 @@ function mimicOpponentMove() {
 
     onclickMovePieceAt(lastMove);
     onclickMovePieceAt(move);
-}
-
-function loseGameResult() {
-    if (AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
-        let accName = "khách vãng lai";
-        if (User.getUserSignInId() != -1) {
-            accName = User.getUserSignIn().name;
-        }
-        AssignedVar.currentGame.resetGameBoard();
-        PopUp.show(`Bạn "${accName}" đã thua cuộc!`, PopUp.sadImgUrl);
-        return;
-    }
-    let propObj = {};
-    let ownerAcc = AssignedVar.currentTable.owner;
-    let opponentAcc = AssignedVar.currentTable.opponent;
-    let user = ownerAcc;
-
-    let USER_LOSES = "owner.loses";
-    let USER_TEMPLOSES = "owner.tempLoses";
-    if (!User.isTableOwner()) {
-        USER_LOSES = "opponent.loses";
-        USER_TEMPLOSES = "opponent.tempLoses";
-        user = opponentAcc;
-
-        propObj["opponent.elo"] = opponentAcc.elo += Game.calculateElo(false);
-
-        propObj["owner.elo"] = ownerAcc.elo += Game.calculateElo(true);
-        propObj["owner.wins"] = ++ownerAcc.wins;
-        propObj["owner.tempWins"] = ++ownerAcc.tempWins;
-    } else {
-        propObj["owner.elo"] = ownerAcc.elo += Game.calculateElo(false);
-
-        propObj["opponent.elo"] = opponentAcc.elo += Game.calculateElo(true);
-        propObj["opponent.wins"] = ++opponentAcc.wins;
-        propObj["opponent.tempWins"] = ++opponentAcc.tempWins;
-    }
-    let LOSER_NAME = user.name;
-    propObj[USER_LOSES] = ++user.loses;
-    propObj[USER_TEMPLOSES] = ++user.tempLoses;
-
-    let updateObj = {
-        ...propObj,
-        opponentLastMove: null, opponentMove: null, lastTurn: null,
-        ownerLastMove: null, ownerMove: null, "opponent.isReady": false, "owner.isReady": false,
-    }
-    PopUp.showLoading(() => {
-        Firebase.updateTableProperty(Firebase.currentTableId, updateObj, () => {
-            console.log(`owner and enemy score in the table is updated!`);
-            PopUp.show(`Bạn "${LOSER_NAME}" đã thua cuộc!`, PopUp.sadImgUrl);
-            AssignedVar.currentGame.resetGameBoard();
-        }, (e) => {
-            console.log(`loseGameResultUpdate!: "${e}"`);
-        });
-    }, `Đợi chút! Hệ thống đang xử lý yêu cầu!`, AssignedVar.FAKE_LOADING_TIME);
 }
 /////////
 /////////

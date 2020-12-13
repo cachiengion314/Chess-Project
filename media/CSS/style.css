@@ -338,6 +338,7 @@ input:focus {
     border-radius: .5em;
     position: absolute;
     z-index: 5;
+    font-size: 24px;
 }
 
 #function-col .box {

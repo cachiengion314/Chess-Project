@@ -202,8 +202,17 @@ export function logicDestroyEnemyPiece(logicEnemyPiece) {
         Game.blackPlayer.deathPieces.push(logicEnemyPiece);
     }
     AssignedVar.currentGame.chessBoard[logicEnemyPiece.currentPos.x][logicEnemyPiece.currentPos.y] = new Empty(logicEnemyPiece.currentPos);
-    console.log(`logicDestroyEnemyPiece. logicEnemyPieces:`, logicEnemyPiece);
+
+    destroyKingEvent(logicEnemyPiece);
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
+}
+
+function destroyKingEvent(logicEnemyPiece) {
+    if (logicEnemyPiece.name == AssignedVar.KING_W || logicEnemyPiece.name == AssignedVar.KING_B) {
+        if (User.isMyPiece(logicEnemyPiece)) {
+            Game.loseGameResult();
+        }
+    }
 }
 
 function noUpdateFirebaseLogicMovePieceTo(nextPos) {

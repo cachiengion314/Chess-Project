@@ -23,11 +23,7 @@ export default class ChatBox {
     static onclickChatBoxSendBtn() {
         let $sendBtn = $(`#function-col .box button`)[0];
         $sendBtn.onclick = () => {
-            if (User.isTableOwner()) {
-                ChatBox.show(ChatBox.OWNER_CHATBOX_ID, $_txtInput.value);
-            } else {
-                ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, $_txtInput.value);
-            }
+            ChatBox.send();
             $_txtInput.value = "";
         };
     }
@@ -36,22 +32,24 @@ export default class ChatBox {
         $_txtInput = $(`#function-col .box input`)[0];
         $_txtInput.onkeydown = (event) => {
             if (event.keyCode == 13) {
-                if (User.isTableOwner()) {
-                    ChatBox.show(ChatBox.OWNER_CHATBOX_ID, $_txtInput.value);
-                    Firebase.updateTableProperty(Firebase.currentTableId, { "ownerChat": $_txtInput.value }, () => {
-                        console.log(`owner sent ${$_txtInput.value} success!`);
-                    });
-                } else {
-                    ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, $_txtInput.value);
-                    Firebase.updateTableProperty(Firebase.currentTableId, { "opponentChat": $_txtInput.value }, () => {
-                        console.log(`opponent sent ${$_txtInput.value} success!`);
-                    });
-                }
+                ChatBox.send();
                 $_txtInput.value = "";
             }
         }
     }
-
+    static send() {
+        if (User.isTableOwner()) {
+            ChatBox.show(ChatBox.OWNER_CHATBOX_ID, $_txtInput.value);
+            Firebase.updateTableProperty(Firebase.currentTableId, { "ownerChat": $_txtInput.value }, () => {
+                console.log(`owner sent success!`);
+            });
+        } else {
+            ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, $_txtInput.value);
+            Firebase.updateTableProperty(Firebase.currentTableId, { "opponentChat": $_txtInput.value }, () => {
+                console.log(`opponent sent success!`);
+            });
+        }
+    }
     static show(BLOCK_ID = `#user-block`, content) {
         $(`${BLOCK_ID} .chatbox`).html(content);
         $(`${BLOCK_ID} .chatbox`).animate({
@@ -61,13 +59,13 @@ export default class ChatBox {
                 clearTimeout(_unSubcribeTimeOut_owner);
                 _unSubcribeTimeOut_owner = setTimeout(() => {
                     ChatBox.hide(ChatBox.OWNER_CHATBOX_ID);
-                }, AssignedVar.FAKE_LOADING_TIME);
+                }, AssignedVar.FAKE_LOADING_TIME * 1.25);
             }
             if (BLOCK_ID == ChatBox.OPPONENT_CHATBOX_ID) {
                 clearTimeout(_unSubcribeTimeOut_opponent);
                 _unSubcribeTimeOut_opponent = setTimeout(() => {
                     ChatBox.hide(ChatBox.OPPONENT_CHATBOX_ID);
-                }, AssignedVar.FAKE_LOADING_TIME);
+                }, AssignedVar.FAKE_LOADING_TIME * 1.25);
             }
         });
     }
