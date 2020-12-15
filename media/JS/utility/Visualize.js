@@ -265,6 +265,9 @@ export default class Visualize {
         }
     }
     static setThemeAt(index) {
+        if (AssignedVar.IsUserInLobby) {
+            return;
+        }
         Visualize.currentThemeIndex = index;
         $(`chess-board`)[0].style.backgroundColor = Visualize.themes[index][AssignedVar.CHESSBOARD_BG_COLOR];
         AssignedVar.positionBlock = Visualize.themes[index][AssignedVar.POSITION_BLOCK];

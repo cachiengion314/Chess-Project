@@ -10,7 +10,7 @@ import {
     onclickMovePieceAt
 } from "./initGameBoard.js";
 
-let _txt = `<h3 style="color: teal; opacity: .5; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+let _txt = `<h3 style="color: white; opacity: .5; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <div>Thật khó tin, toàn server không hề có nổi một bàn chơi nào!</div>
                 <div class="space-vertical"></div>
                 <div>Xin hãy thử nhấn f5 để hệ thống tự động cập nhật bàn chơi mới xem sao!</div>
@@ -60,6 +60,8 @@ function onclickWaitingTable() {
         return;
     }
     Firebase.currentTableId = this.table.tableId;
+    Firebase.currentChatsId = this.table.chatsId;
+
     let playersNumber = ++User.tables[Firebase.currentTableId].table.playersNumber;
 
     let acc = User.getUserSignIn();
@@ -86,9 +88,9 @@ function onclickWaitingTable() {
     }
     PopUp.showLoading(() => {
         Firebase.updateTableProperty(Firebase.currentTableId, propertyObj, () => {
+            AssignedVar.IsUserInLobby = false;
             AssignedVar.currentGame.createNewChessBoard();
             AssignedVar.currentGame.setCurrentPlayer();
-            AssignedVar.IsUserInLobby = false;
             PopUp.closeModal(`#notification-modal`);
             Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
         }, (errorCode) => {
@@ -98,6 +100,13 @@ function onclickWaitingTable() {
             AssignedVar.IsUserInLobby = true;
         });
     }, `Vui lòng đợi hệ thống làm việc!`, AssignedVar.FAKE_LOADING_TIME);
+
+    Firebase.onSnapshotWithChatsId(Firebase.currentChatsId, chatsChangedCallback);
+}
+
+function chatsChangedCallback(chatsData) {
+    AssignedVar.currentChatsId = chatsData;
+    mimicOwnerChat();
 }
 
 function tableChangedCallback(tableData) {
@@ -110,7 +119,6 @@ function mimicAllOwnerActionForThisAcc() {
     kickThisAccToLobbyWhenOwnerQuit();
     if (AssignedVar.currentTable.tableId == -1 || !AssignedVar.currentTable.opponent) return;
     resetBoardWhenOwnerResigned();
-    mimicOwnerChat();
     mimicChessPiece();
     mimicOwnerMove();
 }
@@ -128,6 +136,7 @@ function kickThisAccToLobbyWhenOwnerQuit() {
             }
             Game.saveAndUpdateScore();
             Firebase.unSubcribeSnapshot();
+            Firebase.unSubcribeChatsSnapshot();
         }
     }
 }
@@ -141,8 +150,8 @@ function resetBoardWhenOwnerResigned() {
 }
 
 function mimicOwnerChat() {
-    if (Game.tempChat != AssignedVar.currentTable.ownerChat) {
-        Game.tempChat = AssignedVar.currentTable.ownerChat;
+    if (Game.tempChat != AssignedVar.currentChats.ownerChat) {
+        Game.tempChat = AssignedVar.currentChats.ownerChat;
         Game.showNewOwnerChat();
     }
 }

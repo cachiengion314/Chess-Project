@@ -86,7 +86,7 @@ export default class User {
         User.setChessClubObj(obj);
         User.showWelcomeTitle(`Xin chào bạn ${userInfo.name} đến với chess club online!`);
         AssignedVar.IsUserInLobby = true;
-        User.showUserStatistic();
+        User.showUserStatistic(userInfo);
         User.setUserSignInId(id);
     }
 
@@ -106,6 +106,8 @@ export default class User {
     static opponent_quitAction(tableId = Firebase.currentTableId) {
         PopUp.showLoading(() => {
             Firebase.unSubcribeSnapshot();
+            Firebase.unSubcribeChatsSnapshot();
+
             User.tables[tableId].table.opponent = null;
             let cPlayersNumber = --User.tables[tableId].table.playersNumber;
             console.log(`table.playersNumber:`, User.tables[tableId].table.playersNumber);
@@ -131,6 +133,13 @@ export default class User {
 
     static owner_quitAction(tableId = Firebase.currentTableId) {
         PopUp.showLoading(() => {
+            Firebase.unSubcribeChatsSnapshot();
+            Firebase.deleteChats(Firebase.currentChatsId, () => {
+                console.log(`deleteChats success!`);
+            }, (e) => {
+                console.log(`deleteTable: "${e}"!`);
+            });
+
             Firebase.unSubcribeSnapshot();
             Firebase.deleteTable(tableId, false, () => {
                 PopUp.closeModal(`#notification-modal`);
@@ -202,8 +211,19 @@ export default class User {
             }
         }
     }
-    static showUserStatistic() {
+    static showUserStatistic(userInfo) {
         $(`#user-statistic`).show();
+        let $name = $(`#user-statistic .statistic-txt`)[0];
+        let $elo = $(`#user-statistic .statistic-txt`)[1];
+        let $wins = $(`#user-statistic .statistic-txt`)[2];
+        let $loses = $(`#user-statistic .statistic-txt`)[3];
+        let $draws = $(`#user-statistic .statistic-txt`)[4];
+        $($name).html(`${userInfo.name}`);
+        $($elo).html(`${userInfo.elo}`);
+        $($wins).html(`${userInfo.wins}`);
+        $($loses).html(`${userInfo.loses}`);
+        $($draws).html(`${userInfo.draws}`);
+
     }
     static showWelcomeTitle(content) {
         $(`#sign-col h4`).text(content);
@@ -241,6 +261,12 @@ export default class User {
     }
     static owner_rageQuitAction(tableId) {
         PopUp.showLoading(() => {
+            Firebase.deleteChats(Firebase.currentChatsId, () => {
+                console.log(`deleteChats success!`);
+            }, (e) => {
+                console.log(`deleteTable: "${e}"!`);
+            });
+
             Firebase.deleteTable(tableId, true, () => {
                 PopUp.closeModal(`#notification-modal`);
                 let acc = User.getUserSignIn();

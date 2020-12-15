@@ -25,9 +25,15 @@ export default function listenAllEvents() {
     onclickResignedBtn();
     onclickOfferADrawBtn();
     onclickChangeThemeBtn();
+    onclickOptionBtn();
     listenResizeEvent();
 }
-
+function onclickOptionBtn() {
+    let $optionBtn = $(`#option-btn`)[0];
+    $optionBtn.onclick = () => {
+        PopUp.showOption(`Tùy chọn hệ thống`);
+    }
+}
 function onclickSignInBtn() {
     let $signInBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[0];
     $signInBtn.onclick = () => {
@@ -115,15 +121,14 @@ function onclickOpenSignColBtn() {
             "top": "0",
             "left": "0",
         });
-        if (window.innerWidth < 501) {
-            $(`#sign-col-content`).animate({
-                "width": "40%",
-            }, "fast");
-        } else {
-            $(`#sign-col-content`).animate({
-                "width": "30%",
-            }, "fast");
+
+        let width = "30%";
+        if (window.innerWidth < window.innerHeight) {
+            width = "57%";
         }
+        $(`#sign-col-content`).animate({
+            "width": width,
+        }, "fast");
     });
 
     onclickCloseSignColEvent();
@@ -149,9 +154,11 @@ function listenResizeEvent() {
         switch (AssignedVar.haveUsedSignColButton) {
             case true:
                 if (window.innerWidth > AssignedVar.MAX_SCREEN_WIDTH) {
+                    let width = "18%";
+
                     $(`#sign-col`).css({
                         "display": "flex",
-                        "width": "18%",
+                        "width": width,
                         "height": "100vh",
                         "position": "relative",
                     });
@@ -243,6 +250,7 @@ function onclickReadyBtn() {
 function onclickPlaySoloBtn() {
     let $playSoloBtn = $(`#mode-group-btn button`)[1];
     $playSoloBtn.onclick = () => {
+        AssignedVar.IsUserInLobby = false;
         let userAcc = User.getUserSignIn();
         userAcc.controllingColor = AssignedVar.WHITE;
         let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
@@ -252,7 +260,6 @@ function onclickPlaySoloBtn() {
         AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("guest", "guest@gmail.com", "123"));
         AssignedVar.currentGame.createNewChessBoard();
         AssignedVar.currentGame.setCurrentPlayer();
-        AssignedVar.IsUserInLobby = false;
     };
 }
 
@@ -296,22 +303,30 @@ function onclickCreateATableBtn() {
         AssignedVar.currentGame = new Game(AssignedVar.ONLINE);
         Game.isTheFirstTimeCreateTable = true;
 
+        let newChats = AssignedVar.getDefaultChats(Firebase.currentChatsId);
+
         PopUp.showLoading(() => {
+            Firebase.setChats(Firebase.currentChatsId, newChats, () => {
+                Firebase.onSnapshotWithChatsId(Firebase.currentChatsId, chatsChangedCallback);
+            }, (e) => {
+                console.log(`setChats error: ${e}`);
+            });
+
             Firebase.setTable(Firebase.currentTableId, newTable, () => {
+                AssignedVar.IsUserInLobby = false;
                 AssignedVar.currentGame.createNewChessBoard();
                 AssignedVar.currentGame.setCurrentPlayer();
-                AssignedVar.IsUserInLobby = false;
                 Game.hideOpponentBlock();
 
                 PopUp.closeModal(`#notification-modal`, () => {
                     Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
                     PopUp.showLoading(() => {
-                        PopUp.show(`Hướng dẫn chơi! Khi nhìn thấy đối thủ vào phòng! Hãy nhấn "Sẵn sàng"! Khi cả hai cùng sẵn sàng, trận đấu sẽ được bắt đầu!`, PopUp.cuteImgUrl);
+                        PopUp.show(`Khi thấy đối thủ vào phòng! Hãy nhấn "Sẵn sàng"! Khi cả hai sẵn sàng, trận đấu sẽ được bắt đầu!`, PopUp.cuteImgUrl);
                     }, `Đợi chút! Hệ thống đang tải hướng dẫn chơi!`, AssignedVar.FAKE_LOADING_TIME);
                 });
 
             }, (errorCode) => {
-                PopUp.show(`Sorry! There an error: "${errorCode}" in this action`, PopUp.sadImgUrl);
+                console.log(`error: "${errorCode}"!`);
                 AssignedVar.currentGame = null;
             });
         }, `Vui lòng chờ đợi hệ thống tạo bàn!`, AssignedVar.FAKE_LOADING_TIME);
@@ -320,6 +335,10 @@ function onclickCreateATableBtn() {
 ///////
 ///////
 ///////
+function chatsChangedCallback(chatsData) {
+    AssignedVar.currentChatsId = chatsData;
+    mimicOpponentChat();
+}
 function tableChangedCallback(tableData) {
     AssignedVar.currentTable = tableData;
     Game.quickSaveUserStatistic();
@@ -333,7 +352,6 @@ function mimicAllOpponentActionForThisAcc() {
 
     if (!AssignedVar.currentTable.opponent) return;
     resetBoardWhenOpponentResigned();
-    mimicOpponentChat();
     mimicChessPiece();
     mimicOpponentMove();
 }
@@ -363,8 +381,8 @@ function resetBoardWhenOpponentResigned() {
 }
 
 function mimicOpponentChat() {
-    if (Game.tempChat != AssignedVar.currentTable.opponentChat) {
-        Game.tempChat = AssignedVar.currentTable.opponentChat;
+    if (Game.tempChat != AssignedVar.currentChats.opponentChat) {
+        Game.tempChat = AssignedVar.currentChats.opponentChat;
         Game.showNewOpponentChat();
     }
 }

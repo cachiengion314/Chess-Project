@@ -34,9 +34,11 @@
             </div>
             <!-- Modal footer -->
             <div class="custom-modal-footer">
-                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Ok</button>
-                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Không</button>
-                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Có</button>
+                <button class="custom-btn close-btn fs-sm ml-3 mr-3" style="height: 7vh; width: 100px;">Ok</button>
+                <button class="custom-btn quit-btn close-btn fs-sm ml-3 mr-3"
+                    style="height: 7vh; width: 100px;">Không</button>
+                <button class="custom-btn highlight-btn close-btn fs-sm ml-3 mr-3"
+                    style="height: 7vh; width: 100px;">Có</button>
             </div>
         </div>
     </div>
@@ -52,132 +54,120 @@
             <div class="custom-modal-body mb-4">
                 <div class="align-col-center" style="width: 50%;">
                     <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
-                        <div class="txt mb-1 ml-1">Tên của bạn</div>
+                        <div class="txt white fs-sm mb-1 ml-1">Tên của bạn</div>
                         <input type="text" style="height: 30px;">
                     </div>
                     <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
-                        <div class="txt mb-1 ml-1">Email của bạn</div>
+                        <div class="txt white fs-sm mb-1 ml-1">Email của bạn</div>
                         <input type="text" style="height: 30px;">
                     </div>
                     <div class="txt-input mb-2" style="height: fit-content; width: 100%;">
-                        <div class="txt mb-1 ml-1">Password</div>
-                        <input type="text" style="height: 30px;">
+                        <div class="txt white fs-sm mb-1 ml-1">Password</div>
+                        <input type="password" style="height: 30px;">
                     </div>
                     <div class="txt-input" style="height: fit-content; width: 100%;">
-                        <div class="txt mb-1 ml-1">Password xác minh</div>
-                        <input type="text" style="height: 30px;">
+                        <div class="txt white fs-sm mb-1 ml-1">Password xác minh</div>
+                        <input type="password" style="height: 30px;">
                     </div>
                 </div>
                 <img src="./media/Image/king-b.png" alt="" class="p-3" style="width: 50%;">
             </div>
             <!-- Modal footer -->
             <div class="custom-modal-footer">
-                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Hủy</button>
-                <button class="custom-btn-sm close-btn ml-3 mr-3" style="width: 100px;">Đăng ký</button>
+                <button class="custom-btn quit-btn close-btn fs-sm ml-3 mr-3"
+                    style="height: 7vh; width: 135px;">Hủy</button>
+                <button class="custom-btn highlight-btn close-btn fs-sm ml-3 mr-3"
+                    style="height: 7vh; width: 135px;">Đăng ký</button>
             </div>
         </div>
     </div>
 
     <!-- option modal -->
-    <div class="modal" id="option-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">This is option</h4>
-                </div>
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <button id="change-theme-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">change
-                        theme</button>
-                    <button id="about-us-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
-                        about
-                        us
-                    </button>
-                    <button id="how-to-play-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
-                        how to
-                        play
-                    </button>
-                    <button id="top-player-btn" class="custom-btn font-size-vw-big mb-1" style=" height: 25%; ">
-                        top
-                        player
-                    </button>
-                </div>
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Sign</button>
-                </div>
+    <div class="custom-modal" id="option-modal">
+        <div class="custom-modal-content">
+            <!-- Modal Header -->
+            <div class="custom-modal-header mb-4">
+                <h4>Tùy chọn hệ thống</h4>
+            </div>
+            <!-- Modal body -->
+            <div class="custom-modal-body option-modal-body mb-4" style="height: 30vh;">
+                <button id="change-theme-btn" class="custom-btn fs-big mb-1" style="width: 67%; height: 9vh;">
+                    Đổi màu bàn cờ
+                </button>
+                <button id="about-us-btn" class="custom-btn fs-big mb-1" style="width: 67%; height: 9vh;">
+                    Về chúng tôi
+                </button>
+                <button id="how-to-play-btn" class="custom-btn fs-big mb-1" style="width: 67%; height: 9vh;">
+                    Luật chơi
+                </button>
+                <button id="top-player-btn" class="custom-btn fs-big mb-1" style="width: 67%; height: 9vh;">
+                    Bảng xếp hạng
+                </button>
+            </div>
+            <!-- Modal footer -->
+            <div class="custom-modal-footer">
+                <button class="custom-btn quit-btn close-btn fs-sm ml-3 mr-3"
+                    style="height: 7vh; width: 100px;">Hủy</button>
+                <button class="custom-btn highlight-btn close-btn fs-sm ml-3 mr-3"
+                    style="height: 7vh; width: 100px;">Đồng ý</button>
             </div>
         </div>
     </div>
 
-
-    <div class="all-contents bg-light">
+    <div class="all-contents">
         <!-- 1. sign col -->
         <div id="sign-col" class="pos-relative " style="height:100vh">
             <div id="sign-col-content" style="height:100%;">
-                <div class="row no-margin bg-primary" style="height: 9%;">
-                    <div class="col-sm-3 no-padding">
-                        <img src="./media/Image/knight-w.png" class="img-fluid"
-                            style="width: 100%; height: 100%;"></img>
-                    </div>
-                    <div class="col-sm-9 no-padding">
-                        <h3 class="font-size-vh-ssbig">Chess Club Online</h3>
-                    </div>
-                </div>
-
-                <h4 class="text-center font-size-vw-big">
+                <div id="logo-txt" class="mt-2" style="width: 100%; height: 10%;">Chess Club Online</div>
+                <h4 class="text-center fs-big">
                     Chào mừng đến với Chess club online
                 </h4>
 
-
-                <div class="btn-group-vertical " style="height: 17%; width: 100%;">
-                    <button id="sign-in-btn" class="custom-btn mb-1" style="height: 32%;">
+                <div class="btn-group-vertical " style="height: 20%; width: 100%;">
+                    <button id="sign-in-btn" class="custom-btn fs-sm mb-1" style="height: 32%;">
                         Đăng nhập
                     </button>
-                    <button id="sign-up-btn" class="custom-btn mb-1" style="height: 32%;">
+                    <button id="sign-up-btn" class="custom-btn fs-sm mb-1" style="height: 32%;">
                         Đăng ký
                     </button>
-                    <button id="sign-out-btn" class="custom-btn " style="height: 32%;">
+                    <button id="sign-out-btn" class="custom-btn fs-sm " style="height: 32%;">
                         Đăng xuất
                     </button>
                 </div>
 
-                <div class="space-vertical"></div>
-
-                <div id="user-statistic" class="card " style="height: 35%;">
-                    <div class=" card-header ">
-                        <img src=" ./media/Image/avatar_4.png " id="avatar-big" alt=""
+                <div id="user-statistic" class="custom-card " style="height: fit-content;">
+                    <div class="custom-card-header ">
+                        <img src=" ./media/Image/avatar_4.png " id="avatar-big" alt="" class="mt-2"
                             style="height: 12vh;width: 12vh;">
                     </div>
-                    <div class="card-body ">
-                        <h5 class="font-size-vw-sm overflow-hidden text-center">unknow player</h5>
+                    <div class="custom-card-body ">
+                        <h5 class="statistic-txt fs-big overflow-hidden text-center">unknow player</h5>
                         <div class="card-body-flex-txt " style="width: 100%;">
-                            <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Elo:</div>
-                            <div class="font-size-vw-sm over-flow-hidden " style="width: 60%;">
+                            <div class="align-row-center fs-sm overflow-hidden white" style="width: 50%;">Elo:
+                            </div>
+                            <div class="statistic-txt fs-sm over-flow-hidden " style="width: 50%;">
                                 1000
-                                <small class="font-size-vw-sm">pts</small></div>
+                            </div>
                         </div>
                         <div class="card-body-flex-txt ">
-                            <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Wins:</div>
-                            <div class="font-size-vw-sm over-flow-hidden " style="width: 60%;">
+                            <div class="align-row-center fs-sm overflow-hidden white" style="width: 50%;">
+                                Wins:</div>
+                            <div class="statistic-txt fs-sm over-flow-hidden " style="width: 50%;">
                                 10
-                                <small class="font-size-vw-sm">matches</small>
                             </div>
                         </div>
                         <div class="card-body-flex-txt ">
-                            <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Loses:</div>
-                            <div class="font-size-vw-sm over-flow-hidden " style="width: 60%;">
+                            <div class="align-row-center fs-sm overflow-hidden white" style="width: 50%;">
+                                Loses:</div>
+                            <div class="statistic-txt fs-sm over-flow-hidden " style="width: 50%;">
                                 21
-                                <small class="font-size-vw-sm">matches</small>
                             </div>
                         </div>
-                        <div class="card-body-flex-txt ">
-                            <div class="font-size-vw-sm overflow-hidden " style="width: 40%;">Draws:</div>
-                            <div class="font-size-vw-sm over-flow-hidden " style="width: 60%;">
+                        <div class="card-body-flex-txt mb-2">
+                            <div class="align-row-center fs-sm overflow-hidden white" style="width: 50%;">
+                                Draws:</div>
+                            <div class="statistic-txt fs-sm over-flow-hidden " style="width: 50%;">
                                 78
-                                <small class="font-size-vw-sm">matches</small>
                             </div>
                         </div>
                     </div>
@@ -185,12 +175,11 @@
 
                 <div class="space-vertical "></div>
 
-                <div class="btn-group-vertical " style="height: 5%; width: 100%;">
-                    <button id="option-btn" class="custom-btn font-size-vw-big mb-1" type="button" data-toggle="modal"
-                        data-target="#option-modal" style="height: 100%;">
-                        Option
-                    </button>
-                </div>
+
+                <button id="option-btn" class="custom-btn fs-sm mb-1" style="height: 7%;">
+                    Tùy chọn
+                </button>
+
                 <div class="space-vertical"></div>
             </div>
         </div>
@@ -198,51 +187,51 @@
         <!-- 2. main gameplay col  -->
         <div id="main-col" class="no-padding " style="height: 100vh;">
             <!-- board row -->
-            <div id="waiting-tables" class="bg-light" style="height: 100%;">
+            <div id="waiting-tables" class="" style="height: 100%;">
                 <!-- <waiting-table></waiting-table> -->
             </div>
             <div id="gameplay" style="height: 100%;">
-                <div class="d-flex bg-warning position-relative" style="height: 4%;">
-                    <div id="table-txt" class="text-primary ml-2">Table 2</div>
+                <div class="table-txt d-flex position-relative" style="height: 4%;">
+                    <div id="table-txt" class="fs-ssm white ml-2 mt-1">Table</div>
                 </div>
                 <!-- player 1 row  -->
-                <div id="enemy-block" class="display-flex bg-info position-relative" style="height: 8%;">
+                <div id="enemy-block" class="player-block display-flex position-relative" style="height: 8%;">
                     <img src=" ./media/Image/avatar_6.png " class="avatar-sm avatar-sm ml-2 mr-2"
                         style="width: 8vh; height:8vh;"></img>
-                    <div class="d-block bg-danger" style="width: 150px;">
-                        <div class="text-center text-white bg-success font-size-vh-sm w-100 h-50">Đối thủ</div>
-                        <div class="ready-bg align-row-center font-size-vh-sm w-100 h-50">Chưa sẵn sàng</div>
+                    <div class="d-block " style="width: 150px;">
+                        <div class="player text-center text-white fs-ssm w-100 h-50 pt-1">Đối thủ</div>
+                        <div class="ready-bg align-row-center fs-ssm w-100 h-50">Chưa sẵn sàng</div>
                     </div>
                     <div class="align-end">
-                        <div class="font-size-vh-ssm">wins: 0</div>
-                        <div class="font-size-vh-ssm">draws: 0</div>
-                        <div class="font-size-vh-ssm">time left: 30s</div>
+                        <div class="fs-ssm white">wins: 0</div>
+                        <div class="fs-ssm white">draws: 0</div>
+                        <div class="fs-ssm white">time left: 30s</div>
                     </div>
 
                     <div class="chatbox">tooltip will be here</div>
                 </div>
-              
+
                 <div id="board-package" class=" position-relative" style="height:80%;">
-                    <button id="ready-btn" class="custom-btn">Sẵn sàng</button>
+                    <button id="ready-btn" class="custom-btn fs-sm highlight-btn">Sẵn sàng</button>
                     <!-- <chess-board></chess-board> -->
                 </div>
 
                 <!-- player 2 row  -->
-                <div id="user-block" class="display-flex bg-info position-relative" style="height: 8%;">
+                <div id="user-block" class="player-block display-flex position-relative" style="height: 8%;">
                     <div class="chatbox">tooltip will be here</div>
 
                     <img src=" ./media/Image/avatar_2.png " class="avatar-sm ml-2 mr-2"
                         style="width: 8vh; height:8vh;"></img>
 
-                    <div class="d-block bg-danger" style="width: 150px;">
-                        <div class="text-center text-white bg-success font-size-vh-sm w-100 h-50">Người chơi</div>
-                        <div class="ready-bg align-row-center font-size-vh-sm w-100 h-50">Chưa sẵn sàng</div>
+                    <div class="d-block " style="width: 150px;">
+                        <div class="player text-center text-white fs-ssm w-100 h-50 pt-1">Người chơi</div>
+                        <div class="ready-bg align-row-center fs-ssm w-100 h-50">Chưa sẵn sàng</div>
                     </div>
 
                     <div class="align-end">
-                        <div class="font-size-vh-ssm">wins: 0</div>
-                        <div class="font-size-vh-ssm">draws: 0</div>
-                        <div class="font-size-vh-ssm">time left: 30s</div>
+                        <div class="fs-ssm white">wins: 0</div>
+                        <div class="fs-ssm white">draws: 0</div>
+                        <div class="fs-ssm white">time left: 30s</div>
                     </div>
                 </div>
             </div>
@@ -252,43 +241,39 @@
         <!-- 3. functions col  -->
         <div id="function-col" class="pos-relative " style="height:100vh">
 
-            <div class="horizontal-bar bg-primary" style="height: 5%;">
-                <button id="sign-col-btn" class="custom-btn-sm">&#9776;</button>
+            <div class="horizontal-bar mt-2" style="height: 5%;">
+                <button id="sign-col-btn" class="custom-btn fs-sm" style="height: 100%;">&#9776;</button>
             </div>
 
-            <button class="custom-btn-sm font-size-vw-sm mb-1" style="height: 5%;">
+            <button class="custom-btn quit-btn fs-big mb-1" style="height: 7%;">
                 Thoát game
             </button>
 
-            <div id="mode-group-btn" style="height: 30%">
-                <button class="custom-btn font-size-vw-big mb-1" style=" height: 50%; ">
+            <div id="mode-group-btn" style="height: 35%">
+                <button class="custom-btn highlight-btn fs-big mb-2" style=" height: 55%; ">
                     Tạo bàn
                 </button>
-                <button class="custom-btn font-size-vw-big" style=" height: 40%; ">
+                <button class="custom-btn fs-big" style=" height: 40%; ">
                     Chơi đơn
                 </button>
             </div>
 
-            <div id="gameplay-group-btn" class="btn-group-vertical" style="height: 20%;">
-                <button class="custom-btn-sm font-size-vh-sm mb-1" style="height: 32%;">
+            <div id="gameplay-group-btn" class="btn-group-vertical" style="height: 26%;">
+                <button class="custom-btn fs-sm mb-1" style="height: 32%;">
                     Cầu hòa
                 </button>
-                <button class="custom-btn-sm font-size-vh-sm mb-1" style="height: 32%;">
+                <button class="custom-btn fs-sm mb-1" style="height: 32%;">
                     Đầu hàng 1
                 </button>
-                <button class="custom-btn-sm font-size-vh-sm" style="height: 32%;">
+                <button class="custom-btn fs-sm" style="height: 32%;">
                     Đầu hàng 2
                 </button>
             </div>
 
-            <div class="box " style="height:25%;">
-                <div class="box-header ">Chat Box</div>
-                <div class="box-body" style="height: 55%;">
-                    <!-- chat text in here -->
-                </div>
-                <div id="chat-box-footer" class="box-footer " style="height: 20%;">
+            <div class="box " style="height:6%;">
+                <div id="chat-box-footer" class="box-footer " style="height: 100%;">
                     <input type="text" style="width: 75%;">
-                    <button class="overflow-hidden " style="width: 25%;">Send</button>
+                    <button class="custom-btn overflow-hidden " style="width: 25%;">Gửi</button>
                 </div>
             </div>
 
@@ -298,10 +283,6 @@
     </div>
 
 </body>
-
-<!-- <script type="module">
-    import { initGameBoard } from "./media/JS/InitGameBoard.js "; $(document).ready(readyCallback); function readyCallback() { initGameBoard(); }
-</script> -->
 
 <script src="./media/JS/app.js" type="module"></script>
 

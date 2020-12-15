@@ -31,6 +31,7 @@ export default class AssignedVar {
     static haveUsedSignColButton = false;
     static isLetPlayerControlPiece = false;
     static currentTable = null;
+    static currentChats = null;
 
     static get countMaxCurrentLoses() {
         if (AssignedVar.IsUserInLobby) {
@@ -94,9 +95,18 @@ export default class AssignedVar {
         _defaultTable.playersNumber = 1;
         _defaultTable.is_ownerRageQuit = false;
         _defaultTable.is_opponentRageQuit = false;
-        _defaultTable.ownerChat = null;
-        _defaultTable.opponentChat = null;
+        _defaultTable.chatsId = `chats-` + owner.id;
+
         return _defaultTable;
+    }
+
+    static getDefaultChats(chatsId) {
+        let _defaultChats = {};
+        _defaultChats.chatsId = chatsId;
+        _defaultChats.ownerChat = null;
+        _defaultChats.opponentChat = null;
+
+        return _defaultChats;
     }
 
     static selectedPiece = null;

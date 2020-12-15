@@ -40,12 +40,12 @@ export default class ChatBox {
     static send() {
         if (User.isTableOwner()) {
             ChatBox.show(ChatBox.OWNER_CHATBOX_ID, $_txtInput.value);
-            Firebase.updateTableProperty(Firebase.currentTableId, { "ownerChat": $_txtInput.value }, () => {
+            Firebase.updateChatsProperty(Firebase.currentChatsId, { "ownerChat": $_txtInput.value }, () => {
                 console.log(`owner sent success!`);
             });
         } else {
             ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, $_txtInput.value);
-            Firebase.updateTableProperty(Firebase.currentTableId, { "opponentChat": $_txtInput.value }, () => {
+            Firebase.updateChatsProperty(Firebase.currentChatsId, { "opponentChat": $_txtInput.value }, () => {
                 console.log(`opponent sent success!`);
             });
         }

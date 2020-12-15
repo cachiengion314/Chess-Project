@@ -18,6 +18,24 @@ export default class PopUp {
     static bigModalWidth = "55%";
     static userNameTxtColor = "red";
 
+    static showOption(content = "option", yesCallback = () => { }, noCallback = () => { }) {
+        let OPTION_MODAL_ID = `#option-modal`;
+        PopUp.openModal(OPTION_MODAL_ID);
+
+        let $noBtn = $(`${OPTION_MODAL_ID} .custom-modal-footer .close-btn`)[0];
+        let $yesBtn = $(`${OPTION_MODAL_ID} .custom-modal-footer .close-btn`)[1];
+        $noBtn.onclick = () => {
+            PopUp.closeModal(OPTION_MODAL_ID);
+        }
+        $yesBtn.onclick = () => {
+            PopUp.closeModal(OPTION_MODAL_ID, yesCallback);
+        };
+
+        content = PopUp.highlightContent(content);
+        $(`${OPTION_MODAL_ID} h4`).html(content);
+        $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
+    }
+
     static showSignIn(signInCallback = () => { }, cancelCallback = () => { }) {
         let SIGN_MODAL_ID = `#sign-modal`;
         PopUp.openModal(SIGN_MODAL_ID);
@@ -47,8 +65,9 @@ export default class PopUp {
         $(`${SIGN_MODAL_ID} .txt`).removeClass(`red`);
 
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happierImgUrl)
-        $(`${SIGN_MODAL_ID} h4`).html(`Chào mừng bạn tới chess club online! Hãy đăng nhập nào!`);
+        $(`${SIGN_MODAL_ID} h4`).html(`Hãy đăng nhập nào!`);
     }
+
     static showSignUp(signUpCallback = () => { }, cancelCallback = () => { }) {
         let SIGN_MODAL_ID = `#sign-modal`;
         PopUp.openModal(SIGN_MODAL_ID);
@@ -83,8 +102,9 @@ export default class PopUp {
         $(`${SIGN_MODAL_ID} .txt`).removeClass(`red`);
 
         $(`${SIGN_MODAL_ID} img`).attr(`src`, PopUp.happyImgUrl)
-        $(`${SIGN_MODAL_ID} h4`).html(`Chào mừng đến với Chess club online! Hãy đăng ký một tài khoản để chơi online nào!`);
+        $(`${SIGN_MODAL_ID} h4`).html(`Hãy đăng ký để chơi online nào!`);
     }
+
     static showLoading(closeConditionCallback, content = `Please stand by!`, fakeLoadingTime = 0, imgUrl = PopUp.loadingImgUrl) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
         PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
@@ -103,6 +123,7 @@ export default class PopUp {
         clearTimeout(_unSubcribeTimeout);
         _unSubcribeTimeout = setTimeout(closeConditionCallback, fakeLoadingTime);
     }
+
     static showYesNo(content = "yes or no", imgUrl = PopUp.sadImgUrl, yesCallback = () => { }, noCallback = () => { }) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
         PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
@@ -124,6 +145,7 @@ export default class PopUp {
         $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
     }
+
     static show(content = "notify", imgUrl = PopUp.successImgUrl) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
         PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
@@ -142,6 +164,7 @@ export default class PopUp {
         $(`${NOTIFICATION_MODAL_ID} h4`).html(content);
         $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
     }
+
     static closeModal(MODAL_ID, completedCallback = () => { }) {
         $(`${MODAL_ID} h4`).css({
             "display": "none",
@@ -155,6 +178,7 @@ export default class PopUp {
             setTimeout(completedCallback, 100);
         });
     }
+
     static openModal(MODAL_ID, imgUrl = PopUp.successImgUrl) {
         PopUp.calculateModalWidth();
         $(`${MODAL_ID}`).css({
@@ -178,6 +202,7 @@ export default class PopUp {
             "width": PopUp.normalModalWidth,
         }, "fast");
     }
+
     static calculateModalWidth() {
         PopUp.normalModalWidth = (1000 / window.innerWidth * 40);
         if (PopUp.normalModalWidth > 90) {
@@ -190,6 +215,7 @@ export default class PopUp {
         PopUp.normalModalWidth = PopUp.normalModalWidth.convertToPercent();
         PopUp.bigModalWidth = PopUp.bigModalWidth.convertToPercent();
     }
+
     static highlightContent(content) {
         let arr = content.split(`"`);
         if (arr.length > 2) {

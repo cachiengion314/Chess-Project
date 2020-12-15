@@ -11,6 +11,7 @@ import Visualize from "./utility/Visualize.js";
 import Game from "./gameplay/Game.js";
 import Firebase from "./utility/Firebase.js";
 import User from "./gameplay/User.js";
+import PopUp from "./utility/PopUp.js";
 
 export function initGameBoard() {
     initLogicPieces();
@@ -91,8 +92,6 @@ function initVisualizeBoard() {
             }
         }
     }
-    Visualize.initCoordinatedNumber();
-    Visualize.setThemeAt(Visualize.randomNumberFromAToMax(0, Visualize.themes.length));
 }
 
 function onclickSelectedEmptyAt(fixedPosition) {
@@ -203,14 +202,27 @@ export function logicDestroyEnemyPiece(logicEnemyPiece) {
     }
     AssignedVar.currentGame.chessBoard[logicEnemyPiece.currentPos.x][logicEnemyPiece.currentPos.y] = new Empty(logicEnemyPiece.currentPos);
 
-    destroyKingEvent(logicEnemyPiece);
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
+    destroyKingEvent(logicEnemyPiece);
 }
 
 function destroyKingEvent(logicEnemyPiece) {
     if (logicEnemyPiece.name == AssignedVar.KING_W || logicEnemyPiece.name == AssignedVar.KING_B) {
-        if (User.isMyPiece(logicEnemyPiece)) {
-            Game.loseGameResult();
+        if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+            if (User.isMyPiece(logicEnemyPiece)) {
+                Game.loseGameResult();
+            }
+        } else {
+            if (User.isOwnerPiece(logicEnemyPiece)) {
+                setTimeout(() => {
+                    Game.loseGameResult();
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    Game.loseGameResult();
+                    PopUp.show(`Bạn đã thắng cuộc!`);
+                }, 1000);
+            }
         }
     }
 }

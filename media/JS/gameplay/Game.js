@@ -1,11 +1,12 @@
 import AssignedVar from "../utility/AssignedVar.js";
 import Player from "../gameplay/Player.js";
 import Vector from "../utility/Vector.js";
-import { initGameBoard, onclickSelectedChessPieceAt } from "../initGameBoard.js";
+import { initGameBoard, onclickSelectedChessPieceAt, onclickMovePieceAt } from "../initGameBoard.js";
 import Firebase from "../utility/Firebase.js";
 import User from "./User.js";
 import PopUp from "../utility/PopUp.js";
 import ChatBox from "../utility/ChatBox.js";
+import Visualize from "../utility/Visualize.js";
 
 let $chessBoard;
 let _blackPlayer;
@@ -151,8 +152,17 @@ export default class Game {
         $(`#board-package`).append(Game.$ChessBoard);
         Game.showReadyBtn();
         initGameBoard();
+        Visualize.initCoordinatedNumber();
+        Visualize.setThemeAt(Visualize.randomNumberFromAToMax(0, Visualize.themes.length));
     }
     resetGameBoard() {
+        if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+            if (User.isTableOwner()) {
+                User.showUserStatistic(AssignedVar.currentTable.owner);
+            } else {
+                User.showUserStatistic(AssignedVar.currentTable.opponent);
+            }
+        }
         Game.showReadyBtn();
         this.recharge_letPlayerControlChessPiece_snapshot();
         if (Game.$ChessBoard) {
@@ -360,7 +370,7 @@ export default class Game {
             });
         }, `Đợi chút! Hệ thống đang xử lý yêu cầu!`, AssignedVar.FAKE_LOADING_TIME);
     }
-    
+
     static calculateElo(isAccWin, accElo = 1000, enemyElo = 1000) {
         if (isAccWin) {
             return 15;
