@@ -9,7 +9,6 @@ export default class User {
         this.id = null;
         this.name = name;
         this.email = email;
-        console.log(`AssignedVar.md5(password)`, AssignedVar.md5(password))
         this.password = AssignedVar.md5(password);
         this.elo = 1000;
         this.wins = 0;

@@ -8,7 +8,7 @@ import Vector from "./utility/Vector.js";
 import ChatBox from "./utility/ChatBox.js";
 
 import {
-    onclickMovePieceAt
+    mimicOnclickMovePieceAt
 } from "./initGameBoard.js";
 
 export default function listenAllEvents() {
@@ -420,8 +420,8 @@ function mimicOpponentMove() {
     let lastMove = new Vector(Number(arrLastMove[1]), Number(arrLastMove[2]));
     let move = new Vector(Number(arrMove[1]), Number(arrMove[2]));
 
-    onclickMovePieceAt(lastMove);
-    onclickMovePieceAt(move);
+    mimicOnclickMovePieceAt(lastMove);
+    mimicOnclickMovePieceAt(move);
 }
 /////////
 /////////

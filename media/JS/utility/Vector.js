@@ -26,6 +26,12 @@ export default class Vector {
             return false;
         }
     }
+    isBoardLastLine() {
+        if (this.y == 7 || this.y == 0) {
+            return true;
+        }
+        return false;
+    }
     isPositionInLegalMoves() {
         let isPosInLegalMovess = AssignedVar.legalMovesOfSelectedPiece.filter((vector) => {
             return vector.isEqualTo(this);

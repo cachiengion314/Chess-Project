@@ -264,6 +264,15 @@ export default class Visualize {
             $chessBlock.style.backgroundColor = Visualize.themes[Visualize.currentThemeIndex][AssignedVar.LIGHT_BLOCK];
         }
     }
+    static promotePawnEvent($piece, currentPos, color) {
+        $piece.classList.remove($piece.name);
+        let queenName = AssignedVar.QUEEN_W;
+        if (color == AssignedVar.BLACK) {
+            queenName = AssignedVar.QUEEN_B;
+        }
+        $piece.name = queenName;
+        $piece.id = queenName + "_" + currentPos.convertToId();
+    }
     static setThemeAt(index) {
         if (AssignedVar.IsUserInLobby) {
             return;

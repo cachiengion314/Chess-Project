@@ -134,12 +134,16 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     });
 }
 
-export function onclickMovePieceAt(pos) {
+export function mimicOnclickMovePieceAt(pos) {
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {
             let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
             logicDestroyEnemyPiece(pieceAtPos);
-            noUpdateFirebaseLogicMovePieceTo(pos);
+            destroyKingEvent(pieceAtPos);
+
+            mimicEnemyLogicMovePieceTo(pos);
+
+            promotePawnEvent(AssignedVar.selectedPiece)
             unSubscribeSelectedPiece();
             changePlayerTurn();
         } else {
@@ -147,7 +151,9 @@ export function onclickMovePieceAt(pos) {
         }
     } else {
         if (pos.isPositionInLegalMoves()) {
-            noUpdateFirebaseLogicMovePieceTo(pos);
+            mimicEnemyLogicMovePieceTo(pos);
+
+            promotePawnEvent(AssignedVar.selectedPiece)
             unSubscribeSelectedPiece();
             changePlayerTurn();
         } else {
@@ -167,7 +173,11 @@ export function setupOnClickCallbackAt(pos) {
                 unSubscribeSelectedPiece();
             } else {
                 logicDestroyEnemyPiece(pieceAtPos);
+                destroyKingEvent(pieceAtPos);
+
                 logicMovePieceTo(pos);
+
+                promotePawnEvent(AssignedVar.selectedPiece);
                 unSubscribeSelectedPiece();
                 changePlayerTurn();
             }
@@ -177,6 +187,8 @@ export function setupOnClickCallbackAt(pos) {
     } else {
         if (pos.isPositionInLegalMoves()) {
             logicMovePieceTo(pos);
+
+            promotePawnEvent(AssignedVar.selectedPiece);
             unSubscribeSelectedPiece();
             changePlayerTurn();
         } else {
@@ -203,7 +215,21 @@ export function logicDestroyEnemyPiece(logicEnemyPiece) {
     AssignedVar.currentGame.chessBoard[logicEnemyPiece.currentPos.x][logicEnemyPiece.currentPos.y] = new Empty(logicEnemyPiece.currentPos);
 
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
-    destroyKingEvent(logicEnemyPiece);
+}
+
+function promotePawnEvent(logicPiece) {
+    let color = AssignedVar.WHITE;
+    let currentPos = logicPiece.currentPos;
+    if (currentPos.isBoardLastLine()) {
+        if (logicPiece.name == AssignedVar.PAWN_W) {
+            AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Queen(AssignedVar.WHITE, currentPos);
+            Visualize.promotePawnEvent($(`#${logicPiece.id}`)[0], currentPos, color);
+        } else if (logicPiece.name == AssignedVar.PAWN_B) {
+            color = AssignedVar.BLACK;
+            AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Queen(AssignedVar.BLACK, currentPos);
+            Visualize.promotePawnEvent($(`#${logicPiece.id}`)[0], currentPos, color);
+        }
+    }
 }
 
 function destroyKingEvent(logicEnemyPiece) {
@@ -227,7 +253,7 @@ function destroyKingEvent(logicEnemyPiece) {
     }
 }
 
-function noUpdateFirebaseLogicMovePieceTo(nextPos) {
+function mimicEnemyLogicMovePieceTo(nextPos) {
     let currentPos = AssignedVar.selectedPiece.currentPos;
     AssignedVar.currentGame.chessBoard[currentPos.x][currentPos.y] = new Empty(currentPos);
     AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y] = AssignedVar.selectedPiece;

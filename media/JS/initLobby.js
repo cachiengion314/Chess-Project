@@ -7,7 +7,7 @@ import PopUp from "./utility/PopUp.js";
 import Vector from "./utility/Vector.js";
 
 import {
-    onclickMovePieceAt
+    mimicOnclickMovePieceAt
 } from "./initGameBoard.js";
 
 let _txt = `<h3 style="color: white; opacity: .5; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -177,6 +177,6 @@ function mimicOwnerMove() {
     let lastMove = new Vector(Number(arrLastMove[1]), Number(arrLastMove[2]));
     let move = new Vector(Number(arrMove[1]), Number(arrMove[2]));
 
-    onclickMovePieceAt(lastMove);
-    onclickMovePieceAt(move);
+    mimicOnclickMovePieceAt(lastMove);
+    mimicOnclickMovePieceAt(move);
 }

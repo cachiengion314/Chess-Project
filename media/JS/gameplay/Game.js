@@ -1,7 +1,7 @@
 import AssignedVar from "../utility/AssignedVar.js";
 import Player from "../gameplay/Player.js";
 import Vector from "../utility/Vector.js";
-import { initGameBoard, onclickSelectedChessPieceAt, onclickMovePieceAt } from "../initGameBoard.js";
+import { initGameBoard, onclickSelectedChessPieceAt, mimicOnclickMovePieceAt } from "../initGameBoard.js";
 import Firebase from "../utility/Firebase.js";
 import User from "./User.js";
 import PopUp from "../utility/PopUp.js";
