@@ -61,7 +61,7 @@ export default class Firebase {
     }
     static initialize() {
         Firebase.checkInternet(() => {
-            
+
             firebase.initializeApp({
                 apiKey: 'AIzaSyA8X5BGIHdic4rowTSnVhx_OrdHSkonngQ',
                 authDomain: 'chess-club-online.firebaseapp.com',
@@ -78,9 +78,8 @@ export default class Firebase {
     }
     static setUser(userInfo = {}, successCompletedCallback = (id) => { }, failCompletedCallback = (error) => { }) {
         Firebase.checkInternet(() => {
-            
-            let customUser = new User(userInfo.name, userInfo.email, userInfo.password);
-            let newUser = Firebase.convertCustomObjToGenericObj(customUser)
+
+            let newUser = Firebase.convertCustomObjToGenericObj(userInfo)
             let p = Firebase.dbUsers.add(newUser);
             p.then((resolve) => {
                 successCompletedCallback(resolve.id);
@@ -96,14 +95,14 @@ export default class Firebase {
 
     static authenticateUser(givenUserName = `phong`, givenPassword = `12345`, completedCallback = (isRight, id, userData) => { }) {
         Firebase.checkInternet(() => {
-            
+
             let isGivenPasswordRight = false;
             let p = Firebase.dbUsers.where(`name`, `==`, givenUserName).get();
             p.then((querySnapshot) => {
                 if (!querySnapshot.empty) {
                     let documents = querySnapshot.docs;
                     let userPassword = documents[0].data().password;
-                    if (userPassword === givenPassword) {
+                    if (userPassword === AssignedVar.md5(givenPassword)) {
                         isGivenPasswordRight = true;
                     }
                     completedCallback(isGivenPasswordRight, documents[0].id, documents[0].data());
@@ -119,7 +118,7 @@ export default class Firebase {
 
     static findNameAndEmailDuplicate(givenName = "phong", givenEmail = "fun@mail.com", givenPassword = `12345`, completedCallback = (isNR, isER, uInfo) => { }) {
         Firebase.checkInternet(() => {
-            
+
             let isNameDuplicate = false;
             let isEmailDuplicate = false;
             let userInfo = new User(givenName, givenEmail, givenPassword);
@@ -144,7 +143,7 @@ export default class Firebase {
 
     static queryAllTable(completedCallback = (allTables) => { }) {
         Firebase.checkInternet(() => {
-            
+
             let p = Firebase.dbTalbes.get();
             p.then((querySnapshot) => {
                 let documents = querySnapshot.docs;
@@ -157,7 +156,7 @@ export default class Firebase {
     }
     static onSnapshotWithChatsId(chatId = `id`, changedCallback = (tableData) => { }) {
         Firebase.checkInternet(() => {
-            
+
             _unSubcribeChatsSnapshot = Firebase.dbChats.doc(chatId)
                 .onSnapshot((doc) => {
                     if (doc.exists) {
@@ -169,12 +168,10 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
     static onSnapshotWithId(id = `id`, changedCallback = (tableData) => { }) {
         Firebase.checkInternet(() => {
-            
+
             _unSubcribeTableSnapshot = Firebase.dbTalbes.doc(id)
                 .onSnapshot((doc) => {
                     if (doc.exists) {
@@ -191,7 +188,7 @@ export default class Firebase {
     }
     static updateChatsProperty(chatId, propertyObj, resolveCallback = () => { }, failCallback = (e) => { }) {
         Firebase.checkInternet(() => {
-            
+
             let ref = Firebase.dbChats.doc(chatId);
             ref.update(propertyObj)
                 .then(() => {
@@ -204,8 +201,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
 
     static updateTableProperty(tableId, propertyObj, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
@@ -223,13 +218,11 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
 
     static updateMove(tableId, pieceLastMove, pieceMove, resolveCallback = () => { }) {
         Firebase.checkInternet(() => {
-            
+
             let obj = {};
             let move = "ownerMove";
             let lastMove = "ownerLastMove";
@@ -255,8 +248,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
 
     static updateCurrentUserData(userId, propObj, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
@@ -274,13 +265,11 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
 
     static setCurrentUserData(userId, userObj, resolveCallback = (docData) => { }, failCallback = (errorCode) => { }) {
         Firebase.checkInternet(() => {
-        
+
             let p = Firebase.dbUsers.doc(userId).set(userObj);
             p.then(() => {
                 resolveCallback();
@@ -292,8 +281,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
     static getChats(chatsId, resolveCallback = (docData) => { }, failCallback = (errorCode) => { }) {
         Firebase.checkInternet(() => {
@@ -312,8 +299,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
     static getTable(tableId, resolveCallback = (docData) => { }, failCallback = (errorCode) => { }) {
         Firebase.checkInternet(() => {
@@ -332,8 +317,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
     static setChats(chatId, chatObj, resolveCallback = () => { }, failCallback = (error) => { }) {
         Firebase.checkInternet(() => {
@@ -349,8 +332,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
     static setTable(tableId, tableObj, resolveCallback = () => { }, failCallback = (error) => { }) {
         Firebase.checkInternet(() => {
@@ -366,8 +347,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
     static deleteChats(chatsId, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
         Firebase.checkInternet(() => {
@@ -383,8 +362,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
     static deleteTable(tableId, isOwnerRageQuit = false, resolveCallback = () => { }, failCallback = (errorCode) => { }) {
         Firebase.checkInternet(() => {
@@ -405,8 +382,6 @@ export default class Firebase {
             PopUp.show(`Không có kết nối mạng! Vui lòng thử lại sau!`);
             console.log(e);
         });
-
-
     }
 
     static isEmptyObj(obj) {

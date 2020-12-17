@@ -33,6 +33,10 @@ export default class AssignedVar {
     static currentTable = null;
     static currentChats = null;
 
+    static md5(Content) {
+        return CryptoJS.MD5(Content).toString()
+    }
+
     static get countMaxCurrentLoses() {
         if (AssignedVar.IsUserInLobby) {
             _countMaxCurrentLoses = 0;

@@ -24,7 +24,7 @@ class WaitingTable extends HTMLElement {
                     height: 100%;
                     background-color: teal;
                 }
-                #table-title{
+                #table-title {
                     color: white;
                     font-size: 1.3vw;
                     display: flex;
@@ -69,11 +69,12 @@ class WaitingTable extends HTMLElement {
             "margin-top": `10px`,
             "margin-bottom": `10px`,
             "position": `relative`,
+            "border-radius": ".7em",
         });
         $(this.shadowR).append(this.domStr);
         $(this).hover(() => {
             $(this).css({
-                "background-color": "red",
+                "background-color": "lightgreen",
             });
         }, () => {
             $(this).css({

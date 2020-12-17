@@ -199,11 +199,6 @@ input:focus {
     color: white;
 }
 
-.no-margin-vertical {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-
 .custom-btn {
     background-color: #312e2b;
     border-bottom: .3em solid #2b2926;
@@ -371,6 +366,7 @@ input:focus {
 }
 
 #logo-txt {
+    cursor: pointer;
     line-height: 23px;
     font-style: italic;
     font-size: 26px;

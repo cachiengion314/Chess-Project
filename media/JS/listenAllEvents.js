@@ -24,9 +24,21 @@ export default function listenAllEvents() {
     onclickReadyBtn();
     onclickResignedBtn();
     onclickOfferADrawBtn();
-    onclickChangeThemeBtn();
     onclickOptionBtn();
+    onclickChangeThemeBtn();
+    onclickAboutUsBtn();
+
     listenResizeEvent();
+}
+function onclickAboutUsBtn() {
+    let $aboutUsBtn = $(`#about-us-btn`)[0];
+    $aboutUsBtn.onclick = () => {
+        if (AssignedVar.IsUserAndEnemyReady) {
+            PopUp.show(`Bạn không thể xem được nội dung này khi đang chơi game!`, PopUp.sadImgUrl);
+        } else {
+            window.location.href = "about-us.html";
+        }
+    }
 }
 function onclickOptionBtn() {
     let $optionBtn = $(`#option-btn`)[0];

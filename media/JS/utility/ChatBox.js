@@ -59,13 +59,13 @@ export default class ChatBox {
                 clearTimeout(_unSubcribeTimeOut_owner);
                 _unSubcribeTimeOut_owner = setTimeout(() => {
                     ChatBox.hide(ChatBox.OWNER_CHATBOX_ID);
-                }, AssignedVar.FAKE_LOADING_TIME * 1.25);
+                }, AssignedVar.FAKE_LOADING_TIME * 1.3);
             }
             if (BLOCK_ID == ChatBox.OPPONENT_CHATBOX_ID) {
                 clearTimeout(_unSubcribeTimeOut_opponent);
                 _unSubcribeTimeOut_opponent = setTimeout(() => {
                     ChatBox.hide(ChatBox.OPPONENT_CHATBOX_ID);
-                }, AssignedVar.FAKE_LOADING_TIME * 1.25);
+                }, AssignedVar.FAKE_LOADING_TIME * 1.3);
             }
         });
     }
