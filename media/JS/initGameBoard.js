@@ -134,28 +134,32 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     });
 }
 
+
+
 export function mimicOnclickMovePieceAt(pos) {
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {
             let pieceAtPos = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
             logicDestroyEnemyPiece(pieceAtPos);
-            destroyKingEvent(pieceAtPos);
-
+            checkDestroyKingEvent(pieceAtPos);
             mimicEnemyLogicMovePieceTo(pos);
+            checkPromotePawnEvent(AssignedVar.selectedPiece)
 
-            promotePawnEvent(AssignedVar.selectedPiece)
             unSubscribeSelectedPiece();
             changePlayerTurn();
+            Visualize.logInfo();
         } else {
             subscribeSelectedPieceAt(pos);
         }
     } else {
         if (pos.isPositionInLegalMoves()) {
             mimicEnemyLogicMovePieceTo(pos);
+            checkPromotePawnEvent(AssignedVar.selectedPiece);
+            checkCastleEvent(AssignedVar.selectedPiece, pos);
 
-            promotePawnEvent(AssignedVar.selectedPiece)
             unSubscribeSelectedPiece();
             changePlayerTurn();
+            Visualize.logInfo();
         } else {
             if (AssignedVar.selectedPiece) {
                 unSubscribeSelectedPiece();
@@ -173,13 +177,13 @@ export function setupOnClickCallbackAt(pos) {
                 unSubscribeSelectedPiece();
             } else {
                 logicDestroyEnemyPiece(pieceAtPos);
-                destroyKingEvent(pieceAtPos);
-
+                checkDestroyKingEvent(pieceAtPos);
                 logicMovePieceTo(pos);
+                checkPromotePawnEvent(AssignedVar.selectedPiece);
 
-                promotePawnEvent(AssignedVar.selectedPiece);
                 unSubscribeSelectedPiece();
                 changePlayerTurn();
+                Visualize.logInfo();
             }
         } else {
             subscribeSelectedPieceAt(pos);
@@ -187,10 +191,12 @@ export function setupOnClickCallbackAt(pos) {
     } else {
         if (pos.isPositionInLegalMoves()) {
             logicMovePieceTo(pos);
-
-            promotePawnEvent(AssignedVar.selectedPiece);
+            checkPromotePawnEvent(AssignedVar.selectedPiece);
+            checkCastleEvent(AssignedVar.selectedPiece, pos);
+            
             unSubscribeSelectedPiece();
             changePlayerTurn();
+            Visualize.logInfo();
         } else {
             if (AssignedVar.selectedPiece) {
                 unSubscribeSelectedPiece();
@@ -217,7 +223,29 @@ export function logicDestroyEnemyPiece(logicEnemyPiece) {
     Visualize.destroyEnemyPiece($(`#${logicEnemyPiece.id}`)[0]);
 }
 
-function promotePawnEvent(logicPiece) {
+function checkCastleEvent(logicPiece, nextPos) {
+    if (logicPiece.name == AssignedVar.KING_W || logicPiece.name == AssignedVar.KING_B) {
+        if (logicPiece.posToCastle && logicPiece.posToCastleRook) {
+            if (nextPos.isEqualTo(logicPiece.posToCastle)) {
+                let dir = logicPiece.posToCastleRook.plusVector(logicPiece.posToCastle.multipliByNumber(-1)).multipliByNumber(-1);
+                let newPos = logicPiece.posToCastle.plusVector(dir);
+                let oldRook = AssignedVar.currentGame.chessBoard[logicPiece.posToCastleRook.x][logicPiece.posToCastleRook.y];
+                logicDestroyEnemyPiece(oldRook);
+                spawnLogicPieceAt(newPos, Rook, logicPiece.color);
+            }
+        }
+    }
+}
+
+function spawnLogicPieceAt(pos, Class, color) {
+    AssignedVar.currentGame.chessBoard[pos.x][pos.y] = new Class(color, pos);
+    Visualize.chessPieceImageAt(pos);
+    onclickSelectedChessPieceAt(pos);
+    Visualize.onPieceMouseEnterOf($(`#${AssignedVar.currentGame.chessBoard[pos.x][pos.y].id}`)[0]);
+    Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.currentGame.chessBoard[pos.x][pos.y].id}`)[0]);
+}
+
+function checkPromotePawnEvent(logicPiece) {
     let color = AssignedVar.WHITE;
     let currentPos = logicPiece.currentPos;
     if (currentPos.isBoardLastLine()) {
@@ -232,7 +260,7 @@ function promotePawnEvent(logicPiece) {
     }
 }
 
-function destroyKingEvent(logicEnemyPiece) {
+function checkDestroyKingEvent(logicEnemyPiece) {
     if (logicEnemyPiece.name == AssignedVar.KING_W || logicEnemyPiece.name == AssignedVar.KING_B) {
         if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
             if (User.isMyPiece(logicEnemyPiece)) {
@@ -261,7 +289,6 @@ function mimicEnemyLogicMovePieceTo(nextPos) {
     AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id = AssignedVar.selectedPiece.getId();
     AssignedVar.$selectedPiece.id = AssignedVar.currentGame.chessBoard[nextPos.x][nextPos.y].id;
 
-    Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }
 

@@ -14,8 +14,10 @@ export default class Rook extends Piece {
         this.directions = [
             new Vector(0, 1), new Vector(1, 0), new Vector(0, -1), new Vector(-1, 0)
         ];
+        this.hasMoved = false;
     }
     getId() {
+        this.hasMoved = true;
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
     getAllPossibleMoves() {
