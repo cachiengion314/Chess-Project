@@ -216,6 +216,9 @@ export default class AssignedVar {
     static get COORDINATES_COLOR() {
         return "coordinates-color";
     }
+    static get TIME_EACH_TURN() {
+        return 10;
+    }
     static get KING_W() {
         return "king-w";
     }

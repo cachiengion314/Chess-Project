@@ -86,11 +86,13 @@ function onclickWaitingTable() {
         "opponentLastMove": null,
         "playersNumber": playersNumber,
     }
+
     PopUp.showLoading(() => {
         Firebase.updateTableProperty(Firebase.currentTableId, propertyObj, () => {
             AssignedVar.IsUserInLobby = false;
             AssignedVar.currentGame.createNewChessBoard();
             AssignedVar.currentGame.setCurrentPlayer();
+            Game.showTempStatistic(true);
             PopUp.closeModal(`#notification-modal`);
             Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
         }, (errorCode) => {
@@ -143,9 +145,10 @@ function kickThisAccToLobbyWhenOwnerQuit() {
 
 function resetBoardWhenOwnerResigned() {
     if (AssignedVar.countMaxCurrentLoses < AssignedVar.currentTable.owner.tempLoses) {
-        PopUp.show(`Xin chúc mừng! Bạn đã thắng!`, PopUp.happierImgUrl);
         AssignedVar.countMaxCurrentLoses = AssignedVar.currentTable.owner.tempLoses;
+        PopUp.show(`Xin chúc mừng! Bạn đã thắng!`, PopUp.happierImgUrl);
         AssignedVar.currentGame.resetGameBoard();
+        Game.showTempStatistic();
     }
 }
 

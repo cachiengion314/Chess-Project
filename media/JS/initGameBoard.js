@@ -134,8 +134,6 @@ export function onclickSelectedChessPieceAt(fixedPosition) {
     });
 }
 
-
-
 export function mimicOnclickMovePieceAt(pos) {
     if (pos.isPositionHasPiece()) {
         if (AssignedVar.selectedPiece) {
@@ -147,6 +145,7 @@ export function mimicOnclickMovePieceAt(pos) {
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
+            Game.clearAndStartCountTime();
             Visualize.logInfo();
         } else {
             subscribeSelectedPieceAt(pos);
@@ -159,6 +158,7 @@ export function mimicOnclickMovePieceAt(pos) {
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
+            Game.clearAndStartCountTime();
             Visualize.logInfo();
         } else {
             if (AssignedVar.selectedPiece) {
@@ -183,6 +183,7 @@ export function setupOnClickCallbackAt(pos) {
 
                 unSubscribeSelectedPiece();
                 changePlayerTurn();
+                Game.clearAndStartCountTime();
                 Visualize.logInfo();
             }
         } else {
@@ -193,9 +194,10 @@ export function setupOnClickCallbackAt(pos) {
             logicMovePieceTo(pos);
             checkPromotePawnEvent(AssignedVar.selectedPiece);
             checkCastleEvent(AssignedVar.selectedPiece, pos);
-            
+
             unSubscribeSelectedPiece();
             changePlayerTurn();
+            Game.clearAndStartCountTime();
             Visualize.logInfo();
         } else {
             if (AssignedVar.selectedPiece) {
@@ -203,7 +205,6 @@ export function setupOnClickCallbackAt(pos) {
             }
         }
     }
-
 }
 
 export function logicDestroyEnemyPiece(logicEnemyPiece) {
@@ -270,12 +271,11 @@ function checkDestroyKingEvent(logicEnemyPiece) {
             if (User.isOwnerPiece(logicEnemyPiece)) {
                 setTimeout(() => {
                     Game.loseGameResult();
-                }, 1000);
+                }, 300);
             } else {
                 setTimeout(() => {
-                    Game.loseGameResult();
-                    PopUp.show(`Bạn đã thắng cuộc!`);
-                }, 1000);
+                    Game.winGameResult_onlyForOfflineMode();
+                }, 300);
             }
         }
     }

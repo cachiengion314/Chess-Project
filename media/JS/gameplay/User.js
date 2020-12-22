@@ -23,7 +23,12 @@ export default class User {
         let d = new Date();
         this.accDateCreated = d.toLocaleDateString() + "_" + `${d.getHours()}:${d.getMinutes()}`;
     }
-
+    static isOwnerTurn() {
+        if (AssignedVar.currentGame.currentPlayer.color == AssignedVar.currentTable.owner.controllingColor) {
+            return true;
+        }
+        return false;
+    }
     static isMyPiece(piece) {
         if (User.isTableOwner()) {
             if (User.isOwnerPiece(piece)) {

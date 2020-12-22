@@ -264,14 +264,18 @@ function onclickPlaySoloBtn() {
     $playSoloBtn.onclick = () => {
         AssignedVar.IsUserInLobby = false;
         let userAcc = User.getUserSignIn();
+        if (User.getUserSignInId() == -1) {
+            userAcc = new User(`guest`, `guest@gamil.com`, `123`);
+        }
         userAcc.controllingColor = AssignedVar.WHITE;
         let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
         AssignedVar.currentTable = newTable;
         AssignedVar.currentGame = new Game(AssignedVar.OFFLINE);
         Game.showOpponentBlock();
-        AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("guest", "guest@gmail.com", "123"));
+        AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("guest2", "guest2@gmail.com", "123"));
         AssignedVar.currentGame.createNewChessBoard();
         AssignedVar.currentGame.setCurrentPlayer();
+        Game.showTempStatistic(true);
     };
 }
 
@@ -329,6 +333,7 @@ function onclickCreateATableBtn() {
                 AssignedVar.currentGame.createNewChessBoard();
                 AssignedVar.currentGame.setCurrentPlayer();
                 Game.hideOpponentBlock();
+                Game.showTempStatistic(true);
 
                 PopUp.closeModal(`#notification-modal`, () => {
                     Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
@@ -386,9 +391,10 @@ function noOpponentInTable() {
 
 function resetBoardWhenOpponentResigned() {
     if (AssignedVar.countMaxCurrentLoses < AssignedVar.currentTable.opponent.tempLoses) {
-        PopUp.show(`Xin chúc mừng! Bạn đã thắng!`, PopUp.jokeImgUrl);
         AssignedVar.countMaxCurrentLoses = AssignedVar.currentTable.opponent.tempLoses;
+        PopUp.show(`Xin chúc mừng! Bạn đã thắng!`, PopUp.jokeImgUrl);
         AssignedVar.currentGame.resetGameBoard();
+        Game.showTempStatistic();
     }
 }
 

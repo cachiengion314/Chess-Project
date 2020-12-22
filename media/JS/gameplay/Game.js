@@ -14,6 +14,8 @@ let _whitePlayer;
 let _isGoFirstByChessRule = true;
 let _isTheFirstTimeCreateTable = true;
 let _tempChat;
+let _ownerTime = 10;
+let _opponentTime = 10;
 
 let _placeHolder_letPlayerControlChessPiece;
 let _placeHolder_opponentJoinTable;
@@ -46,6 +48,7 @@ let _opponentLeftTable = () => {
         User.setUserSignIn(acc);
         AssignedVar.currentGame.resetGameBoard();
     }
+    Game.showTempStatistic(true);
     Game.saveAndUpdateScore();
     _isTheFirstTimeCreateTable = false;
     _placeHolder_opponentLeftTable = _emptyAction;
@@ -60,6 +63,8 @@ let _opponentJoinTable = () => {
 let _letPlayerControlChessPiece = () => {
     ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `Trận đấu bắt đầu!`);
     ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `Trận đấu bắt đầu!`);
+
+    Game.clearAndStartCountTime();
 
     for (let x = 0; x < 8; ++x) {
         for (let y = 0; y < 8; ++y) {
@@ -178,6 +183,7 @@ export default class Game {
         if (AssignedVar.currentTable.opponent) {
             AssignedVar.currentTable.opponent.isReady = false;
         }
+        Game.clearAndStartCountTime();
         Game.initLogicPlayer();
         this.setCurrentPlayer();
         initGameBoard();
@@ -317,16 +323,100 @@ export default class Game {
         });
         $(`${BLOCK_ID} .ready-bg`).html(`Chưa sẵn sàng!`)
     }
-    static loseGameResult() {
-        if (AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
-            let accName = "khách vãng lai";
-            if (User.getUserSignInId() != -1) {
-                accName = User.getUserSignIn().name;
-            }
-            AssignedVar.currentGame.resetGameBoard();
-            PopUp.show(`Bạn "${accName}" đã thua cuộc!`, PopUp.sadImgUrl);
+    static showTempStatistic(isFirstTimeShow = false) {
+        let $opponentTempWins = $(`#enemy-block .align-end div`)[0];
+        let $ownerTempWins = $(`#user-block .align-end div`)[0];
+        let $opponentTime = $(`#enemy-block .align-end div`)[2];
+        let $ownerTime = $(`#user-block .align-end div`)[2];
+        if (isFirstTimeShow) {
+            $opponentTempWins.textContent = `wins: ` + 0;
+            $ownerTempWins.textContent = `wins: ` + 0;
+            $opponentTime.textContent = `time: ` + AssignedVar.TIME_EACH_TURN;
+            $ownerTime.textContent = `time: ` + AssignedVar.TIME_EACH_TURN;
             return;
         }
+        if (AssignedVar.currentTable && AssignedVar.currentTable.opponent) {
+            $opponentTempWins.textContent = `wins: ` + AssignedVar.currentTable.opponent.tempWins;
+        }
+        $ownerTempWins.textContent = `wins: ` + AssignedVar.currentTable.owner.tempWins;
+    }
+    static get ownerTime() {
+        return _ownerTime;
+    }
+    static set ownerTime(val) {
+        $(`#user-block .align-end div`)[2].textContent = `time: ` + val;
+        _ownerTime = val;
+    }
+    static get opponentTime() {
+        return _opponentTime;
+    }
+    static set opponentTime(val) {
+        $(`#enemy-block .align-end div`)[2].textContent = `time: ` + val;
+        _opponentTime = val
+    }
+    static clearAndStartCountTime() {
+        Game.ownerTime = AssignedVar.TIME_EACH_TURN;
+        Game.opponentTime = AssignedVar.TIME_EACH_TURN;
+        clearTimeout(Game.clearCountOnwerTime);
+        clearTimeout(Game.clearCountOpponentTime);
+        if (AssignedVar.IsUserAndEnemyReady) {
+            if (User.isOwnerTurn()) {
+                Game.countOwnerTime();
+            } else {
+                Game.countOpponentTime();
+            }
+        }
+    }
+    static clearCountOnwerTime = 0;
+    static clearCountOpponentTime = 0;
+    static countOpponentTime() {
+        Game.clearCountOpponentTime = setTimeout(() => {
+            Game.opponentTime--;
+            if (Game.opponentTime <= 0) {
+                Game.overTimeResult();
+                return;
+            }
+            Game.countOpponentTime();
+        }, 1000);
+    }
+    static countOwnerTime() {
+        Game.clearCountOnwerTime = setTimeout(() => {
+            Game.ownerTime--;
+            if (Game.ownerTime <= 0) {
+                Game.overTimeResult();
+                return;
+            }
+            Game.countOwnerTime();
+        }, 1000);
+    }
+    static overTimeResult() {
+        if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
+            if (User.isTableOwner()) {
+                if (User.isOwnerTurn()) {
+                    Game.loseGameResult();
+                }
+            } else {
+                if (!User.isOwnerTurn()) {
+                    Game.loseGameResult();
+                }
+            }
+        } else {
+            if (User.isOwnerTurn()) {
+                Game.loseGameResult();
+            } else {
+                Game.winGameResult_onlyForOfflineMode();
+            }
+        }
+    }
+    static winGameResult_onlyForOfflineMode() {
+        let ownerAcc = AssignedVar.currentTable.owner;
+        let $ownerTempWins = $(`#user-block .align-end div`)[0];
+        $ownerTempWins.textContent = `wins:  ${++ownerAcc.tempWins}`;
+
+        AssignedVar.currentGame.resetGameBoard();
+        PopUp.show(`Bạn "${ownerAcc.name}" đã thắng cuộc!`, PopUp.happierImgUrl);
+    }
+    static loseGameResult() {
         let propObj = {};
         let ownerAcc = AssignedVar.currentTable.owner;
         let opponentAcc = AssignedVar.currentTable.opponent;
@@ -355,20 +445,27 @@ export default class Game {
         propObj[USER_LOSES] = ++user.loses;
         propObj[USER_TEMPLOSES] = ++user.tempLoses;
 
-        let updateObj = {
-            ...propObj,
-            opponentLastMove: null, opponentMove: null, lastTurn: null,
-            ownerLastMove: null, ownerMove: null, "opponent.isReady": false, "owner.isReady": false,
+        Game.showTempStatistic();
+
+        if (AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
+            PopUp.show(`Bạn "${AssignedVar.currentTable.owner.name}" đã thua cuộc!`, PopUp.sadImgUrl);
+            AssignedVar.currentGame.resetGameBoard();
+        } else {
+            let updateObj = {
+                ...propObj,
+                opponentLastMove: null, opponentMove: null, lastTurn: null,
+                ownerLastMove: null, ownerMove: null, "opponent.isReady": false, "owner.isReady": false,
+            }
+            PopUp.showLoading(() => {
+                Firebase.updateTableProperty(Firebase.currentTableId, updateObj, () => {
+                    console.log(`owner and opponent score is updated!`);
+                    PopUp.show(`Bạn "${LOSER_NAME}" đã thua cuộc!`, PopUp.sadImgUrl);
+                    AssignedVar.currentGame.resetGameBoard();
+                }, (e) => {
+                    console.log(`loseGameResultUpdate!: "${e}"`);
+                });
+            }, `Đợi chút! Hệ thống đang xử lý yêu cầu!`, AssignedVar.FAKE_LOADING_TIME);
         }
-        PopUp.showLoading(() => {
-            Firebase.updateTableProperty(Firebase.currentTableId, updateObj, () => {
-                console.log(`owner and enemy score in the table is updated!`);
-                PopUp.show(`Bạn "${LOSER_NAME}" đã thua cuộc!`, PopUp.sadImgUrl);
-                AssignedVar.currentGame.resetGameBoard();
-            }, (e) => {
-                console.log(`loseGameResultUpdate!: "${e}"`);
-            });
-        }, `Đợi chút! Hệ thống đang xử lý yêu cầu!`, AssignedVar.FAKE_LOADING_TIME);
     }
 
     static calculateElo(isAccWin, accElo = 1000, enemyElo = 1000) {
