@@ -12,6 +12,7 @@ import Game from "./gameplay/Game.js";
 import Firebase from "./utility/Firebase.js";
 import User from "./gameplay/User.js";
 import PopUp from "./utility/PopUp.js";
+import AI from "./gameplay/AI.js";
 
 export function initGameBoard() {
     initLogicPieces();
@@ -184,6 +185,7 @@ export function setupOnClickCallbackAt(pos) {
                 unSubscribeSelectedPiece();
                 changePlayerTurn();
                 Game.clearAndStartCountTime();
+                AI.move(new AI(AssignedVar.currentGame.chessBoard, AssignedVar.BLACK));
                 Visualize.logInfo();
             }
         } else {
@@ -198,6 +200,7 @@ export function setupOnClickCallbackAt(pos) {
             unSubscribeSelectedPiece();
             changePlayerTurn();
             Game.clearAndStartCountTime();
+            AI.move(new AI(AssignedVar.currentGame.chessBoard, AssignedVar.BLACK));
             Visualize.logInfo();
         } else {
             if (AssignedVar.selectedPiece) {

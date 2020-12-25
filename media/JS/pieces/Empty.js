@@ -7,6 +7,10 @@ export default class Empty extends ChessBlock {
         this.type = AssignedVar.EMPTY;
         this.id = `${AssignedVar.EMPTY}_${currentPos.convertToId()}`;
         this.directions = [this.currentPos];
+        this.weights = 0;
+    }
+    getClone() {
+        return new Empty(this.currentPos);
     }
     getId() {
         return `${AssignedVar.EMPTY}_${this.currentPos.convertToId()}`;

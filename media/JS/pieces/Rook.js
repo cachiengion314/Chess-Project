@@ -15,6 +15,10 @@ export default class Rook extends Piece {
             new Vector(0, 1), new Vector(1, 0), new Vector(0, -1), new Vector(-1, 0)
         ];
         this.hasMoved = false;
+        this.weights = 479;
+    }
+    getClone() {
+        return new Rook(this.color, this.currentPos);
     }
     getId() {
         this.hasMoved = true;

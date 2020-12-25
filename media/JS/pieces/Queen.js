@@ -15,6 +15,10 @@ export default class Queen extends Piece {
             new Vector(1, 0), new Vector(0, -1), new Vector(-1, 0), new Vector(0, 1),
             new Vector(1, 1), new Vector(1, -1), new Vector(-1, -1), new Vector(-1, 1)
         ];
+        this.weights = 929;
+    }
+    getClone() {
+        return new Queen(this.color, this.currentPos);
     }
     getId() {
         return `${this.name}_${this.currentPos.convertToId()}`;

@@ -17,6 +17,10 @@ export default class Knight extends Piece {
             new Vector(-2, -1), new Vector(-1, -2),
             new Vector(1, -2), new Vector(2, -1)
         ];
+        this.weights = 280;
+    }
+    getClone() {
+        return new Knight(this.color, this.currentPos);
     }
     getId() {
         return `${this.name}_${this.currentPos.convertToId()}`;

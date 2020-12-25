@@ -76,16 +76,19 @@ export default class Visualize {
         "coordinates-color": "darkslateblue",
     },
     ]
-    static logInfo() {
+    static logInfo(chessBoard = AssignedVar.currentGame.chessBoard) {
         console.log(`------------------------------`);
         let str = ``;
         for (let y = 0; y < 8; ++y) {
             for (let x = 0; x < 8; ++x) {
-                let block = `${AssignedVar.currentGame.chessBoard[x][y].id}`;
-                if (AssignedVar.currentGame.chessBoard[x][y].type == AssignedVar.PIECE) {
+                let block = `${chessBoard[x][y].id}`;
+                if (chessBoard[x][y].type == AssignedVar.PIECE) {
                     block = `[${block}]`;
+                    if (block.length <= 12) {
+                        block = ` ${block} `;
+                    }
                 } else {
-                    block = `[           ]`;
+                    block = `[            ]`;
                 }
                 if (x == 7) {
                     str += ` ${block} \n`;

@@ -14,6 +14,10 @@ export default class Bishop extends Piece {
         this.directions = [
             new Vector(1, 1), new Vector(1, -1), new Vector(-1, -1), new Vector(-1, 1)
         ];
+        this.weights = 320;
+    }
+    getClone() {
+        return new Bishop(this.color, this.currentPos);
     }
     getId() {
         return `${this.name}_${this.currentPos.convertToId()}`;

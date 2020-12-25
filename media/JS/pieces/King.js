@@ -19,12 +19,17 @@ export default class King extends Piece {
         this.posToCastleRook = null;
         this.posToCastle = null;
         this.hasMoved = false;
+        this.weights = 60000;
+    }
+    getClone() {
+        return new King(this.color, this.currentPos);
     }
     getId() {
         this.hasMoved = true;
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
     findPosToCastleRook() {
+        if (this.hasMoved) return null;
         for (let dir of this.castleDirections) {
             for (let i = -3; i < 4; i += 6) {
                 let newPos = this.currentPos.plusVector(dir.multipliByNumber(i));
@@ -46,11 +51,8 @@ export default class King extends Piece {
         let pos;
         if (!this.hasMoved && this.findPosToCastleRook()) {
             let dirToRook = this.findPosToCastleRook().plusVector(this.currentPos.multipliByNumber(-1)).convertToDirection();
-            for (let i = 1; i <= 2; ++i) {
+            for (let i = 2; i <= 2; ++i) {
                 pos = this.currentPos.plusVector(dirToRook.multipliByNumber(i));
-                if (pos.isPositionHasPiece()) {
-                    break;
-                }
             }
             return pos;
         }
@@ -68,7 +70,11 @@ export default class King extends Piece {
         }
         if (this.findPosToCastle()) {
             this.posToCastle = this.findPosToCastle();
-            allMovesPossibleArr.push(this.posToCastle);
+            if (!this.posToCastle.isPositionHasPiece()) {
+                allMovesPossibleArr.push(this.posToCastle);
+            } else {
+                this.posToCastle = null;
+            }
         }
 
         return allMovesPossibleArr;

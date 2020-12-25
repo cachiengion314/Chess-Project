@@ -23,6 +23,10 @@ export default class Pawn extends Piece {
             new Vector(-1, 0).plusVector(new Vector(0, moveDirection)),
             new Vector(1, 0).plusVector(new Vector(0, moveDirection)),
         ];
+        this.weights = 100;
+    }
+    getClone() {
+        return new Pawn(this.color, this.currentPos);
     }
     getId() {
         this.hasMoved = true;

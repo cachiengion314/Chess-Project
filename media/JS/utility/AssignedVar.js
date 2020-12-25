@@ -29,7 +29,6 @@ let _wPawns = [];
 export default class AssignedVar {
     static currentGame = null;
     static haveUsedSignColButton = false;
-    static isLetPlayerControlPiece = false;
     static currentTable = null;
     static currentChats = null;
 
@@ -217,7 +216,7 @@ export default class AssignedVar {
         return "coordinates-color";
     }
     static get TIME_EACH_TURN() {
-        return 10;
+        return 1000;
     }
     static get KING_W() {
         return "king-w";
