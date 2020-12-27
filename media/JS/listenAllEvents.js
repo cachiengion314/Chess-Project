@@ -6,30 +6,75 @@ import PopUp from "./utility/PopUp.js";
 import Game from "./gameplay/Game.js";
 import Vector from "./utility/Vector.js";
 import ChatBox from "./utility/ChatBox.js";
-
 import {
     mimicOnclickMovePieceAt
 } from "./initGameBoard.js";
+import AI from "./gameplay/AI.js";
 
 export default function listenAllEvents() {
-    responsiveSignColEventInvoke();
-
+    // sign section
     onclickSignInBtn();
     onclickSignUpBtn();
     onclickSignOutBtn();
+    // game mode section
     onclickCreateATableBtn();
-    onclickPlaySoloBtn();
+    onclickPlayWithFriendBtn();
+    onclickPlayWithComputerBtn();
+    // Gameplay section
     onclickQuitGameBtn();
     onclickOpenSignColBtn();
     onclickReadyBtn();
     onclickResignedBtn();
     onclickOfferADrawBtn();
+    // option section
     onclickOptionBtn();
     onclickChangeThemeBtn();
     onclickAboutUsBtn();
-
+    onclickAI_Btn();
+    // resize event section
+    responsiveSignColEventInvoke();
     listenResizeEvent();
 }
+
+function onclickAI_Btn() {
+    let $aiBtn = $(`#ai-btn`)[0];
+    if (AI.MAX_EVALUATED_TURN == 4) {
+        $aiBtn.textContent = "Máy tính: Khó";
+    } else if (AI.MAX_EVALUATED_TURN == 3) {
+        $aiBtn.textContent = "Máy tính: Dễ";
+    }
+    $aiBtn.onclick = () => {
+        if (AI.MAX_EVALUATED_TURN == 4) {
+            AI.setMaxEvaluatedTurn(AssignedVar.EASY);
+            $aiBtn.textContent = "Máy tính: Dễ";
+        } else if (AI.MAX_EVALUATED_TURN == 3) {
+            AI.setMaxEvaluatedTurn(AssignedVar.HARD);
+            $aiBtn.textContent = "Máy tính: Khó";
+        }
+    }
+}
+
+function onclickPlayWithComputerBtn() {
+    let $playWithComputerBtn = $(`#mode-group-btn button`)[2];
+    $playWithComputerBtn.onclick = () => {
+        AssignedVar.IsUserInLobby = false;
+        Game.doesNeedAI_Move = true;
+        let userAcc = User.getUserSignIn();
+        if (User.getUserSignInId() == -1) {
+            userAcc = new User(`guest`, `guest@gamil.com`, `123`);
+        }
+        userAcc.controllingColor = AssignedVar.WHITE;
+        let newTable = AssignedVar.getDefaultTable(Firebase.currentTableId, userAcc);
+        AssignedVar.currentTable = newTable;
+        AssignedVar.currentGame = new Game(AssignedVar.OFFLINE);
+        Game.showOpponentBlock();
+        AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("computer", "computer@gmail.com", "123"));
+        AssignedVar.currentGame.createNewChessBoard();
+        AssignedVar.currentGame.setCurrentPlayer();
+        Game.showTempStatistic(true);
+    };
+}
+
 function onclickAboutUsBtn() {
     let $aboutUsBtn = $(`#about-us-btn`)[0];
     $aboutUsBtn.onclick = () => {
@@ -40,12 +85,14 @@ function onclickAboutUsBtn() {
         }
     }
 }
+
 function onclickOptionBtn() {
     let $optionBtn = $(`#option-btn`)[0];
     $optionBtn.onclick = () => {
         PopUp.showOption(`Tùy chọn hệ thống`);
     }
 }
+
 function onclickSignInBtn() {
     let $signInBtn = $(`#sign-col .btn-group-vertical .custom-btn`)[0];
     $signInBtn.onclick = () => {
@@ -259,9 +306,9 @@ function onclickReadyBtn() {
     });
 }
 
-function onclickPlaySoloBtn() {
-    let $playSoloBtn = $(`#mode-group-btn button`)[1];
-    $playSoloBtn.onclick = () => {
+function onclickPlayWithFriendBtn() {
+    let $playWithFriendBtn = $(`#mode-group-btn button`)[1];
+    $playWithFriendBtn.onclick = () => {
         AssignedVar.IsUserInLobby = false;
         let userAcc = User.getUserSignIn();
         if (User.getUserSignInId() == -1) {

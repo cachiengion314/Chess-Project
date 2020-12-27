@@ -26,13 +26,15 @@ export default class Pawn extends Piece {
         this.weights = 100;
     }
     getClone() {
-        return new Pawn(this.color, this.currentPos);
+        let clonePawn = new Pawn(this.color, this.currentPos);
+        clonePawn.hasMoved = this.hasMoved;
+        return clonePawn;
     }
     getId() {
         this.hasMoved = true;
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
-    getAllPossibleMoves() {
+    getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         let allMovesPossibleArr = [];
         let maxStep = 2;
         if (this.hasMoved) {
@@ -41,7 +43,7 @@ export default class Pawn extends Piece {
         for (let vector of this.directions) {
             for (let i = 1; i <= maxStep; ++i) {
                 let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
-                if (!newMovePos.isPositionHasPiece()) {
+                if (!newMovePos.isPositionHasPiece(chessBoard)) {
                     allMovesPossibleArr.push(newMovePos);
                 } else {
                     break;
@@ -50,7 +52,7 @@ export default class Pawn extends Piece {
         }
         this.specialAttackDirections.forEach(pos => {
             let atkPos = this.currentPos.plusVector(pos);
-            if (atkPos.isPositionHasPiece() && atkPos.isPositionCanAttack()) {
+            if (atkPos.isPositionHasPiece(chessBoard) && atkPos.isPositionCanAttack(chessBoard, controllingColor)) {
                 allMovesPossibleArr.push(atkPos);
             }
         });

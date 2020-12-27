@@ -68,17 +68,14 @@ export default class AssignedVar {
         return _isUserAndEnemyReady;
     }
     static set IsUserInLobby(val) {
-        Game.hideChatbox();
         if (val) {
+            Game.doesNeedAI_Move = false;
             Game.hideChessBoardAndShowLobby();
             Game.hideQuitGameBtn();
             initLobby();
         } else {
             Game.showChessBoardAndHideLobby();
             Game.showQuitGameBtn();
-            if (AssignedVar.currentGame && AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
-                Game.showChatbox();
-            }
         }
         _isUserInLobby = val;
     }
@@ -121,6 +118,12 @@ export default class AssignedVar {
     static chessClubObj = {
         "current_user_signin_id": -1,
         "all_accounts_sign_up_in_this_browser": {},
+    }
+    static get EASY() {
+        return "easy";
+    }
+    static get HARD() {
+        return "hard";
     }
     static get FAKE_LOADING_TIME() {
         return 1500;

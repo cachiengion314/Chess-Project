@@ -87,55 +87,6 @@ export default class Game {
         this.gameMode = gameMode;
         this.chessBoard = [];
     }
-    static get tempChat() {
-        return _tempChat;
-    }
-    static set tempChat(val) {
-        _tempChat = val;
-    }
-    static get isTheFirstTimeCreateTable() {
-        return _isTheFirstTimeCreateTable;
-    }
-    static set isTheFirstTimeCreateTable(val) {
-        _isTheFirstTimeCreateTable = val;
-    }
-    static showNewOpponentChat() {
-        _placeHolder_showNewOpponentChat();
-    }
-    static showNewOwnerChat() {
-        _placeHolder_showNewOwnerChat();
-    }
-    static opponentLeftTable_snapshot() {
-        _placeHolder_opponentLeftTable();
-    }
-    static recharge_opponentLeftTable_snapshot() {
-        _placeHolder_opponentLeftTable = _opponentLeftTable;
-    }
-    static recharge_opponentJoinTable_snapshot() {
-        _placeHolder_opponentJoinTable = _opponentJoinTable;
-    }
-    static opponentJoinTable_snapshot() {
-        _placeHolder_opponentJoinTable();
-    }
-    static initLogicPlayer() {
-        Game.blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
-        Game.whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
-    }
-    static get $ChessBoard() {
-        return $chessBoard;
-    }
-    static get blackPlayer() {
-        return _blackPlayer;
-    }
-    static set blackPlayer(val) {
-        _blackPlayer = val;
-    }
-    static get whitePlayer() {
-        return _whitePlayer;
-    }
-    static set whitePlayer(val) {
-        _whitePlayer = val;
-    }
     letPlayerControlChessPiece_snapshot() {
         _placeHolder_letPlayerControlChessPiece();
     }
@@ -188,7 +139,56 @@ export default class Game {
         this.setCurrentPlayer();
         initGameBoard();
     }
-
+    static doesNeedAI_Move = false;
+    static get tempChat() {
+        return _tempChat;
+    }
+    static set tempChat(val) {
+        _tempChat = val;
+    }
+    static get isTheFirstTimeCreateTable() {
+        return _isTheFirstTimeCreateTable;
+    }
+    static set isTheFirstTimeCreateTable(val) {
+        _isTheFirstTimeCreateTable = val;
+    }
+    static showNewOpponentChat() {
+        _placeHolder_showNewOpponentChat();
+    }
+    static showNewOwnerChat() {
+        _placeHolder_showNewOwnerChat();
+    }
+    static opponentLeftTable_snapshot() {
+        _placeHolder_opponentLeftTable();
+    }
+    static recharge_opponentLeftTable_snapshot() {
+        _placeHolder_opponentLeftTable = _opponentLeftTable;
+    }
+    static recharge_opponentJoinTable_snapshot() {
+        _placeHolder_opponentJoinTable = _opponentJoinTable;
+    }
+    static opponentJoinTable_snapshot() {
+        _placeHolder_opponentJoinTable();
+    }
+    static initLogicPlayer() {
+        Game.blackPlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.BLACK));
+        Game.whitePlayer = Firebase.convertCustomObjToGenericObj(new Player(AssignedVar.WHITE));
+    }
+    static get $ChessBoard() {
+        return $chessBoard;
+    }
+    static get blackPlayer() {
+        return _blackPlayer;
+    }
+    static set blackPlayer(val) {
+        _blackPlayer = val;
+    }
+    static get whitePlayer() {
+        return _whitePlayer;
+    }
+    static set whitePlayer(val) {
+        _whitePlayer = val;
+    }
     static saveAndUpdateScore() {
         let acc = User.getUserSignIn();
         acc.isReady = false;
@@ -232,15 +232,22 @@ export default class Game {
         $(`#gameplay-group-btn`).show(`fast`);
         $(`#gameplay`).show(`fast`);
         $(`#waiting-tables`).hide(`fast`);
+        User.correctedAccNames();
         if (AssignedVar.currentGame && AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
             Game.showOnlineGroupBtn();
+            Game.showChatbox();
         } else if (AssignedVar.currentGame && AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
-            Game.showSoloGroupBtn();
+            if (Game.doesNeedAI_Move) {
+                Game.showComputerGroupBtn();
+            } else {
+                Game.showSoloGroupBtn();
+            }
+            Game.hideChatbox();
         }
     }
     static hideChessBoardAndShowLobby() {
         Game.emptyBoardPackage();
-
+        Game.hideChatbox();
         $(`#mode-group-btn`).show(`fast`);
         $(`#gameplay-group-btn`).hide(`fast`);
         $(`#gameplay`).hide(`fast`);
@@ -249,10 +256,10 @@ export default class Game {
     static showOnlineGroupBtn() {
         $(`#mode-group-btn`).hide(`fast`);
         $(`#gameplay-group-btn`).show(`fast`);
-        let secondBtn = $(`#gameplay-group-btn button`)[1];
-        let thirdBtn = $(`#gameplay-group-btn button`)[2];
-        $(secondBtn).text(`Đầu hàng`);
-        $(thirdBtn).hide();
+        let $secondBtn = $(`#gameplay-group-btn button`)[1];
+        let $thirdBtn = $(`#gameplay-group-btn button`)[2];
+        $($secondBtn).text(`Đầu hàng`);
+        $($thirdBtn).hide();
     }
     static showSoloGroupBtn() {
         $(`#mode-group-btn`).hide(`fast`);
@@ -262,6 +269,14 @@ export default class Game {
         $($secondBtn).text(`Đầu hàng cho người chơi 1`);
         $($thirdBtn).text(`Đầu hàng cho người chơi 2`);
         $($thirdBtn).show();
+    }
+    static showComputerGroupBtn() {
+        $(`#mode-group-btn`).hide(`fast`);
+        $(`#gameplay-group-btn`).show(`fast`);
+        let secondBtn = $(`#gameplay-group-btn button`)[1];
+        let thirdBtn = $(`#gameplay-group-btn button`)[2];
+        $(secondBtn).text(`Đầu hàng`);
+        $(thirdBtn).hide();
     }
     static emptyWaitingTables() {
         $(`#waiting-tables`).empty();

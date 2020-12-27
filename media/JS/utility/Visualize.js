@@ -2,8 +2,8 @@ import AssignedVar from "./AssignedVar.js";
 import Vector from "./Vector.js";
 
 export default class Visualize {
-    static randomNumberFromAToMax(a, max) {
-        return Math.floor(Math.random() * (max - a)) + a;
+    static randomNumberFromAToMax(a, MAX) {
+        return Math.floor(Math.random() * (MAX - a)) + a;
     }
     static setupZIndex() {
         $(`.chatbox`).css("z-index", AssignedVar.CHATBOX_ZINDEX);
@@ -77,7 +77,6 @@ export default class Visualize {
     },
     ]
     static logInfo(chessBoard = AssignedVar.currentGame.chessBoard) {
-        console.log(`------------------------------`);
         let str = ``;
         for (let y = 0; y < 8; ++y) {
             for (let x = 0; x < 8; ++x) {

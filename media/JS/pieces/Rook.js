@@ -18,21 +18,23 @@ export default class Rook extends Piece {
         this.weights = 479;
     }
     getClone() {
-        return new Rook(this.color, this.currentPos);
+        let cloneRook = new Rook(this.color, this.currentPos);
+        cloneRook.hasMoved = this.hasMoved;
+        return cloneRook;
     }
     getId() {
         this.hasMoved = true;
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
-    getAllPossibleMoves() {
+    getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         let allMovesPossibleArr = [];
         for (let vector of this.directions) {
             for (let i = 1; i < 8; ++i) {
                 let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
-                if (newMovePos.isPositionCanAttack()) {
+                if (newMovePos.isPositionCanAttack(chessBoard, controllingColor)) {
                     allMovesPossibleArr.push(newMovePos);
                 }
-                if (newMovePos.isPositionHasPiece()) {
+                if (newMovePos.isPositionHasPiece(chessBoard)) {
                     break;
                 }
             }

@@ -15,7 +15,7 @@ export default class ChessBoardInfo {
             for (let y = 0; y < this.chessBoard[x].length; ++y) {
                 if (this.chessBoard[x][y].color && this.chessBoard[x][y].color == this.controllingColor) {
                     let selectedPiece = this.chessBoard[x][y];
-                    let piece_allPossibleMoves = selectedPiece.getAllPossibleMoves();
+                    let piece_allPossibleMoves = selectedPiece.getAllPossibleMoves(this.chessBoard, this.controllingColor);
                     for (let pos of piece_allPossibleMoves) {
                         let moveObj = new MoveInfo(selectedPiece.currentPos, pos);
                         allPossibleMoves.push(moveObj);

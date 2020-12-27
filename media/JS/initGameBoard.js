@@ -11,7 +11,6 @@ import Visualize from "./utility/Visualize.js";
 import Game from "./gameplay/Game.js";
 import Firebase from "./utility/Firebase.js";
 import User from "./gameplay/User.js";
-import PopUp from "./utility/PopUp.js";
 import AI from "./gameplay/AI.js";
 
 export function initGameBoard() {
@@ -147,7 +146,6 @@ export function mimicOnclickMovePieceAt(pos) {
             unSubscribeSelectedPiece();
             changePlayerTurn();
             Game.clearAndStartCountTime();
-            Visualize.logInfo();
         } else {
             subscribeSelectedPieceAt(pos);
         }
@@ -160,7 +158,6 @@ export function mimicOnclickMovePieceAt(pos) {
             unSubscribeSelectedPiece();
             changePlayerTurn();
             Game.clearAndStartCountTime();
-            Visualize.logInfo();
         } else {
             if (AssignedVar.selectedPiece) {
                 unSubscribeSelectedPiece();
@@ -178,15 +175,16 @@ export function setupOnClickCallbackAt(pos) {
                 unSubscribeSelectedPiece();
             } else {
                 logicDestroyEnemyPiece(pieceAtPos);
-                checkDestroyKingEvent(pieceAtPos);
+                let isKingDead = checkDestroyKingEvent(pieceAtPos);
                 logicMovePieceTo(pos);
                 checkPromotePawnEvent(AssignedVar.selectedPiece);
 
                 unSubscribeSelectedPiece();
                 changePlayerTurn();
                 Game.clearAndStartCountTime();
-                AI.move(new AI(AssignedVar.currentGame.chessBoard, AssignedVar.BLACK));
-                Visualize.logInfo();
+                if (!isKingDead && Game.doesNeedAI_Move) {
+                    AI.setupMoveFor(AssignedVar.BLACK);
+                }
             }
         } else {
             subscribeSelectedPieceAt(pos);
@@ -200,8 +198,9 @@ export function setupOnClickCallbackAt(pos) {
             unSubscribeSelectedPiece();
             changePlayerTurn();
             Game.clearAndStartCountTime();
-            AI.move(new AI(AssignedVar.currentGame.chessBoard, AssignedVar.BLACK));
-            Visualize.logInfo();
+            if (Game.doesNeedAI_Move) {
+                AI.setupMoveFor(AssignedVar.BLACK);
+            }
         } else {
             if (AssignedVar.selectedPiece) {
                 unSubscribeSelectedPiece();
@@ -235,7 +234,10 @@ function checkCastleEvent(logicPiece, nextPos) {
                 let newPos = logicPiece.posToCastle.plusVector(dir);
                 let oldRook = AssignedVar.currentGame.chessBoard[logicPiece.posToCastleRook.x][logicPiece.posToCastleRook.y];
                 logicDestroyEnemyPiece(oldRook);
-                spawnLogicPieceAt(newPos, Rook, logicPiece.color);
+                let newRook = spawnLogicPieceAt(newPos, Rook, logicPiece.color);
+                newRook.hasMoved = true;
+                logicPiece.posToCastle = null;
+                logicPiece.posToCastleRook = null;
             }
         }
     }
@@ -247,6 +249,7 @@ function spawnLogicPieceAt(pos, Class, color) {
     onclickSelectedChessPieceAt(pos);
     Visualize.onPieceMouseEnterOf($(`#${AssignedVar.currentGame.chessBoard[pos.x][pos.y].id}`)[0]);
     Visualize.onPieceMouseLeaveOf($(`#${AssignedVar.currentGame.chessBoard[pos.x][pos.y].id}`)[0]);
+    return AssignedVar.currentGame.chessBoard[pos.x][pos.y];
 }
 
 function checkPromotePawnEvent(logicPiece) {
@@ -281,7 +284,9 @@ function checkDestroyKingEvent(logicEnemyPiece) {
                 }, 300);
             }
         }
+        return true;
     }
+    return false;
 }
 
 function mimicEnemyLogicMovePieceTo(nextPos) {
@@ -311,7 +316,6 @@ export function logicMovePieceTo(nextPos) {
         });
     }
 
-    Visualize.logInfo();
     Visualize.movePiece(AssignedVar.$selectedPiece, currentPos, nextPos);
 }
 

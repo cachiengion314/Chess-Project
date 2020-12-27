@@ -15,7 +15,7 @@ export default class Empty extends ChessBlock {
     getId() {
         return `${AssignedVar.EMPTY}_${this.currentPos.convertToId()}`;
     }
-    getAllPossibleMoves() {
+    getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         return [this.currentPos];
     }
 }

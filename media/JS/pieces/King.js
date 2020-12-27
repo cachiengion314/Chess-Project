@@ -22,21 +22,27 @@ export default class King extends Piece {
         this.weights = 60000;
     }
     getClone() {
-        return new King(this.color, this.currentPos);
+        let cloneKing = new King(this.color, this.currentPos);
+        cloneKing.hasMoved = this.hasMoved;
+        cloneKing.posToCastleRook = this.posToCastleRook;
+        cloneKing.posToCastle = this.posToCastle;
+        return cloneKing;
     }
     getId() {
         this.hasMoved = true;
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
-    findPosToCastleRook() {
+    findPosToCastleRook(chessBoard = AssignedVar.currentGame.chessBoard) {
         if (this.hasMoved) return null;
         for (let dir of this.castleDirections) {
             for (let i = -3; i < 4; i += 6) {
                 let newPos = this.currentPos.plusVector(dir.multipliByNumber(i));
-                let chessPiece = AssignedVar.currentGame.chessBoard[newPos.x][newPos.y];
-                if (chessPiece.name == AssignedVar.EMPTY) {
-                    break;
+                let chessPiece;
+                if (newPos.isPositionOnTheBoard()) {
+                    chessPiece = chessBoard[newPos.x][newPos.y];
                 }
+                if (chessPiece && chessPiece.name == AssignedVar.EMPTY) break;
+
                 if (chessPiece.name == AssignedVar.ROOK_B || chessPiece.name == AssignedVar.ROOK_W) {
                     if (!chessPiece.hasMoved && this.color == chessPiece.color) {
                         this.posToCastleRook = newPos
@@ -47,36 +53,39 @@ export default class King extends Piece {
         }
         return null;
     }
-    findPosToCastle() {
+    findPosToCastle(chessBoard = AssignedVar.currentGame.chessBoard) {
         let pos;
-        if (!this.hasMoved && this.findPosToCastleRook()) {
-            let dirToRook = this.findPosToCastleRook().plusVector(this.currentPos.multipliByNumber(-1)).convertToDirection();
-            for (let i = 2; i <= 2; ++i) {
+        if (!this.hasMoved && this.findPosToCastleRook(chessBoard)) {
+            let dirToRook = this.findPosToCastleRook(chessBoard).plusVector(this.currentPos.multipliByNumber(-1)).convertToDirection();
+            for (let i = 1; i <= 2; ++i) {
                 pos = this.currentPos.plusVector(dirToRook.multipliByNumber(i));
+                if (pos.isPositionHasPiece(chessBoard)) {
+                    return null;
+                }
             }
             return pos;
         }
         return null;
     }
-    getAllPossibleMoves() {
+    getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         let allMovesPossibleArr = [];
         for (let vector of this.directions) {
             for (let i = 1; i < 2; ++i) {
                 let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
-                if (newMovePos.isPositionCanAttack()) {
+                if (newMovePos.isPositionCanAttack(chessBoard, controllingColor)) {
                     allMovesPossibleArr.push(newMovePos);
                 }
             }
         }
-        if (this.findPosToCastle()) {
-            this.posToCastle = this.findPosToCastle();
-            if (!this.posToCastle.isPositionHasPiece()) {
+        let castlePos = this.findPosToCastle(chessBoard);
+        if (castlePos) {
+            this.posToCastle = castlePos;
+            if (!this.posToCastle.isPositionHasPiece(chessBoard)) {
                 allMovesPossibleArr.push(this.posToCastle);
             } else {
                 this.posToCastle = null;
             }
         }
-
         return allMovesPossibleArr;
     }
 }

@@ -1,33 +1,41 @@
 import AssignedVar from "../utility/AssignedVar.js";
 import ChessBoardInfo from "./ChessBoardInfo.js";
 import Empty from "../pieces/Empty.js";
-import Vector from "../utility/Vector.js";
 import { mimicOnclickMovePieceAt } from "../initGameBoard.js";
+import Visualize from "../utility/Visualize.js";
+import PopUp from "../utility/PopUp.js";
+
+let _maxEvaluatedTurn = 4;
 
 export default class AI {
     constructor(chessBoard, controllingColor) {
         this.dedicatedChessBoardInfo = null;
-        this.boardScore = 0;
+        this.expectedScore = 0;
         let cloneChessBoard = AI.cloneChessBoard(chessBoard);
         let chessBoardInfo = new ChessBoardInfo(cloneChessBoard, null, null, controllingColor);
-        this.minimax_evaluatingPosition(chessBoardInfo, controllingColor, 0);
+        this.minimax_evaluatingPosition(chessBoardInfo, controllingColor, 0, undefined, undefined);
     }
-    minimax_evaluatingPosition(lastChessBoardInfo, controllingColor, countTurn) {
+    minimax_evaluatingPosition(lastChessBoardInfo, controllingColor, countTurn, alpha, beta) {
         countTurn++;
         if (countTurn == AI.MAX_EVALUATED_TURN) {
             return AI.evaluatingPosition(lastChessBoardInfo);
         }
         let allPossibleMoves = lastChessBoardInfo.getAllPossibleMoves();
+        allPossibleMoves = AI.shuffleArray(allPossibleMoves);
         let optimizedChessBoardInfo, optimizedScore;
         if (controllingColor == AssignedVar.WHITE) {
             controllingColor = AI.changeControllingColor(controllingColor);
             optimizedScore = -Infinity;
             for (let moveObj of allPossibleMoves) {
                 let currentChessBoardInfo = this.movePiece(lastChessBoardInfo, moveObj);
-                let moveScore = this.minimax_evaluatingPosition(currentChessBoardInfo, controllingColor, countTurn);
+                let moveScore = this.minimax_evaluatingPosition(currentChessBoardInfo, controllingColor, countTurn, alpha, beta);
                 if (moveScore > optimizedScore) {
                     optimizedScore = moveScore;
                     optimizedChessBoardInfo = currentChessBoardInfo;
+                    alpha = optimizedScore;
+                }
+                if (beta && moveScore > beta) {
+                    break;
                 }
             }
         } else {
@@ -35,17 +43,20 @@ export default class AI {
             optimizedScore = Infinity;
             for (let moveObj of allPossibleMoves) {
                 let currentChessBoardInfo = this.movePiece(lastChessBoardInfo, moveObj);
-                let moveScore = this.minimax_evaluatingPosition(currentChessBoardInfo, controllingColor, countTurn);
+                let moveScore = this.minimax_evaluatingPosition(currentChessBoardInfo, controllingColor, countTurn, alpha, beta);
                 if (moveScore < optimizedScore) {
                     optimizedScore = moveScore;
                     optimizedChessBoardInfo = currentChessBoardInfo;
+                    beta = optimizedScore;
+                }
+                if (alpha && moveScore < alpha) {
+                    break;
                 }
             }
         }
         if (countTurn == 1) {
             this.dedicatedChessBoardInfo = optimizedChessBoardInfo;
-            this.boardScore = optimizedScore;
-            console.log(`boardScore:`, optimizedScore);
+            this.expectedScore = optimizedScore;
         }
         return optimizedScore;
     }
@@ -65,6 +76,12 @@ export default class AI {
 
         let nextChessBoardInfo = new ChessBoardInfo(chessBoard, originChessBoard, moveObj, controllingColor);
         return nextChessBoardInfo;
+    }
+    log() {
+        console.log(`----------AI optimized move info----------`);
+        Visualize.logInfo(this.dedicatedChessBoardInfo.chessBoard);
+        console.log(`The score AI expected when chosen that move:`, this.expectedScore);
+        console.log(`----------AI optimized move info----------`);
     }
     static evaluatingPosition(chessBoardInfo) {
         let sumWeights = 0;
@@ -98,14 +115,50 @@ export default class AI {
         }
         return AssignedVar.WHITE;
     }
-    static get MAX_EVALUATED_TURN() {
-        return 3;
+    static shuffleArray(arr) {
+        let tempArr = [...arr];
+        let rArr = [...arr];
+        for (let i = 0; i < arr.length; ++i) {
+            let rIndex = Visualize.randomNumberFromAToMax(0, tempArr.length);
+            rArr[i] = tempArr[rIndex];
+            tempArr = tempArr.filter(item => {
+                return item != rArr[i];
+            });
+        }
+        return rArr;
     }
-    static move(aiInstants) {
-        let moveObj = aiInstants.dedicatedChessBoardInfo.moveFromParrent;
+    static setMaxEvaluatedTurn(easy_hard_str) {
+        if (easy_hard_str == AssignedVar.EASY) {
+            _maxEvaluatedTurn = 3;
+        }
+        if (easy_hard_str == AssignedVar.HARD) {
+            _maxEvaluatedTurn = 4;
+        }
+    }
+    static get MAX_EVALUATED_TURN() {
+        return _maxEvaluatedTurn;
+    }
+    static move(controllingColor) {
+        let aiInstant = new AI(AssignedVar.currentGame.chessBoard, controllingColor);
+        let moveObj = aiInstant.dedicatedChessBoardInfo.moveFromParrent;
         let currentPos = moveObj.currentPos;
         let nextPos = moveObj.nextPos;
         mimicOnclickMovePieceAt(currentPos);
-        mimicOnclickMovePieceAt(nextPos);
+        setTimeout(() => {
+            mimicOnclickMovePieceAt(nextPos);
+            aiInstant.log();
+        }, 200);
+    }
+    static setupMoveFor(controllingColor) {
+        if (AI.MAX_EVALUATED_TURN > 3) {
+            setTimeout(() => {
+                PopUp.showLoading(() => {
+                    AI.move(controllingColor);
+                    PopUp.closeModal(`#notification-modal`);
+                }, `Vui lòng chờ đợi máy tính suy nghĩ!`, 300);
+            }, 300);
+        } else {
+            AI.move(controllingColor);
+        }
     }
 }

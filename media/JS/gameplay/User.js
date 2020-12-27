@@ -216,26 +216,7 @@ export default class User {
             }
         }
     }
-    static showUserStatistic(userInfo) {
-        $(`#user-statistic`).show();
-        let $name = $(`#user-statistic .statistic-txt`)[0];
-        let $elo = $(`#user-statistic .statistic-txt`)[1];
-        let $wins = $(`#user-statistic .statistic-txt`)[2];
-        let $loses = $(`#user-statistic .statistic-txt`)[3];
-        let $draws = $(`#user-statistic .statistic-txt`)[4];
-        $($name).html(`${userInfo.name}`);
-        $($elo).html(`${userInfo.elo}`);
-        $($wins).html(`${userInfo.wins}`);
-        $($loses).html(`${userInfo.loses}`);
-        $($draws).html(`${userInfo.draws}`);
 
-    }
-    static showWelcomeTitle(content) {
-        $(`#sign-col h4`).text(content);
-    }
-    static hideUserStatistic() {
-        $(`#user-statistic`).hide();
-    }
     static opponent_rageQuitAction(tableId) {
         PopUp.showLoading(() => {
             User.tables[tableId].table.opponent.id = null;
@@ -264,6 +245,7 @@ export default class User {
                 });
         }, `Bạn vừa tự ý out khỏi bàn chơi! Lần sau hãy nhấn thoát game!`, AssignedVar.FAKE_LOADING_TIME, PopUp.angryImgUrl);
     }
+
     static owner_rageQuitAction(tableId) {
         PopUp.showLoading(() => {
             Firebase.deleteChats(Firebase.currentChatsId, () => {
@@ -285,5 +267,36 @@ export default class User {
                 PopUp.closeModal(`#notification-modal`);
             });
         }, `Bạn vừa tự ý out khỏi bàn chơi! Lần sau hãy nhấn thoát game!`, AssignedVar.FAKE_LOADING_TIME, PopUp.angryImgUrl);
+    }
+
+    static showUserStatistic(userInfo) {
+        $(`#user-statistic`).show();
+        let $name = $(`#user-statistic .statistic-txt`)[0];
+        let $elo = $(`#user-statistic .statistic-txt`)[1];
+        let $wins = $(`#user-statistic .statistic-txt`)[2];
+        let $loses = $(`#user-statistic .statistic-txt`)[3];
+        let $draws = $(`#user-statistic .statistic-txt`)[4];
+        $($name).html(`${userInfo.name}`);
+        $($elo).html(`${userInfo.elo}`);
+        $($wins).html(`${userInfo.wins}`);
+        $($loses).html(`${userInfo.loses}`);
+        $($draws).html(`${userInfo.draws}`);
+    }
+
+    static showWelcomeTitle(content) {
+        $(`#sign-col h4`).text(content);
+    }
+
+    static hideUserStatistic() {
+        $(`#user-statistic`).hide();
+    }
+    static correctedAccNames() {
+        if (!AssignedVar.currentGame) return;
+        let ownerName = AssignedVar.currentTable.owner.name;
+        $(`#user-block .player`).text(`${ownerName}`);
+        if (AssignedVar.currentTable.opponent) {
+            let opponentName = AssignedVar.currentTable.opponent.name;
+            $(`#enemy-block .player`).text(`${opponentName}`);
+        }
     }
 }

@@ -15,16 +15,14 @@ export default class Vector {
     isEqualTo(vector) {
         if (this.x == vector.x && this.y == vector.y) {
             return true
-        } else {
-            return false;
         }
+        return false;
     }
     isXYUniform() {
         if (this.x % 2 == 0 && this.y % 2 == 0 || this.x % 2 != 0 && this.y % 2 != 0) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
     isBoardLastLine() {
         if (this.y == 7 || this.y == 0) {
@@ -75,33 +73,29 @@ export default class Vector {
         if (this.x < 0 || this.y < 0 ||
             this.x > 7 || this.y > 7) {
             return false;
-        } else
-            return true;
+        }
+        return true;
     }
-    isPositionHasPiece() {
+    isPositionHasPiece(chessBoard = AssignedVar.currentGame.chessBoard) {
         if (this.isPositionOnTheBoard()) {
-            let piece = AssignedVar.currentGame.chessBoard[this.x][this.y];
+            let piece = chessBoard[this.x][this.y];
             if (piece.type == AssignedVar.PIECE) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
             return false;
         }
+        return false;
     }
-    isPositionCanAttack() {
+    isPositionCanAttack(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         if (!AssignedVar.currentGame.currentPlayer || !this.isPositionOnTheBoard()) return false;
-        if (this.isPositionHasPiece()) {
-            let piece = AssignedVar.currentGame.chessBoard[this.x][this.y];
-            if (piece.controlByPlayerId == AssignedVar.currentGame.currentPlayer.id) {
+        if (this.isPositionHasPiece(chessBoard)) {
+            let piece = chessBoard[this.x][this.y];
+            if (piece.color == controllingColor) {
                 return false;
-            } else {
-                return true;
             }
-        } else {
             return true;
         }
+        return true;
     }
     static createRandomDirection() {
         let rX = Visualize.randomNumberFromAToMax(-1, 2);
