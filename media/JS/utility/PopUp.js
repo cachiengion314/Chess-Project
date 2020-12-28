@@ -105,6 +105,18 @@ export default class PopUp {
         $(`${SIGN_MODAL_ID} h4`).html(`Hãy đăng ký để chơi online nào!`);
     }
 
+    static showWait(closeConditionCallback, content = `Please stand by!`, fakeLoadingTime = 0, imgUrl = PopUp.loadingImgUrl) {
+        let WAIT_MODAL_ID = `#wait-modal`;
+        PopUp.openModal(WAIT_MODAL_ID, imgUrl);
+
+        content = PopUp.highlightContent(content);
+        $(`${WAIT_MODAL_ID} h4`).html(content);
+        $(`#user-name-txt`).css({ "color": PopUp.userNameTxtColor });
+
+        clearTimeout(_unSubcribeTimeout);
+        _unSubcribeTimeout = setTimeout(closeConditionCallback, fakeLoadingTime);
+    }
+
     static showLoading(closeConditionCallback, content = `Please stand by!`, fakeLoadingTime = 0, imgUrl = PopUp.loadingImgUrl) {
         let NOTIFICATION_MODAL_ID = `#notification-modal`;
         PopUp.openModal(NOTIFICATION_MODAL_ID, imgUrl);
@@ -185,7 +197,7 @@ export default class PopUp {
             "display": "block",
             "z-index": AssignedVar.CUSTOM_MODAL_ZINDEX,
         });
-        if (MODAL_ID == "#notification-modal") {
+        if (MODAL_ID == "#notification-modal" || MODAL_ID == "#wait-modal") {
             $(`${MODAL_ID} img`).attr(`src`, imgUrl);
             $(`${MODAL_ID}`).css({
                 "z-index": AssignedVar.NOTIFICATION_MODAL_ZINDEX,

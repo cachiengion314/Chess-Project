@@ -24,6 +24,19 @@ export default class Pawn extends Piece {
             new Vector(1, 0).plusVector(new Vector(0, moveDirection)),
         ];
         this.weights = 100;
+        this.positions = [
+            [100, 100, 100, 100, 100, 100, 100, 100],
+            [10, 10, 10, 10, 10, 10, 10, 10],
+            [0, 30, 0, 0, 0, 0, 30, 0],
+            [-10, 3, 2, 1, 1, 1, 3, -10],
+            [-10, 10, 10, 10, 10, 10, 10, -10],
+            [1, 20, 0, 0, 0, 0, 20, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ];
+        if (this.color == AssignedVar.BLACK) {
+            this.positions = this.positions.reverse();
+        }
     }
     getClone() {
         let clonePawn = new Pawn(this.color, this.currentPos);

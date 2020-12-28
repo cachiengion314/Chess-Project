@@ -16,6 +16,19 @@ export default class Rook extends Piece {
         ];
         this.hasMoved = false;
         this.weights = 479;
+        this.positions = [
+            [5, 0, 0, 0, 0, 0, 0, 5],
+            [3, 0, 0, 0, 0, 0, 0, 3],
+            [1, 0, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [-1, 1, 0, 0, 0, 0, 1, -1],
+            [-1, 1, 0, 0, 0, 0, 1, -1],
+            [-1, 1, 1, 1, 1, 1, 1, -1],
+            [-1, 0, 1, 0, 0, 0, 0, -1]
+        ];
+        if (this.color == AssignedVar.BLACK) {
+            this.positions = this.positions.reverse();
+        }
     }
     getClone() {
         let cloneRook = new Rook(this.color, this.currentPos);

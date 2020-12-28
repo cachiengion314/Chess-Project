@@ -119,6 +119,12 @@ export default class AssignedVar {
         "current_user_signin_id": -1,
         "all_accounts_sign_up_in_this_browser": {},
     }
+    static get CRAZY() {
+        return "crazy";
+    }
+    static get NORMAL() {
+        return "normal";
+    }
     static get EASY() {
         return "easy";
     }

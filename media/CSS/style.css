@@ -289,6 +289,19 @@ input:focus {
     justify-content: center;
 }
 
+.wait-modal-content {
+    background-color: #3d3939;
+    width: 0%;
+    height: fit-content;
+    position: absolute;
+    top: 7%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 1.1em;
+    border-bottom: 6px solid #2b2727;
+    padding: 9px 13px;
+}
+
 .horizontal-bar {
     display: flex;
     justify-content: flex-start;

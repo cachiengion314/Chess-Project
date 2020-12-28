@@ -18,6 +18,19 @@ export default class Knight extends Piece {
             new Vector(1, -2), new Vector(2, -1)
         ];
         this.weights = 280;
+        this.positions = [
+            [-50, 0, 0, 0, 0, 0, 0, -50],
+            [0, 0, 10, 0, 0, 0, 0, 0],
+            [0, 0, 0, 10, 1, 1, 0, 0],
+            [0, 0, 3, 1, 1, 2, 0, 0],
+            [-10, 0, 1, 2, 1, 2, 0, -10],
+            [1, 0, 2, 2, 2, 2, 0, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [-50, -1, -1, -1, -1, -1, -1, -50]
+        ];
+        if (this.color == AssignedVar.BLACK) {
+            this.positions = this.positions.reverse();
+        }
     }
     getClone() {
         return new Knight(this.color, this.currentPos);

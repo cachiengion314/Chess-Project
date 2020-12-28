@@ -38,19 +38,10 @@ export default function listenAllEvents() {
 
 function onclickAI_Btn() {
     let $aiBtn = $(`#ai-btn`)[0];
-    if (AI.MAX_EVALUATED_TURN == 4) {
-        $aiBtn.textContent = "Máy tính: Khó";
-    } else if (AI.MAX_EVALUATED_TURN == 3) {
-        $aiBtn.textContent = "Máy tính: Dễ";
-    }
+    AI.displayCurrentAI_difficult($aiBtn);
     $aiBtn.onclick = () => {
-        if (AI.MAX_EVALUATED_TURN == 4) {
-            AI.setMaxEvaluatedTurn(AssignedVar.EASY);
-            $aiBtn.textContent = "Máy tính: Dễ";
-        } else if (AI.MAX_EVALUATED_TURN == 3) {
-            AI.setMaxEvaluatedTurn(AssignedVar.HARD);
-            $aiBtn.textContent = "Máy tính: Khó";
-        }
+        AI.increaseAI_Difficult();
+        AI.displayCurrentAI_difficult($aiBtn);
     }
 }
 

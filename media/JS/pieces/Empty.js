@@ -8,6 +8,16 @@ export default class Empty extends ChessBlock {
         this.id = `${AssignedVar.EMPTY}_${currentPos.convertToId()}`;
         this.directions = [this.currentPos];
         this.weights = 0;
+        this.positions = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ];
     }
     getClone() {
         return new Empty(this.currentPos);

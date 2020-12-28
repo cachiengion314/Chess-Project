@@ -15,6 +15,19 @@ export default class Bishop extends Piece {
             new Vector(1, 1), new Vector(1, -1), new Vector(-1, -1), new Vector(-1, 1)
         ];
         this.weights = 320;
+        this.positions = [
+            [-50, -10, -10, -10, -10, -10, -10, -50],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [-10, -1, 0, -10, -10, 0, -1, -10]
+        ];
+        if (this.color == AssignedVar.BLACK) {
+            this.positions = this.positions.reverse();
+        }
     }
     getClone() {
         return new Bishop(this.color, this.currentPos);

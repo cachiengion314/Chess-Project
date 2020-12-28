@@ -53,8 +53,7 @@ function initLogicPieces() {
 
 function initLogicBoard() {
     for (let x = 0; x < 8; ++x) {
-        let array = [];
-        AssignedVar.currentGame.chessBoard.push(array);
+        AssignedVar.currentGame.chessBoard.push([]);
         for (let y = 0; y < 8; ++y) {
             AssignedVar.currentGame.chessBoard[x].push(new Empty(new Vector(x, y)));
         }

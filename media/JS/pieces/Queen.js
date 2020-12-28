@@ -16,6 +16,19 @@ export default class Queen extends Piece {
             new Vector(1, 1), new Vector(1, -1), new Vector(-1, -1), new Vector(-1, 1)
         ];
         this.weights = 929;
+        this.positions = [
+            [10, 0, 0, 0, 5, 0, 0, 10],
+            [0, 0, 3, 0, 0, 3, 0, 0],
+            [0, 0, 1, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [-10, 0, 0, 0, 0, 0, 0, -10],
+            [-10, -2, -1, -2, -1, -2, -1, -10],
+            [-10, -1, -2, -1, -1, -2, -1, -10],
+            [-50, 0, 0, 0, 0, 0, 0, -50]
+        ];
+        if (this.color == AssignedVar.BLACK) {
+            this.positions = this.positions.reverse();
+        }
     }
     getClone() {
         return new Queen(this.color, this.currentPos);
