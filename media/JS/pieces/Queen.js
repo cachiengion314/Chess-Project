@@ -24,7 +24,7 @@ export default class Queen extends Piece {
             [-10, 0, 0, 0, 0, 0, 0, -10],
             [-10, -2, -1, -2, -1, -2, -1, -10],
             [-10, -1, -2, -1, -1, -2, -1, -10],
-            [-50, 0, 0, 0, 0, 0, 0, -50]
+            [-50, 0, 0, 0, -7, 0, 0, -50]
         ];
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();

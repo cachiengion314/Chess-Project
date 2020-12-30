@@ -23,7 +23,7 @@ export default class Bishop extends Piece {
             [1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 1],
-            [-10, -1, 0, -10, -10, 0, -1, -10]
+            [-10, -1, -7, -10, -10, -7, -1, -10]
         ];
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();

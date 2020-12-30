@@ -28,7 +28,7 @@ export default class King extends Piece {
             [-1, 0, 0, 0, 0, 0, 0, -5],
             [-1, -1, -1, -1, -1, -1, -1, -5],
             [-1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, 10, 0, 0, 0, 0, 0, -1]
+            [-1, 10, 0, 7, 0, 0, 0, -1]
         ];
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();
