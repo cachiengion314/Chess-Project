@@ -11,8 +11,8 @@ let _aiDifficultArray = [`easy`, `normal`, `hard`,];
 
 export default class AI {
     constructor(chessBoard, controllingColor) {
-        this.dedicatedChessBoardInfo = null;
-        this.expectedScore = 0;
+        this.evaluating_chessBoardInfo = null;
+        this.evaluating_boardScore = 0;
         let cloneChessBoard = AI.cloneChessBoard(chessBoard);
         let chessBoardInfo = new ChessBoardInfo(cloneChessBoard, null, null, controllingColor);
         this.minimax_evaluating(chessBoardInfo, controllingColor, 0, undefined, undefined, _maxEvaluatedTurn);
@@ -59,8 +59,8 @@ export default class AI {
             }
         }
         if (countTurn == 1) {
-            this.dedicatedChessBoardInfo = optimizedChessBoardInfo;
-            this.expectedScore = optimizedScore;
+            this.evaluating_chessBoardInfo = optimizedChessBoardInfo;
+            this.evaluating_boardScore = optimizedScore;
         }
         return optimizedScore;
     }
@@ -83,9 +83,8 @@ export default class AI {
     }
     log() {
         console.log(`----------AI optimized move info----------`);
-        Visualize.logInfo(this.dedicatedChessBoardInfo.chessBoard);
-        console.log(`The score AI expected when chosen that move:`, this.expectedScore);
-        console.log(`----------AI optimized move info----------`);
+        Visualize.logInfo(this.evaluating_chessBoardInfo.chessBoard);
+        console.log(`The board score AI expected when chosen that move:`, this.evaluating_boardScore);
     }
     static evaluating(chessBoardInfo) {
         let sumWeights = 0;
@@ -108,7 +107,7 @@ export default class AI {
     }
     static move(controllingColor) {
         let aiInstant = new AI(AssignedVar.currentGame.chessBoard, controllingColor);
-        let moveObj = aiInstant.dedicatedChessBoardInfo.moveFromParrent;
+        let moveObj = aiInstant.evaluating_chessBoardInfo.moveFromParrent;
         let currentPos = moveObj.currentPos;
         let nextPos = moveObj.nextPos;
         mimicOnclickMovePieceAt(currentPos);
@@ -169,6 +168,22 @@ export default class AI {
         if (_aiDifficultIndex == _aiDifficultArray.length) {
             _aiDifficultIndex = 0;
         }
+    }
+    static reducePromisingMovesNumber(dedicatedMoves, controllingColor) {
+        let finalArr = [];
+        let sortedArr = dedicatedMoves.slice();
+        sortedArr = sortedArr.sort((objA, objB) => {
+            if (controllingColor == AssignedVar.WHITE) {
+                return objB.moveScore - objA.moveScore;
+            }
+            return objA.moveScore - objB.moveScore;
+        });
+        let pNumbers = Math.floor(sortedArr.length * .1);
+        if (pNumbers == 0) pNumbers = 1;
+        for (let i = 0; i < pNumbers; ++i) {
+            finalArr.push(sortedArr[i]);
+        }
+        return finalArr;
     }
     static displayCurrentAI_difficult($aiBtn) {
         $aiBtn.textContent = `Computer: ${_aiDifficultArray[_aiDifficultIndex]}`;
