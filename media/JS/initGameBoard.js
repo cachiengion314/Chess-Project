@@ -150,9 +150,9 @@ export function mimicOnclickMovePieceAt(pos) {
         }
     } else {
         if (pos.isPositionInLegalMoves()) {
+            checkCastleEvent(AssignedVar.selectedPiece, pos);
             mimicEnemyLogicMovePieceTo(pos);
             checkPromotePawnEvent(AssignedVar.selectedPiece);
-            checkCastleEvent(AssignedVar.selectedPiece, pos);
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
@@ -190,9 +190,9 @@ export function setupOnClickCallbackAt(pos) {
         }
     } else {
         if (pos.isPositionInLegalMoves()) {
+            checkCastleEvent(AssignedVar.selectedPiece, pos);
             logicMovePieceTo(pos);
             checkPromotePawnEvent(AssignedVar.selectedPiece);
-            checkCastleEvent(AssignedVar.selectedPiece, pos);
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
@@ -228,11 +228,13 @@ export function logicDestroyEnemyPiece(logicEnemyPiece) {
 function checkCastleEvent(logicPiece, nextPos) {
     if (logicPiece.name == AssignedVar.KING_W || logicPiece.name == AssignedVar.KING_B) {
         if (logicPiece.posToCastle && logicPiece.posToCastleRook) {
-            if (nextPos.isEqualTo(logicPiece.posToCastle)) {
+            if (nextPos.isEqualTo(logicPiece.posToCastle) && !logicPiece.hasMoved) {
                 let dir = logicPiece.posToCastleRook.plusVector(logicPiece.posToCastle.multipliByNumber(-1)).multipliByNumber(-1);
                 let newPos = logicPiece.posToCastle.plusVector(dir);
                 let oldRook = AssignedVar.currentGame.chessBoard[logicPiece.posToCastleRook.x][logicPiece.posToCastleRook.y];
-                logicDestroyEnemyPiece(oldRook);
+                if (oldRook.type == AssignedVar.PIECE) {
+                    logicDestroyEnemyPiece(oldRook);
+                }
                 let newRook = spawnLogicPieceAt(newPos, Rook, logicPiece.color);
                 newRook.hasMoved = true;
                 logicPiece.posToCastle = null;
