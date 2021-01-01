@@ -5,7 +5,7 @@ import { mimicOnclickMovePieceAt } from "../initGameBoard.js";
 import Visualize from "../utility/Visualize.js";
 import PopUp from "../utility/PopUp.js";
 
-let _maxEvaluatedTurn = 3;
+let _maxEvaluatedTurn = 5;
 let _aiDifficultIndex = 0;
 let _aiDifficultArray = [`easy`, `normal`, `hard`,];
 
@@ -15,15 +15,19 @@ export default class AI {
         this.evaluating_boardScore = 0;
         let cloneChessBoard = AI.cloneChessBoard(chessBoard);
         let chessBoardInfo = new ChessBoardInfo(cloneChessBoard, null, null, controllingColor);
-        this.minimax_evaluating(chessBoardInfo, controllingColor, 0, undefined, undefined, _maxEvaluatedTurn);
+        let timeConsume = AI.measureExecutionTime(() => {
+            this.minimax_evaluating(chessBoardInfo, controllingColor, 0, undefined, undefined, _maxEvaluatedTurn);
+        });
+        console.log(`timeConsume:`, timeConsume);
     }
     minimax_evaluating(lastChessBoardInfo, controllingColor, countTurn, alpha, beta, maxEvaluatedTurn) {
         countTurn++;
+        lastChessBoardInfo.isAtTurn = countTurn;
         if (countTurn == maxEvaluatedTurn) {
             return AI.evaluating(lastChessBoardInfo);
         }
         let allPossibleMoves = lastChessBoardInfo.getAllPossibleMoves();
-        allPossibleMoves = AI.shuffleArray(allPossibleMoves);
+        // allPossibleMoves = AI.shuffleArray(allPossibleMoves);
         let optimizedChessBoardInfo, optimizedScore;
         if (controllingColor == AssignedVar.WHITE) {
             controllingColor = AI.changeControllingColor(controllingColor);
@@ -61,6 +65,7 @@ export default class AI {
         if (countTurn == 1) {
             this.evaluating_chessBoardInfo = optimizedChessBoardInfo;
             this.evaluating_boardScore = optimizedScore;
+            // console.log(`turn 1 - allPossibleMoves`, allPossibleMoves);
         }
         return optimizedScore;
     }
@@ -88,22 +93,24 @@ export default class AI {
     }
     static evaluating(chessBoardInfo) {
         let sumWeights = 0;
-        let sumPositions = 0;
+        let sumHeuristic = 0;
         for (let x = 0; x < 8; ++x) {
             for (let y = 0; y < 8; ++y) {
                 let selectedPiece = chessBoardInfo.chessBoard[x][y];
                 if (selectedPiece.color) {
                     if (selectedPiece.color == AssignedVar.WHITE) {
                         sumWeights += selectedPiece.weights;
-                        sumPositions += selectedPiece.positions[y][x];
+                        selectedPiece.currentH_Score = selectedPiece.getHeuristicScore(chessBoardInfo.chessBoard);
+                        sumHeuristic += selectedPiece.currentH_Score;
                     } else {
                         sumWeights -= selectedPiece.weights;
-                        sumPositions -= selectedPiece.positions[y][x];
+                        selectedPiece.currentH_Score = selectedPiece.getHeuristicScore(chessBoardInfo.chessBoard);
+                        sumHeuristic -= selectedPiece.currentH_Score;
                     }
                 }
             }
         }
-        return sumWeights + sumPositions;
+        return sumWeights + sumHeuristic;
     }
     static move(controllingColor) {
         let aiInstant = new AI(AssignedVar.currentGame.chessBoard, controllingColor);
@@ -144,18 +151,6 @@ export default class AI {
         }
         return AssignedVar.WHITE;
     }
-    static shuffleArray(arr) {
-        let tempArr = [...arr];
-        let rArr = [...arr];
-        for (let i = 0; i < arr.length; ++i) {
-            let rIndex = Visualize.randomNumberFromAToMax(0, tempArr.length);
-            rArr[i] = tempArr[rIndex];
-            tempArr = tempArr.filter(item => {
-                return item != rArr[i];
-            });
-        }
-        return rArr;
-    }
     static getCurrentAI_difficult() {
         return _aiDifficultArray[_aiDifficultIndex];
     }
@@ -169,23 +164,26 @@ export default class AI {
             _aiDifficultIndex = 0;
         }
     }
-    static reducePromisingMovesNumber(dedicatedMoves, controllingColor) {
-        let finalArr = [];
-        let sortedArr = dedicatedMoves.slice();
-        sortedArr = sortedArr.sort((objA, objB) => {
-            if (controllingColor == AssignedVar.WHITE) {
-                return objB.moveScore - objA.moveScore;
-            }
-            return objA.moveScore - objB.moveScore;
-        });
-        let pNumbers = Math.floor(sortedArr.length * .1);
-        if (pNumbers == 0) pNumbers = 1;
-        for (let i = 0; i < pNumbers; ++i) {
-            finalArr.push(sortedArr[i]);
-        }
-        return finalArr;
-    }
     static displayCurrentAI_difficult($aiBtn) {
         $aiBtn.textContent = `Computer: ${_aiDifficultArray[_aiDifficultIndex]}`;
+    }
+
+    static measureExecutionTime(callback) {
+        let startTimer = window.performance.now();
+        callback();
+        let endTimer = window.performance.now();
+        return endTimer - startTimer;
+    }
+    static shuffleArray(arr) {
+        let tempArr = [...arr];
+        let rArr = [...arr];
+        for (let i = 0; i < arr.length; ++i) {
+            let rIndex = Visualize.randomNumberFromAToMax(0, tempArr.length);
+            rArr[i] = tempArr[rIndex];
+            tempArr = tempArr.filter(item => {
+                return item != rArr[i];
+            });
+        }
+        return rArr;
     }
 }

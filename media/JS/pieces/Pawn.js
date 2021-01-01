@@ -25,23 +25,46 @@ export default class Pawn extends Piece {
         ];
         this.weights = 100;
         this.positions = [
-            [929, 929, 929, 929, 929, 929, 929, 929],
+            [829, 829, 829, 829, 829, 829, 829, 829],
             [100, 100, 100, 100, 100, 100, 100, 100],
-            [0, 3, 3, 3, 3, 3, 3, 0],
-            [0, 3, 2, 1, 1, 1, 3, 0],
-            [-1, 3, 1, 3, 1, 1, 3, -1],
-            [1, 3, 0, 3, 0, 0, 3, 1],
+            [10, 10, 10, 10, 10, 10, 10, 10],
+            [0, 5, 3, 5, 5, 5, 3, 0],
+            [0, 18, 16, 19, 17, 18, 20, 0],
+            [1, 13, 0, 14, 0, 0, 15, 1],
             [-7, -7, -7, -7, -7, -7, -7, -7],
             [0, 0, 0, 0, 0, 0, 0, 0]
         ];
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();
         }
+        this.currentH_Score = 0;
+    }
+    getHeuristicScore(clonedChessBoard) {
+        let heuristicValue = 0;
+        let threatPostionValue = 0;
+        let bonusPositionValue = 0;
+        let positionsValue = this.positions[this.currentPos.y][this.currentPos.x];
+
+        let selectedPiece_allPossibleMoves = this.getAllPossibleMoves(clonedChessBoard, this.color);
+        for (let pos of selectedPiece_allPossibleMoves) {
+            if (pos.isPositionCanAttack(clonedChessBoard, this.color)) {
+                if (pos.isPositionHasPiece(clonedChessBoard)) {
+                    let enemyPiece = clonedChessBoard[pos.x][pos.y];
+                    threatPostionValue += Math.floor(enemyPiece.weights * .1);
+                }
+                if (bonusPositionValue < 9) {
+                    bonusPositionValue++;
+                }
+            }
+        }
+        heuristicValue = threatPostionValue + bonusPositionValue + positionsValue;
+        return heuristicValue;
     }
     getClone() {
-        let clonePawn = new Pawn(this.color, this.currentPos);
-        clonePawn.hasMoved = this.hasMoved;
-        return clonePawn;
+        let clone = new Pawn(this.color, this.currentPos);
+        clone.currentH_Score = this.currentH_Score;
+        clone.hasMoved = this.hasMoved;
+        return clone;
     }
     getId() {
         this.hasMoved = true;

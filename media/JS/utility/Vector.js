@@ -1,5 +1,6 @@
 import AssignedVar from "./AssignedVar.js";
 import Visualize from "./Visualize.js";
+import AI from "../gameplay/AI.js";
 
 export default class Vector {
     constructor(x = 0, y = 0) {
@@ -96,6 +97,49 @@ export default class Vector {
             return true;
         }
         return true;
+    }
+    findDangerousPiece(clonedChessBoard, controllingColor) {
+        let dangerousEnemies = [];
+        let protectedFriends = [];
+        let oppositeControllingColor = AI.changeControllingColor(controllingColor);
+        for (let x = 0; x < 8; ++x) {
+            for (let y = 0; y < 8; ++y) {
+                let piece = clonedChessBoard[x][y];
+                if (piece.color) {
+                    if (piece.color == oppositeControllingColor) {
+                        let isPieceDangerous = false;
+                        let e_piece_allPossibleMoves = piece.getAllPossibleMoves(clonedChessBoard, oppositeControllingColor);
+                        for (let e_pos of e_piece_allPossibleMoves) {
+                            if (e_pos.isEqualTo(this)) {
+                                isPieceDangerous = true;
+                                break;
+                            }
+                        }
+                        if (isPieceDangerous) {
+                            dangerousEnemies.push(piece);
+                        }
+                    } else {
+                        let isProtected = false;
+                        let f_piece_allPossibleMoves = piece.getAllPossibleMoves(clonedChessBoard, oppositeControllingColor);
+                        for (let f_pos of f_piece_allPossibleMoves) {
+                            if (f_pos.isEqualTo(this)) {
+                                isProtected = true;
+                                break;
+                            }
+                        }
+                        if (isProtected) {
+                            protectedFriends.push(piece);
+                        }
+                    }
+                }
+
+            }
+        }
+        let foundData = {
+            "dangerousEnemies": dangerousEnemies,
+            "protectedFriends": protectedFriends,
+        }
+        return foundData;
     }
     static createRandomDirection() {
         let rX = Visualize.randomNumberFromAToMax(-1, 2);

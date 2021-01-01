@@ -29,9 +29,33 @@ export default class Queen extends Piece {
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();
         }
+        this.currentH_Score = 0;
+    }
+    getHeuristicScore(clonedChessBoard) {
+        let heuristicValue = 0;
+        let threatPostionValue = 0;
+        let bonusPositionValue = 0;
+        let positionsValue = this.positions[this.currentPos.y][this.currentPos.x];
+
+        let selectedPiece_allPossibleMoves = this.getAllPossibleMoves(clonedChessBoard, this.color);
+        for (let pos of selectedPiece_allPossibleMoves) {
+            if (pos.isPositionCanAttack(clonedChessBoard, this.color)) {
+                if (pos.isPositionHasPiece(clonedChessBoard)) {
+                    let enemyPiece = clonedChessBoard[pos.x][pos.y];
+                    threatPostionValue += Math.floor(enemyPiece.weights * .1);
+                }
+                if (bonusPositionValue < 9) {
+                    bonusPositionValue++;
+                }
+            }
+        }
+        heuristicValue = threatPostionValue + bonusPositionValue + positionsValue;
+        return heuristicValue;
     }
     getClone() {
-        return new Queen(this.color, this.currentPos);
+        let clone = new Queen(this.color, this.currentPos);
+        clone.currentH_Score = this.currentH_Score;
+        return clone;
     }
     getId() {
         return `${this.name}_${this.currentPos.convertToId()}`;
