@@ -40,7 +40,10 @@ export default class Pawn extends Piece {
         this.currentH_Score = 0;
         this.current_allPossibleMoves = null;
     }
-    checkCapturedPosition(pos) {
+    findProtectedFriendAt(pos, friends_allPossibleMoves) {
+
+    }
+    checkCapturedPositionAt(pos) {
         for (let dir of this.specialAttackDirections) {
             let atkPos = this.currentPos.plusVector(dir);
             if (atkPos.isEqualTo(pos)) {
@@ -59,31 +62,38 @@ export default class Pawn extends Piece {
         this.hasMoved = true;
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
-    getAllPossibleAttackMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
-
+    getAtkPosOnly(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
+        let allAtkPos = [];
+        this.specialAttackDirections.forEach(pos => {
+            let atkPos = this.currentPos.plusVector(pos);
+            if (atkPos.isPositionCanAttack(chessBoard, controllingColor)) {
+                allAtkPos.push(atkPos);
+            }
+        });
+        return allAtkPos;
     }
     getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
-        let allMovesPossibleArr = [];
+        let possibleMoves = [];
         let maxStep = 2;
         if (this.hasMoved) {
             maxStep = 1;
         }
-        for (let vector of this.directions) {
-            for (let i = 1; i <= maxStep; ++i) {
-                let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
-                if (!newMovePos.isPositionHasPiece(chessBoard)) {
-                    allMovesPossibleArr.push(newMovePos);
-                } else {
-                    break;
-                }
+        let dir = this.directions[0];
+        for (let i = 1; i <= maxStep; ++i) {
+            let newMovePos = this.currentPos.plusVector(dir.multipliByNumber(i));
+            if (!newMovePos.isPositionHasPiece(chessBoard)) {
+                possibleMoves.push(newMovePos);
+            } else {
+                break;
             }
         }
+
         this.specialAttackDirections.forEach(pos => {
             let atkPos = this.currentPos.plusVector(pos);
             if (atkPos.isPositionHasPiece(chessBoard) && atkPos.isPositionCanAttack(chessBoard, controllingColor)) {
-                allMovesPossibleArr.push(atkPos);
+                possibleMoves.push(atkPos);
             }
         });
-        return allMovesPossibleArr;
+        return possibleMoves;
     }
 }

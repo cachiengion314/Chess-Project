@@ -13,7 +13,11 @@ export default class Piece extends ChessBlock {
             this.controlByPlayerId = Game.blackPlayer.id;
         }
     }
-    checkCapturedPosition(pos) {
+    getAtkPosOnly(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
+        return this.getAllPossibleMoves(chessBoard, controllingColor);
+    }
+    getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) { }
+    checkCapturedPositionAt(pos) {
         return true;
     }
 }

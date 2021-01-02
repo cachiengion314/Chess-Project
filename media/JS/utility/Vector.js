@@ -98,22 +98,20 @@ export default class Vector {
         }
         return true;
     }
-    findDangerousPiece(chessBoard, selectedPiece, friends_allPossibleMoves, enemies_allPossibleMoves) {
+    findDangerousPiece(chessBoard, selectedPiece, friends_allPossibleMoves, enemies_atkPosOnly) {
         let dangerousEnemies = [];
         let protectedFriends = [];
         let selectedPieceCurrentPos = selectedPiece.currentPos;
 
-        for (let eMoveObj of enemies_allPossibleMoves) {
+        for (let eMoveObj of enemies_atkPosOnly) {
             if (eMoveObj.nextPos.isEqualTo(this)) {
-                if (eMoveObj.selectedPiece.checkCapturedPosition(this)) {
-                    dangerousEnemies.push(eMoveObj.selectedPiece);
-                }
+                dangerousEnemies.push(eMoveObj.selectedPiece);
             }
         }
         for (let fMoveObj of friends_allPossibleMoves) {
             if (fMoveObj.nextPos.isEqualTo(this)) {
                 if (!fMoveObj.currentPos.isEqualTo(selectedPieceCurrentPos)) {
-                    if (fMoveObj.selectedPiece.checkCapturedPosition(this)) {
+                    if (fMoveObj.selectedPiece.checkCapturedPositionAt(this)) {
                         protectedFriends.push(fMoveObj.selectedPiece);
                     }
                 }

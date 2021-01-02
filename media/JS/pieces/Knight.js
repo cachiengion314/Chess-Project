@@ -45,11 +45,9 @@ export default class Knight extends Piece {
     getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         let allMovesPossibleArr = [];
         for (let vector of this.directions) {
-            for (let i = 1; i < 2; ++i) {
-                let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
-                if (newMovePos.isPositionCanAttack(chessBoard, controllingColor)) {
-                    allMovesPossibleArr.push(newMovePos);
-                }
+            let newMovePos = this.currentPos.plusVector(vector);
+            if (newMovePos.isPositionCanAttack(chessBoard, controllingColor)) {
+                allMovesPossibleArr.push(newMovePos);
             }
         }
         return allMovesPossibleArr;
