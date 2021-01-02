@@ -76,18 +76,25 @@ export default class Visualize {
         "coordinates-color": "darkslateblue",
     },
     ]
-    static logInfo(chessBoard = AssignedVar.currentGame.chessBoard) {
+    static logInfo(chessBoard = AssignedVar.currentGame.chessBoard, haveH_Score = false) {
         let str = ``;
         for (let y = 0; y < 8; ++y) {
             for (let x = 0; x < 8; ++x) {
                 let block = `${chessBoard[x][y].id}`;
                 if (chessBoard[x][y].type == AssignedVar.PIECE) {
-                    block = `[${block}]`;
-                    if (block.length <= 12) {
-                        block = ` ${block} `;
+                    let hScore = 0;
+                    if (haveH_Score) {
+                        hScore = chessBoard[x][y].currentH_Score;
+                    }
+                    if (block.length == 11) {
+                        block = `[${block}|${hScore}  ]`;
+                    } else if (block.length > 11) {
+                        block = `[${block}|${hScore} ]`
+                    } else {
+                        block = `[ ${block}|${hScore}  ]`;
                     }
                 } else {
-                    block = `[            ]`;
+                    block = `[               ]`;
                 }
                 if (x == 7) {
                     str += ` ${block} \n`;

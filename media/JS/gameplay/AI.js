@@ -26,16 +26,17 @@ export default class AI {
         if (countTurn == maxEvaluatedTurn) {
             return AI.evaluating(lastChessBoardInfo);
         }
-        let allPossibleMoves = lastChessBoardInfo.getAllPossibleMoves();
-        // allPossibleMoves = AI.shuffleArray(allPossibleMoves);
+
+        let friends_allPossibleMoves = lastChessBoardInfo.getFriends_allPossibleMoves();
+        // friends_allPossibleMoves = AI.shuffleArray(friends_allPossibleMoves);
+
         let optimizedChessBoardInfo, optimizedScore;
         if (controllingColor == AssignedVar.WHITE) {
             controllingColor = AI.changeControllingColor(controllingColor);
             optimizedScore = -Infinity;
-            for (let moveObj of allPossibleMoves) {
+            for (let moveObj of friends_allPossibleMoves) {
                 let currentChessBoardInfo = this.movePiece(lastChessBoardInfo, moveObj);
                 let moveScore = this.minimax_evaluating(currentChessBoardInfo, controllingColor, countTurn, alpha, beta, maxEvaluatedTurn);
-
                 if (moveScore > optimizedScore) {
                     optimizedScore = moveScore;
                     optimizedChessBoardInfo = currentChessBoardInfo;
@@ -48,10 +49,9 @@ export default class AI {
         } else {
             controllingColor = AI.changeControllingColor(controllingColor);
             optimizedScore = Infinity;
-            for (let moveObj of allPossibleMoves) {
+            for (let moveObj of friends_allPossibleMoves) {
                 let currentChessBoardInfo = this.movePiece(lastChessBoardInfo, moveObj);
                 let moveScore = this.minimax_evaluating(currentChessBoardInfo, controllingColor, countTurn, alpha, beta, maxEvaluatedTurn);
-
                 if (moveScore < optimizedScore) {
                     optimizedScore = moveScore;
                     optimizedChessBoardInfo = currentChessBoardInfo;
@@ -65,7 +65,7 @@ export default class AI {
         if (countTurn == 1) {
             this.evaluating_chessBoardInfo = optimizedChessBoardInfo;
             this.evaluating_boardScore = optimizedScore;
-            // console.log(`turn 1 - allPossibleMoves`, allPossibleMoves);
+            console.log(`turn 1 - friends_allPossibleMoves`, friends_allPossibleMoves);
         }
         return optimizedScore;
     }
@@ -80,6 +80,7 @@ export default class AI {
         chessBoard[nextPos.x][nextPos.y] = movedPiece;
         chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
         chessBoard[nextPos.x][nextPos.y].id = movedPiece.getId();
+        // chessBoard[nextPos.x][nextPos.y].currentH_Score = moveObj.moveScore;
 
         let controllingColor = AI.changeControllingColor(chessBoardInfo.controllingColor);
 
@@ -90,9 +91,16 @@ export default class AI {
         console.log(`----------AI optimized move info----------`);
         Visualize.logInfo(this.evaluating_chessBoardInfo.chessBoard);
         console.log(`The board score AI expected when chosen that move:`, this.evaluating_boardScore);
+        console.log(`------------------------------------------`);
+    }
+    log_evaluating(chessBoardInfo){
+        console.log(`----------AI evaluating info----------`);
+        Visualize.logInfo(chessBoardInfo.chessBoard, true);
+        console.log(`--------------------------------------`);
     }
     static evaluating(chessBoardInfo) {
         let sumWeights = 0;
+        let sumPos = 0;
         let sumHeuristic = 0;
         for (let x = 0; x < 8; ++x) {
             for (let y = 0; y < 8; ++y) {
@@ -100,17 +108,17 @@ export default class AI {
                 if (selectedPiece.color) {
                     if (selectedPiece.color == AssignedVar.WHITE) {
                         sumWeights += selectedPiece.weights;
-                        selectedPiece.currentH_Score = selectedPiece.getHeuristicScore(chessBoardInfo.chessBoard);
+                        sumPos += selectedPiece.positions[y][x];
                         sumHeuristic += selectedPiece.currentH_Score;
                     } else {
                         sumWeights -= selectedPiece.weights;
-                        selectedPiece.currentH_Score = selectedPiece.getHeuristicScore(chessBoardInfo.chessBoard);
+                        sumPos -= selectedPiece.positions[y][x];
                         sumHeuristic -= selectedPiece.currentH_Score;
                     }
                 }
             }
         }
-        return sumWeights + sumHeuristic;
+        return sumWeights + sumPos + sumHeuristic;
     }
     static move(controllingColor) {
         let aiInstant = new AI(AssignedVar.currentGame.chessBoard, controllingColor);

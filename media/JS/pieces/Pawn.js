@@ -38,27 +38,16 @@ export default class Pawn extends Piece {
             this.positions = this.positions.reverse();
         }
         this.currentH_Score = 0;
+        this.current_allPossibleMoves = null;
     }
-    getHeuristicScore(clonedChessBoard) {
-        let heuristicValue = 0;
-        let threatPostionValue = 0;
-        let bonusPositionValue = 0;
-        let positionsValue = this.positions[this.currentPos.y][this.currentPos.x];
-
-        let selectedPiece_allPossibleMoves = this.getAllPossibleMoves(clonedChessBoard, this.color);
-        for (let pos of selectedPiece_allPossibleMoves) {
-            if (pos.isPositionCanAttack(clonedChessBoard, this.color)) {
-                if (pos.isPositionHasPiece(clonedChessBoard)) {
-                    let enemyPiece = clonedChessBoard[pos.x][pos.y];
-                    threatPostionValue += Math.floor(enemyPiece.weights * .1);
-                }
-                if (bonusPositionValue < 9) {
-                    bonusPositionValue++;
-                }
+    checkCapturedPosition(pos) {
+        for (let dir of this.specialAttackDirections) {
+            let atkPos = this.currentPos.plusVector(dir);
+            if (atkPos.isEqualTo(pos)) {
+                return true;
             }
         }
-        heuristicValue = threatPostionValue + bonusPositionValue + positionsValue;
-        return heuristicValue;
+        return false;
     }
     getClone() {
         let clone = new Pawn(this.color, this.currentPos);
@@ -69,6 +58,9 @@ export default class Pawn extends Piece {
     getId() {
         this.hasMoved = true;
         return `${this.name}_${this.currentPos.convertToId()}`;
+    }
+    getAllPossibleAttackMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
+
     }
     getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         let allMovesPossibleArr = [];

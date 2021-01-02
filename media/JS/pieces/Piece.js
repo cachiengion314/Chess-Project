@@ -13,4 +13,7 @@ export default class Piece extends ChessBlock {
             this.controlByPlayerId = Game.blackPlayer.id;
         }
     }
+    checkCapturedPosition(pos) {
+        return true;
+    }
 }
