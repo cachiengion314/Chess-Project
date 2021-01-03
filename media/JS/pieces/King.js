@@ -33,15 +33,14 @@ export default class King extends Piece {
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();
         }
-        this.currentH_Score = 0;
-        this.current_allPossibleMoves = null;
+        this.possibleMovesScore = 0;
+        this.guardians = [];
     }
     getClone() {
         let clone = new King(this.color, this.currentPos);
         clone.hasMoved = this.hasMoved;
         clone.posToCastleRook = this.posToCastleRook;
         clone.posToCastle = this.posToCastle;
-        clone.currentH_Score = this.currentH_Score;
         return clone;
     }
     getId() {
@@ -89,6 +88,12 @@ export default class King extends Piece {
             let newMovePos = this.currentPos.plusVector(vector);
             if (newMovePos.isPositionCanAttack(chessBoard, controllingColor)) {
                 allMovesPossibleArr.push(newMovePos);
+            }
+            if (newMovePos.isPositionHasPiece(chessBoard)) {
+                let protectedPiece = chessBoard[newMovePos.x][newMovePos.y];
+                if (protectedPiece.color == controllingColor) {
+                    protectedPiece.guardians.push(this);
+                }
             }
         }
         let castlePos = this.findPosToCastle(chessBoard);

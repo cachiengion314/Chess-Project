@@ -13,6 +13,12 @@ export default class Piece extends ChessBlock {
             this.controlByPlayerId = Game.blackPlayer.id;
         }
     }
+    getPossibleMovesScore() {
+        if (this.possibleMovesScore > 8) {
+            this.possibleMovesScore = 8;
+        }
+        return this.possibleMovesScore;
+    }
     getAtkPosOnly(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         return this.getAllPossibleMoves(chessBoard, controllingColor);
     }

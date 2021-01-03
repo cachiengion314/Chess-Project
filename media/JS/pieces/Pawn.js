@@ -27,21 +27,18 @@ export default class Pawn extends Piece {
         this.positions = [
             [829, 829, 829, 829, 829, 829, 829, 829],
             [100, 100, 100, 100, 100, 100, 100, 100],
-            [10, 10, 10, 10, 10, 10, 10, 10],
-            [0, 5, 3, 5, 5, 5, 3, 0],
-            [0, 18, 16, 19, 17, 18, 20, 0],
-            [1, 13, 0, 14, 0, 0, 15, 1],
+            [35, 35, 35, 35, 35, 35, 35, 35],
+            [18, 18, 16, 19, 17, 18, 20, 20],
+            [18, 18, 16, 19, 17, 18, 20, 20],
+            [3, 13, 7, 14, 7, 7, 15, 3],
             [-7, -7, -7, -7, -7, -7, -7, -7],
             [0, 0, 0, 0, 0, 0, 0, 0]
         ];
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();
         }
-        this.currentH_Score = 0;
-        this.current_allPossibleMoves = null;
-    }
-    findProtectedFriendAt(pos, friends_allPossibleMoves) {
-
+        this.possibleMovesScore = 1;
+        this.guardians = [];
     }
     checkCapturedPositionAt(pos) {
         for (let dir of this.specialAttackDirections) {
@@ -54,7 +51,7 @@ export default class Pawn extends Piece {
     }
     getClone() {
         let clone = new Pawn(this.color, this.currentPos);
-        clone.currentH_Score = this.currentH_Score;
+        // clone.currentH_Score = this.currentH_Score;
         clone.hasMoved = this.hasMoved;
         return clone;
     }

@@ -18,6 +18,7 @@ export default class Empty extends ChessBlock {
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0]
         ];
+        // this.guardians = [];
     }
     getClone() {
         return new Empty(this.currentPos);

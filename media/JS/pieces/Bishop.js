@@ -28,30 +28,34 @@ export default class Bishop extends Piece {
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();
         }
-        this.currentH_Score = 0;
-        this.current_allPossibleMoves = null;
+        this.possibleMovesScore = 0;
+        this.guardians = [];
     }
     getClone() {
         let clone = new Bishop(this.color, this.currentPos);
-        clone.currentH_Score = this.currentH_Score;
         return clone;
     }
     getId() {
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
     getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
-        let allMovesPossibleArr = [];
-        for (let vector of this.directions) {
+        let possibleMoves = [];
+        for (let dir of this.directions) {
             for (let i = 1; i < 8; ++i) {
-                let newMovePos = this.currentPos.plusVector(vector.multipliByNumber(i));
+                let newMovePos = this.currentPos.plusVector(dir.multipliByNumber(i));
                 if (newMovePos.isPositionCanAttack(chessBoard, controllingColor)) {
-                    allMovesPossibleArr.push(newMovePos);
+                    possibleMoves.push(newMovePos);
                 }
                 if (newMovePos.isPositionHasPiece(chessBoard)) {
+                    let protectedPiece = chessBoard[newMovePos.x][newMovePos.y];
+                    if (protectedPiece.color == controllingColor) {
+                        protectedPiece.guardians.push(this);
+                    }
                     break;
                 }
             }
         }
-        return allMovesPossibleArr;
+        this.possibleMovesScore = possibleMoves.length;
+        return possibleMoves;
     }
 }

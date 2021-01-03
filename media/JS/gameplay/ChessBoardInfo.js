@@ -1,7 +1,7 @@
 import AssignedVar from "../utility/AssignedVar.js";
 import AI from "./AI.js";
 import MoveInfo from "./MoveInfo.js";
-import Empty from "../pieces/Empty.js";
+import Visualize from "../utility/Visualize.js";
 
 export default class ChessBoardInfo {
     constructor(clonedChessBoard, parrent, moveFromParrent, controllingColor) {
@@ -39,9 +39,15 @@ export default class ChessBoardInfo {
             moveObj.preEvaluatingMoveScore(this.chessBoard, friends_allPossibleMoves, enemies_atkPosOnly);
         }
         friends_allPossibleMoves.sort((objA, objB) => {
+            if (objB.moveScore == objA.moveScore) {
+                if (Visualize.randomNumberFromAToMax(0, 2)) {
+                    return -1;
+                }
+                return 1;
+            }
             return objB.moveScore - objA.moveScore;
         });
-      
+
         return friends_allPossibleMoves
     }
 }

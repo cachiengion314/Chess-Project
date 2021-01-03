@@ -17,7 +17,7 @@ export default class Knight extends Piece {
             new Vector(-2, -1), new Vector(-1, -2),
             new Vector(1, -2), new Vector(2, -1)
         ];
-        this.weights = 320;
+        this.weights = 300;
         this.positions = [
             [-50, 0, 0, 0, 0, 0, 0, -50],
             [0, 0, 4, 0, 0, 4, 0, 0],
@@ -31,25 +31,25 @@ export default class Knight extends Piece {
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();
         }
-        this.currentH_Score = 0;
-        this.current_allPossibleMoves = null;
+        this.possibleMovesScore = 0;
+        this.guardians = [];
     }
     getClone() {
         let clone = new Knight(this.color, this.currentPos);
-        clone.currentH_Score = this.currentH_Score;
         return clone;
     }
     getId() {
         return `${this.name}_${this.currentPos.convertToId()}`;
     }
     getAllPossibleMoves(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
-        let allMovesPossibleArr = [];
+        let possibleMoves = [];
         for (let vector of this.directions) {
             let newMovePos = this.currentPos.plusVector(vector);
             if (newMovePos.isPositionCanAttack(chessBoard, controllingColor)) {
-                allMovesPossibleArr.push(newMovePos);
+                possibleMoves.push(newMovePos);
             }
         }
-        return allMovesPossibleArr;
+        this.possibleMovesScore = possibleMoves.length;
+        return possibleMoves;
     }
 }

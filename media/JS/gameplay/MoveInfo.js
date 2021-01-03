@@ -17,44 +17,13 @@ export default class MoveInfo {
     calculateTradingSituation(unexpectedEnemyPiece, dangerousEnemies, protectedFriends) {
         let tradingValue = 0;
         if (dangerousEnemies.length > 0) {
-            dangerousEnemies.sort((objA, objB) => {
-                return objA.weights - objB.weights;
-            });
             tradingValue -= this.selectedPiece.weights;
             if (protectedFriends.length > 0) {
-                protectedFriends.sort((objA, objB) => {
-                    return objA.weights - objB.weights;
-                });
                 tradingValue = 0;
-                let gap = dangerousEnemies[0].weights - this.selectedPiece.weights;
-                if (gap > 8) gap = 8;
-                tradingValue += gap;
             }
         }
-        if (unexpectedEnemyPiece.type == AssignedVar.PIECE) {
-            tradingValue += unexpectedEnemyPiece.weights;
-        }
+        tradingValue += unexpectedEnemyPiece.weights;
 
         this.moveScore = tradingValue;
-    }
-    calculateBonusPositionScore(clonedChessBoard) {
-        let heuristicValue = 0;
-        let threatPostionValue = 0;
-        let bonusPositionValue = 0;
-
-        let selectedPiece_allPossibleMoves = this.getAllPossibleMoves(clonedChessBoard, this.color);
-        for (let pos of selectedPiece_allPossibleMoves) {
-            if (pos.isPositionCanAttack(clonedChessBoard, this.color)) {
-                if (pos.isPositionHasPiece(clonedChessBoard)) {
-                    let enemyPiece = clonedChessBoard[pos.x][pos.y];
-                    threatPostionValue += Math.floor(enemyPiece.weights * .1);
-                }
-            }
-            if (bonusPositionValue < 9) {
-                bonusPositionValue++;
-            }
-        }
-        heuristicValue = threatPostionValue + bonusPositionValue;
-        return heuristicValue;
     }
 }

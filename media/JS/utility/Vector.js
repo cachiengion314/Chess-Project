@@ -1,6 +1,7 @@
 import AssignedVar from "./AssignedVar.js";
 import Visualize from "./Visualize.js";
 import AI from "../gameplay/AI.js";
+import Empty from "../pieces/Empty.js";
 
 export default class Vector {
     constructor(x = 0, y = 0) {
@@ -117,6 +118,31 @@ export default class Vector {
                 }
             }
         }
+        for (let i = 0; i < selectedPiece.guardians.length; ++i) {
+            let isStillProtected = false;
+            let dirToThis = this.plusVector(selectedPiece.guardians[i].currentPos.multipliByNumber(-1)).convertToDirection();
+            let hasGuardianDirectionsInclude_DirToThis = selectedPiece.guardians[i].directions.some(dir => { return dir.isEqualTo(dirToThis) });
+            if (hasGuardianDirectionsInclude_DirToThis) {
+                for (let j = 1; j < 8; ++j) {
+                    let nextStep = selectedPiece.guardians[i].currentPos.plusVector(dirToThis.multipliByNumber(j));
+                    if (nextStep.isEqualTo(selectedPieceCurrentPos)) continue;
+                    if (nextStep.isPositionHasPiece(chessBoard)) {
+                        if (nextStep.isEqualTo(this)) {
+                            isStillProtected = true;
+                        }
+                        break;
+                    }
+                    if (nextStep.isEqualTo(this)) {
+                        isStillProtected = true;
+                        break;
+                    }
+                }
+            }
+            if (isStillProtected) {
+                protectedFriends.push(selectedPiece.guardians[i]);
+            }
+        }
+
         let foundData = {
             "dangerousEnemies": dangerousEnemies,
             "protectedFriends": protectedFriends,

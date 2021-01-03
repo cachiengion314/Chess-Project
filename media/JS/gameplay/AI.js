@@ -5,9 +5,11 @@ import { mimicOnclickMovePieceAt } from "../initGameBoard.js";
 import Visualize from "../utility/Visualize.js";
 import PopUp from "../utility/PopUp.js";
 
-let _maxEvaluatedTurn = 5;
+const _MAX_EVALUATED_POSSIBLE_TURN = 6;
+const _MIN_EVALUATED_POSSIBLE_TURN = 3;
+let _maxEvaluatedTurn = 3;
 let _aiDifficultIndex = 0;
-let _aiDifficultArray = [`easy`, `normal`, `hard`,];
+let _aiDifficultArray = [`easy`, `normal`, `hard`, `crazy`];
 
 export default class AI {
     constructor(chessBoard, controllingColor) {
@@ -28,7 +30,6 @@ export default class AI {
         }
 
         let friends_allPossibleMoves = lastChessBoardInfo.getFriends_allPossibleMoves();
-        // friends_allPossibleMoves = AI.shuffleArray(friends_allPossibleMoves);
 
         let optimizedChessBoardInfo, optimizedScore;
         if (controllingColor == AssignedVar.WHITE) {
@@ -65,7 +66,7 @@ export default class AI {
         if (countTurn == 1) {
             this.evaluating_chessBoardInfo = optimizedChessBoardInfo;
             this.evaluating_boardScore = optimizedScore;
-            console.log(`turn 1 - friends_allPossibleMoves`, friends_allPossibleMoves);
+            // console.log(`turn 1 - friends_allPossibleMoves`, friends_allPossibleMoves);
         }
         return optimizedScore;
     }
@@ -80,7 +81,7 @@ export default class AI {
         chessBoard[nextPos.x][nextPos.y] = movedPiece;
         chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
         chessBoard[nextPos.x][nextPos.y].id = movedPiece.getId();
-        // chessBoard[nextPos.x][nextPos.y].currentH_Score = moveObj.moveScore;
+        chessBoard[nextPos.x][nextPos.y].possibleMovesScore += Math.floor(moveObj.moveScore * .01);
 
         let controllingColor = AI.changeControllingColor(chessBoardInfo.controllingColor);
 
@@ -92,11 +93,14 @@ export default class AI {
         Visualize.logInfo(this.evaluating_chessBoardInfo.chessBoard);
         console.log(`The board score AI expected when chosen that move:`, this.evaluating_boardScore);
         console.log(`------------------------------------------`);
-    }
-    log_evaluating(chessBoardInfo){
-        console.log(`----------AI evaluating info----------`);
-        Visualize.logInfo(chessBoardInfo.chessBoard, true);
-        console.log(`--------------------------------------`);
+        // for (let x = 0; x < 8; ++x) {
+        //     for (let y = 0; y < 8; ++y) {
+        //         let piece = this.evaluating_chessBoardInfo.chessBoard[x][y];
+        //         if (piece.color) {
+        //             console.log(`piece.guardians:`, piece.id, piece.guardians);
+        //         }
+        //     }
+        // }
     }
     static evaluating(chessBoardInfo) {
         let sumWeights = 0;
@@ -109,11 +113,11 @@ export default class AI {
                     if (selectedPiece.color == AssignedVar.WHITE) {
                         sumWeights += selectedPiece.weights;
                         sumPos += selectedPiece.positions[y][x];
-                        sumHeuristic += selectedPiece.currentH_Score;
+                        sumHeuristic += selectedPiece.getPossibleMovesScore();
                     } else {
                         sumWeights -= selectedPiece.weights;
                         sumPos -= selectedPiece.positions[y][x];
-                        sumHeuristic -= selectedPiece.currentH_Score;
+                        sumHeuristic -= selectedPiece.getPossibleMovesScore();
                     }
                 }
             }
@@ -132,7 +136,7 @@ export default class AI {
         }, 200);
     }
     static setupMoveFor(controllingColor) {
-        if (_maxEvaluatedTurn > 3) {
+        if (_maxEvaluatedTurn > 2) {
             setTimeout(() => {
                 PopUp.showWait(() => {
                     AI.move(controllingColor);
@@ -165,8 +169,8 @@ export default class AI {
     static increaseAI_Difficult() {
         _aiDifficultIndex++;
         _maxEvaluatedTurn++;
-        if (_maxEvaluatedTurn == 6) {
-            _maxEvaluatedTurn = 3;
+        if (_maxEvaluatedTurn == _MAX_EVALUATED_POSSIBLE_TURN + 1) {
+            _maxEvaluatedTurn = _MIN_EVALUATED_POSSIBLE_TURN;
         }
         if (_aiDifficultIndex == _aiDifficultArray.length) {
             _aiDifficultIndex = 0;
