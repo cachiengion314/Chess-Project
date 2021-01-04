@@ -107,6 +107,7 @@ export default class Vector {
         for (let eMoveObj of enemies_atkPosOnly) {
             if (eMoveObj.nextPos.isEqualTo(this)) {
                 dangerousEnemies.push(eMoveObj.selectedPiece);
+                break;
             }
         }
         for (let fMoveObj of friends_allPossibleMoves) {
@@ -114,6 +115,7 @@ export default class Vector {
                 if (!fMoveObj.currentPos.isEqualTo(selectedPieceCurrentPos)) {
                     if (fMoveObj.selectedPiece.checkCapturedPositionAt(this)) {
                         protectedFriends.push(fMoveObj.selectedPiece);
+                        break;
                     }
                 }
             }
@@ -140,6 +142,7 @@ export default class Vector {
             }
             if (isStillProtected) {
                 protectedFriends.push(selectedPiece.guardians[i]);
+                break;
             }
         }
 

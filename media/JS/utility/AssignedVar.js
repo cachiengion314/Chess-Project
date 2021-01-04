@@ -186,10 +186,10 @@ export default class AssignedVar {
         return "no_user";
     }
     static get WHITE() {
-        return "white";
+        return true;
     }
     static get BLACK() {
-        return "black";
+        return false;
     }
     static get EMPTY() {
         return "empty";

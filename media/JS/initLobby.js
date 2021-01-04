@@ -61,7 +61,7 @@ function onclickWaitingTable() {
     }
     Firebase.currentTableId = this.table.tableId;
     Firebase.currentChatsId = this.table.chatsId;
-
+    console.log(`table id:`, Firebase.currentTableId);
     let playersNumber = ++User.tables[Firebase.currentTableId].table.playersNumber;
 
     let acc = User.getUserSignIn();
@@ -94,6 +94,7 @@ function onclickWaitingTable() {
             AssignedVar.currentGame.setCurrentPlayer();
             Game.showTempStatistic(true);
             PopUp.closeModal(`#notification-modal`);
+            // console.log(`currentGame:`, AssignedVar.currentGame);
             Firebase.onSnapshotWithId(Firebase.currentTableId, tableChangedCallback);
         }, (errorCode) => {
             console.log(`onclickWaitingTable: ${errorCode}`);

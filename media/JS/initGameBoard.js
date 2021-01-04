@@ -233,7 +233,8 @@ function checkCastleEvent(logicPiece, nextPos) {
                 let newPos = logicPiece.posToCastle.plusVector(dir);
                 let oldRook = AssignedVar.currentGame.chessBoard[logicPiece.posToCastleRook.x][logicPiece.posToCastleRook.y];
                 if (oldRook.type == AssignedVar.PIECE) {
-                    logicDestroyEnemyPiece(oldRook);
+                    AssignedVar.currentGame.chessBoard[oldRook.currentPos.x][oldRook.currentPos.y] = new Empty(oldRook.currentPos);
+                    Visualize.destroyEnemyPiece($(`#${oldRook.id}`)[0]);
                 }
                 let newRook = spawnLogicPieceAt(newPos, Rook, logicPiece.color);
                 newRook.hasMoved = true;

@@ -51,7 +51,6 @@ export default class Pawn extends Piece {
     }
     getClone() {
         let clone = new Pawn(this.color, this.currentPos);
-        // clone.currentH_Score = this.currentH_Score;
         clone.hasMoved = this.hasMoved;
         return clone;
     }

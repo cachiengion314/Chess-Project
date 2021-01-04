@@ -84,7 +84,7 @@ export default class AI {
         chessBoard[nextPos.x][nextPos.y].possibleMovesScore += Math.floor(moveObj.moveScore * .01);
 
         let controllingColor = AI.changeControllingColor(chessBoardInfo.controllingColor);
-
+    
         let nextChessBoardInfo = new ChessBoardInfo(chessBoard, originChessBoard, moveObj, controllingColor);
         return nextChessBoardInfo;
     }
@@ -105,24 +105,24 @@ export default class AI {
     static evaluating(chessBoardInfo) {
         let sumWeights = 0;
         let sumPos = 0;
-        let sumHeuristic = 0;
+        let sumPossibleMoveScore = 0;
         for (let x = 0; x < 8; ++x) {
             for (let y = 0; y < 8; ++y) {
                 let selectedPiece = chessBoardInfo.chessBoard[x][y];
-                if (selectedPiece.color) {
+                if (selectedPiece.type == AssignedVar.PIECE) {
                     if (selectedPiece.color == AssignedVar.WHITE) {
                         sumWeights += selectedPiece.weights;
                         sumPos += selectedPiece.positions[y][x];
-                        sumHeuristic += selectedPiece.getPossibleMovesScore();
+                        sumPossibleMoveScore += selectedPiece.getPossibleMovesScore();
                     } else {
                         sumWeights -= selectedPiece.weights;
                         sumPos -= selectedPiece.positions[y][x];
-                        sumHeuristic -= selectedPiece.getPossibleMovesScore();
+                        sumPossibleMoveScore -= selectedPiece.getPossibleMovesScore();
                     }
                 }
             }
         }
-        return sumWeights + sumPos + sumHeuristic;
+        return sumWeights + sumPos + sumPossibleMoveScore;
     }
     static move(controllingColor) {
         let aiInstant = new AI(AssignedVar.currentGame.chessBoard, controllingColor);
