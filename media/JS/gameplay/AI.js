@@ -4,12 +4,10 @@ import Empty from "../pieces/Empty.js";
 import { mimicOnclickMovePieceAt } from "../initGameBoard.js";
 import Visualize from "../utility/Visualize.js";
 import PopUp from "../utility/PopUp.js";
+import User from "./User.js";
 
-const _MAX_EVALUATED_POSSIBLE_TURN = 6;
-const _MIN_EVALUATED_POSSIBLE_TURN = 3;
-let _maxEvaluatedTurn = 3;
-let _aiDifficultIndex = 0;
-let _aiDifficultArray = [`easy`, `normal`, `hard`, `crazy`];
+let _aiDifficultArray = [{ title: `easy`, maxEvaluatedTurn: 3 }, { title: `normal`, maxEvaluatedTurn: 4 },
+{ title: `hard`, maxEvaluatedTurn: 5 }, { title: `crazy`, maxEvaluatedTurn: 6 }];
 
 export default class AI {
     constructor(chessBoard, controllingColor) {
@@ -17,6 +15,9 @@ export default class AI {
         this.evaluating_boardScore = 0;
         let cloneChessBoard = AI.cloneChessBoard(chessBoard);
         let chessBoardInfo = new ChessBoardInfo(cloneChessBoard, null, null, controllingColor);
+
+        let _maxEvaluatedTurn = _aiDifficultArray[AI.getCurrentAI_difficultIndex()].maxEvaluatedTurn;
+
         let timeConsume = AI.measureExecutionTime(() => {
             this.minimax_evaluating(chessBoardInfo, controllingColor, 0, undefined, undefined, _maxEvaluatedTurn);
         });
@@ -84,7 +85,7 @@ export default class AI {
         chessBoard[nextPos.x][nextPos.y].possibleMovesScore += Math.floor(moveObj.moveScore * .01);
 
         let controllingColor = AI.changeControllingColor(chessBoardInfo.controllingColor);
-    
+
         let nextChessBoardInfo = new ChessBoardInfo(chessBoard, originChessBoard, moveObj, controllingColor);
         return nextChessBoardInfo;
     }
@@ -109,7 +110,7 @@ export default class AI {
         for (let x = 0; x < 8; ++x) {
             for (let y = 0; y < 8; ++y) {
                 let selectedPiece = chessBoardInfo.chessBoard[x][y];
-                if (selectedPiece.type == AssignedVar.PIECE) {
+                if (selectedPiece.weights > 0) {
                     if (selectedPiece.color == AssignedVar.WHITE) {
                         sumWeights += selectedPiece.weights;
                         sumPos += selectedPiece.positions[y][x];
@@ -136,16 +137,12 @@ export default class AI {
         }, 200);
     }
     static setupMoveFor(controllingColor) {
-        if (_maxEvaluatedTurn > 2) {
-            setTimeout(() => {
-                PopUp.showWait(() => {
-                    AI.move(controllingColor);
-                    PopUp.closeModal(`#wait-modal`);
-                }, `Vui lòng chờ máy tính suy nghĩ!`, 300);
-            }, 300);
-        } else {
-            AI.move(controllingColor);
-        }
+        setTimeout(() => {
+            PopUp.showWait(() => {
+                AI.move(controllingColor);
+                PopUp.closeModal(`#wait-modal`);
+            }, `Vui lòng chờ máy tính suy nghĩ!`, 300);
+        }, 300);
     }
     static cloneChessBoard(arr) {
         let cloneArr = [];
@@ -163,21 +160,24 @@ export default class AI {
         }
         return AssignedVar.WHITE;
     }
-    static getCurrentAI_difficult() {
-        return _aiDifficultArray[_aiDifficultIndex];
+    static setCurrentAI_difficultIndex(aiDifficult) {
+        let chessClubObj = User.getChessClubObj();
+        chessClubObj[AssignedVar.KEY_CURRENT_AI_DIFFICULT_INDEX] = aiDifficult;
+        User.setChessClubObj(chessClubObj);
+    }
+    static getCurrentAI_difficultIndex() {
+        return User.getChessClubObj()[AssignedVar.KEY_CURRENT_AI_DIFFICULT_INDEX];
     }
     static increaseAI_Difficult() {
+        let _aiDifficultIndex = AI.getCurrentAI_difficultIndex();
         _aiDifficultIndex++;
-        _maxEvaluatedTurn++;
-        if (_maxEvaluatedTurn == _MAX_EVALUATED_POSSIBLE_TURN + 1) {
-            _maxEvaluatedTurn = _MIN_EVALUATED_POSSIBLE_TURN;
-        }
         if (_aiDifficultIndex == _aiDifficultArray.length) {
             _aiDifficultIndex = 0;
         }
+        AI.setCurrentAI_difficultIndex(_aiDifficultIndex);
     }
     static displayCurrentAI_difficult($aiBtn) {
-        $aiBtn.textContent = `Computer: ${_aiDifficultArray[_aiDifficultIndex]}`;
+        $aiBtn.textContent = `Máy tính: ${_aiDifficultArray[AI.getCurrentAI_difficultIndex()].title}`;
     }
 
     static measureExecutionTime(callback) {

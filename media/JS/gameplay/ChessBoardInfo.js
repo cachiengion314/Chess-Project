@@ -18,7 +18,7 @@ export default class ChessBoardInfo {
         for (let x = 0; x < this.chessBoard.length; ++x) {
             for (let y = 0; y < this.chessBoard[x].length; ++y) {
                 let selectedPiece = this.chessBoard[x][y];
-                if (selectedPiece.type == AssignedVar.PIECE) {
+                if (selectedPiece.weights > 0) {
                     if (selectedPiece.color == this.controllingColor) {
                         let friend_allPossibleMoves = selectedPiece.getAllPossibleMoves(this.chessBoard, this.controllingColor);
                         for (let f_pos of friend_allPossibleMoves) {

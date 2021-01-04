@@ -117,6 +117,7 @@ export default class AssignedVar {
 
     static chessClubObj = {
         "current_user_signin_id": -1,
+        "currentAI_DifficultIndex": 0,
         "all_accounts_sign_up_in_this_browser": {},
     }
     static get CRAZY() {
@@ -175,6 +176,9 @@ export default class AssignedVar {
     }
     static get KEY_CURRENT_USER_SIGNIN_ID() {
         return "current_user_signin_id";
+    }
+    static get KEY_CURRENT_AI_DIFFICULT_INDEX() {
+        return "currentAI_DifficultIndex";
     }
     static get OFFLINE() {
         return "offline";
