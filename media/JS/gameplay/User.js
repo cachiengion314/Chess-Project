@@ -291,7 +291,8 @@ export default class User {
         $(`#user-statistic`).hide();
     }
     static correctedAccNames() {
-        if (!AssignedVar.currentGame) return;
+        if (!AssignedVar.currentGame || !AssignedVar.currentTable) return;
+
         let ownerName = AssignedVar.currentTable.owner.name;
         $(`#user-block .player`).text(`${ownerName}`);
         if (AssignedVar.currentTable.opponent) {

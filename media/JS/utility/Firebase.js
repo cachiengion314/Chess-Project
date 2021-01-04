@@ -399,15 +399,16 @@ export default class Firebase {
         return genericObj;
     }
     static checkInternet(resolveCallback = () => { }, failCallback = (e) => { }) {
-        fetch(`https://opentdb.com/api.php?amount=5&category=21&difficulty=easy&type=multiple`).then(() => {
-            _checkInternet = true;
-            resolveCallback();
-            return _checkInternet
-        }, (e) => {
-            _checkInternet = false;
-            failCallback(e);
-            return _checkInternet;
-        })
+        // fetch(`https://opentdb.com/api.php?amount=5&category=21&difficulty=easy&type=multiple`).then(() => {
+        //     _checkInternet = true;
+        //     resolveCallback();
+        //     return _checkInternet
+        // }, (e) => {
+        //     _checkInternet = false;
+        //     failCallback(e);
+        //     return _checkInternet;
+        // });
+        resolveCallback();
 
         return _checkInternet;
     }

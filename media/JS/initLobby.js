@@ -18,7 +18,9 @@ let _txt = `<h3 style="color: white; opacity: .5; text-align: center; display: f
 
 export default function initLobby() {
     Firebase.queryAllTable((allTables) => {
-        Game.hideChessBoardAndShowLobby();
+        if (AssignedVar.IsUserInLobby) {
+            Game.hideChessBoardAndShowLobby();
+        }
         if (allTables.length == 0) {
             $(`#waiting-tables`).html(_txt);
         } else {
