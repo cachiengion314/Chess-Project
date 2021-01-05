@@ -2,6 +2,7 @@ import AssignedVar from "./AssignedVar.js";
 import Visualize from "./Visualize.js";
 import AI from "../gameplay/AI.js";
 import Empty from "../pieces/Empty.js";
+import Utility from "./Utility.js";
 
 export default class Vector {
     constructor(x = 0, y = 0) {
@@ -120,6 +121,7 @@ export default class Vector {
                 }
             }
         }
+        let bonusGuardiansPossibleMoveScore = 0;
         for (let i = 0; i < selectedPiece.guardians.length; ++i) {
             let isStillProtected = false;
             let dirToThis = this.plusVector(selectedPiece.guardians[i].currentPos.multipliByNumber(-1)).convertToDirection();
@@ -127,6 +129,7 @@ export default class Vector {
             if (hasGuardianDirectionsInclude_DirToThis) {
                 for (let j = 1; j < 8; ++j) {
                     let nextStep = selectedPiece.guardians[i].currentPos.plusVector(dirToThis.multipliByNumber(j));
+                    bonusGuardiansPossibleMoveScore++;
                     if (nextStep.isEqualTo(selectedPieceCurrentPos)) continue;
                     if (nextStep.isPositionHasPiece(chessBoard)) {
                         if (nextStep.isEqualTo(this)) {
@@ -149,12 +152,13 @@ export default class Vector {
         let foundData = {
             "dangerousEnemies": dangerousEnemies,
             "protectedFriends": protectedFriends,
+            "bonusScore": bonusGuardiansPossibleMoveScore + selectedPiece.guardians.length,
         }
         return foundData;
     }
     static createRandomDirection() {
-        let rX = Visualize.randomNumberFromAToMax(-1, 2);
-        let rY = Visualize.randomNumberFromAToMax(-1, 2);
+        let rX = Utility.randomFromAToMax(-1, 2);
+        let rY = Utility.randomFromAToMax(-1, 2);
         if (rX == 0 && rY == 0) {
             return Vector.createRandomDirection();
         }

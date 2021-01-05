@@ -5,6 +5,7 @@ import { mimicOnclickMovePieceAt } from "../initGameBoard.js";
 import Visualize from "../utility/Visualize.js";
 import PopUp from "../utility/PopUp.js";
 import User from "./User.js";
+import Utility from "../utility/Utility.js";
 
 let _aiDifficultArray = [{ title: `easy`, maxEvaluatedTurn: 3 }, { title: `normal`, maxEvaluatedTurn: 4 },
 { title: `hard`, maxEvaluatedTurn: 5 }, { title: `crazy`, maxEvaluatedTurn: 6 }];
@@ -18,7 +19,7 @@ export default class AI {
 
         let _maxEvaluatedTurn = _aiDifficultArray[AI.getCurrentAI_difficultIndex()].maxEvaluatedTurn;
 
-        let timeConsume = AI.measureExecutionTime(() => {
+        let timeConsume = Utility.measureExecutionTime(() => {
             this.minimax_evaluating(chessBoardInfo, controllingColor, 0, undefined, undefined, _maxEvaluatedTurn);
         });
         console.log(`timeConsume:`, timeConsume);
@@ -82,7 +83,7 @@ export default class AI {
         chessBoard[nextPos.x][nextPos.y] = movedPiece;
         chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
         chessBoard[nextPos.x][nextPos.y].id = movedPiece.getId();
-        chessBoard[nextPos.x][nextPos.y].possibleMovesScore += Math.floor(moveObj.moveScore * .01);
+        chessBoard[nextPos.x][nextPos.y].possibleMovesScore = Math.floor(moveObj.moveScore * .01) + moveObj.bonusScore;
 
         let controllingColor = AI.changeControllingColor(chessBoardInfo.controllingColor);
 
@@ -94,15 +95,8 @@ export default class AI {
         Visualize.logInfo(this.evaluating_chessBoardInfo.chessBoard);
         console.log(`The board score AI expected when chosen that move:`, this.evaluating_boardScore);
         console.log(`------------------------------------------`);
-        // for (let x = 0; x < 8; ++x) {
-        //     for (let y = 0; y < 8; ++y) {
-        //         let piece = this.evaluating_chessBoardInfo.chessBoard[x][y];
-        //         if (piece.color) {
-        //             console.log(`piece.guardians:`, piece.id, piece.guardians);
-        //         }
-        //     }
-        // }
     }
+    static isOn = false;
     static evaluating(chessBoardInfo) {
         let sumWeights = 0;
         let sumPos = 0;
@@ -166,6 +160,9 @@ export default class AI {
         User.setChessClubObj(chessClubObj);
     }
     static getCurrentAI_difficultIndex() {
+        if (!User.getChessClubObj()[AssignedVar.KEY_CURRENT_AI_DIFFICULT_INDEX]) {
+            AI.setCurrentAI_difficultIndex(0);
+        }
         return User.getChessClubObj()[AssignedVar.KEY_CURRENT_AI_DIFFICULT_INDEX];
     }
     static increaseAI_Difficult() {
@@ -177,25 +174,6 @@ export default class AI {
         AI.setCurrentAI_difficultIndex(_aiDifficultIndex);
     }
     static displayCurrentAI_difficult($aiBtn) {
-        $aiBtn.textContent = `Máy tính: ${_aiDifficultArray[AI.getCurrentAI_difficultIndex()].title}`;
-    }
-
-    static measureExecutionTime(callback) {
-        let startTimer = window.performance.now();
-        callback();
-        let endTimer = window.performance.now();
-        return endTimer - startTimer;
-    }
-    static shuffleArray(arr) {
-        let tempArr = [...arr];
-        let rArr = [...arr];
-        for (let i = 0; i < arr.length; ++i) {
-            let rIndex = Visualize.randomNumberFromAToMax(0, tempArr.length);
-            rArr[i] = tempArr[rIndex];
-            tempArr = tempArr.filter(item => {
-                return item != rArr[i];
-            });
-        }
-        return rArr;
+        $aiBtn.textContent = `Cấp độ: ${_aiDifficultArray[AI.getCurrentAI_difficultIndex()].title}`;
     }
 }

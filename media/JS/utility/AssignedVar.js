@@ -2,6 +2,7 @@ import Game from "../gameplay/Game.js";
 import Firebase from "./Firebase.js";
 import initLobby from "../initLobby.js";
 import PopUp from "./PopUp.js";
+import AI from "../gameplay/AI.js";
 
 let _isUserAndEnemyReady = false;
 let _isUserInLobby = true;
@@ -69,7 +70,7 @@ export default class AssignedVar {
     }
     static set IsUserInLobby(val) {
         if (val) {
-            Game.doesNeedAI_Move = false;
+            AI.isOn = false;
             Game.hideChessBoardAndShowLobby();
             Game.hideQuitGameBtn();
             initLobby();

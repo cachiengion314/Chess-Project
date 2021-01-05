@@ -26,6 +26,7 @@ export default function listenAllEvents() {
     onclickReadyBtn();
     onclickResignedBtn();
     onclickOfferADrawBtn();
+    onclickControllingColorBtn();
     // option section
     onclickOptionBtn();
     onclickChangeThemeBtn();
@@ -34,6 +35,31 @@ export default function listenAllEvents() {
     // resize event section
     responsiveSignColEventInvoke();
     listenResizeEvent();
+}
+
+function onclickControllingColorBtn() {
+    let $controllingColorBtn = $(`#controllingcolor-btn`)[0];
+    $controllingColorBtn.onclick = () => {
+        if (AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
+            if (AssignedVar.IsUserAndEnemyReady) {
+                PopUp.show(`Bạn không thể chỉnh lại màu quân mình điều khiển khi đang chơi game!`, PopUp.sadImgUrl);
+                return;
+            }
+            if (AssignedVar.currentTable.opponent.controllingColor == AssignedVar.BLACK) {
+                AssignedVar.currentTable.opponent.controllingColor = AssignedVar.WHITE;
+                AssignedVar.currentTable.owner.controllingColor = AssignedVar.BLACK;
+                $controllingColorBtn.textContent = `Cầm quân: đen`;
+                User.correctedAccNames(`#enemy-block`, `#user-block`);
+            } else {
+                AssignedVar.currentTable.opponent.controllingColor = AssignedVar.BLACK;
+                AssignedVar.currentTable.owner.controllingColor = AssignedVar.WHITE;
+                $controllingColorBtn.textContent = `Cầm quân: trắng`;
+                User.correctedAccNames(`#user-block`, `#enemy-block`);
+            }
+        } else {
+            console.log(`AI function only! there an error!`);
+        }
+    }
 }
 
 function onclickAI_Btn() {
@@ -49,7 +75,7 @@ function onclickPlayWithComputerBtn() {
     let $playWithComputerBtn = $(`#mode-group-btn button`)[2];
     $playWithComputerBtn.onclick = () => {
         AssignedVar.IsUserInLobby = false;
-        Game.doesNeedAI_Move = true;
+        AI.isOn = true;
         let userAcc = User.getUserSignIn();
         if (User.getUserSignInId() == -1) {
             userAcc = new User(`guest`, `guest@gamil.com`, `123`);
@@ -59,7 +85,8 @@ function onclickPlayWithComputerBtn() {
         AssignedVar.currentTable = newTable;
         AssignedVar.currentGame = new Game(AssignedVar.OFFLINE);
         Game.showOpponentBlock();
-        AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("computer", "computer@gmail.com", "123"));
+        AssignedVar.currentTable.opponent = Firebase.convertCustomObjToGenericObj(new User("super_Computer69", "superComputer@gmail.com", "123"));
+        AssignedVar.currentTable.opponent.controllingColor = AssignedVar.BLACK;
         AssignedVar.currentGame.createNewChessBoard();
         AssignedVar.currentGame.setCurrentPlayer();
         Game.showTempStatistic(true);

@@ -290,14 +290,14 @@ export default class User {
     static hideUserStatistic() {
         $(`#user-statistic`).hide();
     }
-    static correctedAccNames() {
+    static correctedAccNames(USER_BLOCK_ID = `#user-block`, ENEMY_BLOCK_ID = `#enemy-block`) {
         if (!AssignedVar.currentGame || !AssignedVar.currentTable) return;
 
         let ownerName = AssignedVar.currentTable.owner.name;
-        $(`#user-block .player`).text(`${ownerName}`);
+        $(`${USER_BLOCK_ID} .player`).text(`${ownerName}`);
         if (AssignedVar.currentTable.opponent) {
             let opponentName = AssignedVar.currentTable.opponent.name;
-            $(`#enemy-block .player`).text(`${opponentName}`);
+            $(`${ENEMY_BLOCK_ID} .player`).text(`${opponentName}`);
         }
     }
 }

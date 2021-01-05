@@ -7,6 +7,8 @@ import User from "./User.js";
 import PopUp from "../utility/PopUp.js";
 import ChatBox from "../utility/ChatBox.js";
 import Visualize from "../utility/Visualize.js";
+import AI from "./AI.js";
+import Utility from "../utility/Utility.js";
 
 let $chessBoard;
 let _blackPlayer;
@@ -74,6 +76,15 @@ let _letPlayerControlChessPiece = () => {
             }
         }
     }
+
+    if (AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
+        if (AI.isOn) {
+            if (!User.isOwnerTurn()) {
+                AI.setupMoveFor(AssignedVar.currentTable.opponent.controllingColor);
+            }
+        }
+    }
+
     _placeHolder_letPlayerControlChessPiece = _emptyAction;
 }
 _placeHolder_letPlayerControlChessPiece = _letPlayerControlChessPiece;
@@ -109,7 +120,7 @@ export default class Game {
         Game.showReadyBtn();
         initGameBoard();
         Visualize.initCoordinatedNumber();
-        Visualize.setThemeAt(Visualize.randomNumberFromAToMax(0, Visualize.themes.length));
+        Visualize.setThemeAt(Utility.randomFromAToMax(0, Visualize.themes.length));
     }
     resetGameBoard() {
         if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
@@ -139,7 +150,6 @@ export default class Game {
         this.setCurrentPlayer();
         initGameBoard();
     }
-    static doesNeedAI_Move = false;
     static get tempChat() {
         return _tempChat;
     }
@@ -237,10 +247,10 @@ export default class Game {
             Game.showOnlineGroupBtn();
             Game.showChatbox();
         } else if (AssignedVar.currentGame && AssignedVar.currentGame.gameMode == AssignedVar.OFFLINE) {
-            if (Game.doesNeedAI_Move) {
-                Game.showComputerGroupBtn();
+            if (AI.isOn) {
+                Game.showPlayWithComputerGroupBtn();
             } else {
-                Game.showSoloGroupBtn();
+                Game.showPlayWithFriendGroupBtn();
             }
             Game.hideChatbox();
         }
@@ -256,27 +266,39 @@ export default class Game {
     static showOnlineGroupBtn() {
         $(`#mode-group-btn`).hide(`fast`);
         $(`#gameplay-group-btn`).show(`fast`);
-        let $secondBtn = $(`#gameplay-group-btn button`)[1];
-        let $thirdBtn = $(`#gameplay-group-btn button`)[2];
-        $($secondBtn).text(`Đầu hàng`);
-        $($thirdBtn).hide();
+        let $surrender1Btn = $(`#surrender1-btn`)[0];
+        let $surrender2Btn = $(`#surrender2-btn`)[0];
+        let $colorBtn = $(`#controllingcolor-btn`)[0];
+        $($surrender1Btn).text(`Đầu hàng`);
+        $($surrender2Btn).hide();
+        $($colorBtn).hide();
     }
-    static showSoloGroupBtn() {
+    static showPlayWithFriendGroupBtn() {
         $(`#mode-group-btn`).hide(`fast`);
         $(`#gameplay-group-btn`).show(`fast`);
-        let $secondBtn = $(`#gameplay-group-btn button`)[1];
-        let $thirdBtn = $(`#gameplay-group-btn button`)[2];
-        $($secondBtn).text(`Đầu hàng cho người chơi 1`);
-        $($thirdBtn).text(`Đầu hàng cho người chơi 2`);
-        $($thirdBtn).show();
+        let $surrender1Btn = $(`#surrender1-btn`)[0];
+        let $surrender2Btn = $(`#surrender2-btn`)[0];
+        let $colorBtn = $(`#controllingcolor-btn`)[0];
+        let $aiBtn = $(`#ai-btn`)[0];
+        $($colorBtn).hide();
+        $($aiBtn).hide();
+        $($surrender1Btn).show();
+        $($surrender2Btn).show();
+        $($surrender1Btn).text(`Đầu hàng cho người 1`);
+        $($surrender2Btn).text(`Đầu hàng cho người 2`);
     }
-    static showComputerGroupBtn() {
+    static showPlayWithComputerGroupBtn() {
         $(`#mode-group-btn`).hide(`fast`);
         $(`#gameplay-group-btn`).show(`fast`);
-        let secondBtn = $(`#gameplay-group-btn button`)[1];
-        let thirdBtn = $(`#gameplay-group-btn button`)[2];
-        $(secondBtn).text(`Đầu hàng`);
-        $(thirdBtn).hide();
+        let $surrender1Btn = $(`#surrender1-btn`)[0];
+        let $surrender2Btn = $(`#surrender2-btn`)[0];
+        let $colorBtn = $(`#controllingcolor-btn`)[0];
+        let $aiBtn = $(`#ai-btn`)[0];
+        $($colorBtn).show();
+        $($aiBtn).show();
+        $($surrender1Btn).show();
+        $($surrender2Btn).hide();
+        $($surrender1Btn).text(`Đầu hàng`);
     }
     static emptyWaitingTables() {
         $(`#waiting-tables`).empty();

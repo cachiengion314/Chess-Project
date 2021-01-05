@@ -2,9 +2,6 @@ import AssignedVar from "./AssignedVar.js";
 import Vector from "./Vector.js";
 
 export default class Visualize {
-    static randomNumberFromAToMax(a, MAX) {
-        return Math.floor(Math.random() * (MAX - a)) + a;
-    }
     static setupZIndex() {
         $(`.chatbox`).css("z-index", AssignedVar.CHATBOX_ZINDEX);
         $(`#sign-col`).css("z-index", AssignedVar.SIGN_COL_ZINDEX);

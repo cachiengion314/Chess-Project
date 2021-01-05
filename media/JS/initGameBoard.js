@@ -12,6 +12,7 @@ import Game from "./gameplay/Game.js";
 import Firebase from "./utility/Firebase.js";
 import User from "./gameplay/User.js";
 import AI from "./gameplay/AI.js";
+import ChatBox from "./utility/ChatBox.js";
 
 export function initGameBoard() {
     initLogicPieces();
@@ -102,35 +103,45 @@ function onclickSelectedEmptyAt(fixedPosition) {
 }
 
 export function onclickSelectedChessPieceAt(fixedPosition) {
-    let $chessPiece = $(`#${AssignedVar.currentGame.chessBoard[fixedPosition.x][fixedPosition.y].id}`);
-    $chessPiece.on(`click`, () => {
-        let pos = Vector.convertIdToVector($chessPiece[0].id);
-
+    let $chessPiece = $(`#${AssignedVar.currentGame.chessBoard[fixedPosition.x][fixedPosition.y].id}`)[0];
+    $chessPiece.onclick = () => {
+        let pos = Vector.convertIdToVector($chessPiece.id);
         if (AssignedVar.currentGame.gameMode == AssignedVar.ONLINE) {
-            let accControlingColor = AssignedVar.currentTable.opponent.controllingColor;
             if (User.isTableOwner()) {
-                accControlingColor = AssignedVar.currentTable.owner.controllingColor;
-            }
-            if (AssignedVar.currentGame.currentPlayer.color != accControlingColor) {
-                if (pos.isPositionHasPiece()) {
-                    Visualize.cannotAttackPieceEffect($chessPiece[0]);
+                if (User.isOwnerTurn()) {
+                    allowControllPieceAt(pos, $chessPiece);
+                } else {
+                    if (pos.isPositionHasPiece()) {
+                        Visualize.cannotAttackPieceEffect($chessPiece);
+                    }
                 }
-                return;
+            } else {
+                if (!User.isOwnerTurn()) {
+                    allowControllPieceAt(pos, $chessPiece);
+                } else {
+                    if (pos.isPositionHasPiece()) {
+                        Visualize.cannotAttackPieceEffect($chessPiece);
+                    }
+                }
             }
+        } else {
+            allowControllPieceAt(pos, $chessPiece);
         }
+    };
+}
 
-        if (AssignedVar.currentGame.currentPlayer.id == $chessPiece[0].controlbyplayerid) {
+function allowControllPieceAt(pos, $chessPiece) {
+    if (AssignedVar.currentGame.currentPlayer.id == $chessPiece.controlbyplayerid) {
+        setupOnClickCallbackAt(pos);
+    } else {
+        if (pos.isPositionInLegalMoves()) {
             setupOnClickCallbackAt(pos);
         } else {
-            if (pos.isPositionInLegalMoves()) {
-                setupOnClickCallbackAt(pos);
-            } else {
-                if (pos.isPositionHasPiece()) {
-                    Visualize.cannotAttackPieceEffect($chessPiece[0]);
-                }
+            if (pos.isPositionHasPiece()) {
+                Visualize.cannotAttackPieceEffect($chessPiece);
             }
         }
-    });
+    }
 }
 
 export function mimicOnclickMovePieceAt(pos) {
@@ -140,7 +151,8 @@ export function mimicOnclickMovePieceAt(pos) {
             logicDestroyEnemyPiece(pieceAtPos);
             checkDestroyKingEvent(pieceAtPos);
             mimicEnemyLogicMovePieceTo(pos);
-            checkPromotePawnEvent(AssignedVar.selectedPiece)
+            checkPromotePawnEvent(AssignedVar.selectedPiece);
+            showCheckKing(AssignedVar.selectedPiece);
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
@@ -153,6 +165,7 @@ export function mimicOnclickMovePieceAt(pos) {
             checkCastleEvent(AssignedVar.selectedPiece, pos);
             mimicEnemyLogicMovePieceTo(pos);
             checkPromotePawnEvent(AssignedVar.selectedPiece);
+            showCheckKing(AssignedVar.selectedPiece);
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
@@ -177,12 +190,13 @@ export function setupOnClickCallbackAt(pos) {
                 let isKingDead = checkDestroyKingEvent(pieceAtPos);
                 logicMovePieceTo(pos);
                 checkPromotePawnEvent(AssignedVar.selectedPiece);
+                showCheckKing(AssignedVar.selectedPiece);
 
                 unSubscribeSelectedPiece();
                 changePlayerTurn();
                 Game.clearAndStartCountTime();
-                if (!isKingDead && Game.doesNeedAI_Move) {
-                    AI.setupMoveFor(AssignedVar.BLACK);
+                if (!isKingDead && AI.isOn) {
+                    AI.setupMoveFor(AssignedVar.currentTable.opponent.controllingColor);
                 }
             }
         } else {
@@ -193,16 +207,34 @@ export function setupOnClickCallbackAt(pos) {
             checkCastleEvent(AssignedVar.selectedPiece, pos);
             logicMovePieceTo(pos);
             checkPromotePawnEvent(AssignedVar.selectedPiece);
+            showCheckKing(AssignedVar.selectedPiece);
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
             Game.clearAndStartCountTime();
-            if (Game.doesNeedAI_Move) {
-                AI.setupMoveFor(AssignedVar.BLACK);
+            if (AI.isOn) {
+                AI.setupMoveFor(AssignedVar.currentTable.opponent.controllingColor);
             }
         } else {
             if (AssignedVar.selectedPiece) {
                 unSubscribeSelectedPiece();
+            }
+        }
+    }
+}
+
+function showCheckKing(selectedPiece) {
+    let pieceAllAtkPos = selectedPiece.getAtkPosOnly();
+    for (let pos of pieceAllAtkPos) {
+        let potentialEnemyKing = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
+        if (potentialEnemyKing.weights == 60000) {
+            if (AssignedVar.currentGame.currentPlayer.color != potentialEnemyKing.color) {
+                if (User.isOwnerPiece(potentialEnemyKing)) {
+                    ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `Chiếu tướng!`);
+                } else {
+                    ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `Chiếu tướng!`);
+                }
+                break;
             }
         }
     }

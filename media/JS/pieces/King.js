@@ -89,12 +89,6 @@ export default class King extends Piece {
             if (newMovePos.isPositionCanAttack(chessBoard, controllingColor)) {
                 allMovesPossibleArr.push(newMovePos);
             }
-            if (newMovePos.isPositionHasPiece(chessBoard)) {
-                let protectedPiece = chessBoard[newMovePos.x][newMovePos.y];
-                if (protectedPiece.color == controllingColor) {
-                    protectedPiece.guardians.push(this);
-                }
-            }
         }
         let castlePos = this.findPosToCastle(chessBoard);
         if (castlePos) {

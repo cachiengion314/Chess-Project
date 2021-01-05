@@ -6,10 +6,12 @@ export default class MoveInfo {
         this.currentPos = currentPos;
         this.nextPos = nextPos;
         this.moveScore = null;
+        this.bonusScore = null;
     }
     preEvaluatingMoveScore(chessBoard, friends_allPossibleMoves, enemies_atkPosOnly) {
         let unexpectedEnemyPiece = chessBoard[this.nextPos.x][this.nextPos.y];
         let foundData = this.nextPos.findDangerousPiece(chessBoard, this.selectedPiece, friends_allPossibleMoves, enemies_atkPosOnly);
+        this.bonusScore = foundData.bonusScore;
         this.calculateTradingSituation(unexpectedEnemyPiece, foundData.dangerousEnemies, foundData.protectedFriends);
 
         return this;

@@ -2,6 +2,7 @@ import AssignedVar from "../utility/AssignedVar.js";
 import AI from "./AI.js";
 import MoveInfo from "./MoveInfo.js";
 import Visualize from "../utility/Visualize.js";
+import Utility from "../utility/Utility.js";
 
 export default class ChessBoardInfo {
     constructor(clonedChessBoard, parrent, moveFromParrent, controllingColor) {
@@ -40,7 +41,7 @@ export default class ChessBoardInfo {
         }
         friends_allPossibleMoves.sort((objA, objB) => {
             if (objB.moveScore == objA.moveScore) {
-                if (Visualize.randomNumberFromAToMax(0, 2)) {
+                if (Utility.randomFromAToMax(0, 2)) {
                     return -1;
                 }
                 return 1;
