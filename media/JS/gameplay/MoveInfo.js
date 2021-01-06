@@ -24,7 +24,11 @@ export default class MoveInfo {
                 tradingValue = 0;
             }
         }
-        tradingValue += unexpectedEnemyPiece.weights;
+        if (unexpectedEnemyPiece) {
+            tradingValue += unexpectedEnemyPiece.weights;
+        } else {
+            console.log(`there an error in calculateTradingSituation`);
+        }
 
         this.moveScore = tradingValue;
     }

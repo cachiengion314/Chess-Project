@@ -30,8 +30,10 @@ export default class AI {
         if (countTurn == maxEvaluatedTurn) {
             return AI.evaluating(lastChessBoardInfo);
         }
-
         let friends_allPossibleMoves = lastChessBoardInfo.getFriends_allPossibleMoves();
+        if (friends_allPossibleMoves.length == 0) {
+            return AI.evaluating(lastChessBoardInfo);
+        }
 
         let optimizedChessBoardInfo, optimizedScore;
         if (controllingColor == AssignedVar.WHITE) {

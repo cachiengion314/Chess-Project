@@ -269,6 +269,8 @@ export default class Game {
         let $surrender1Btn = $(`#surrender1-btn`)[0];
         let $surrender2Btn = $(`#surrender2-btn`)[0];
         let $colorBtn = $(`#controllingcolor-btn`)[0];
+        let $aiBtn = $(`#ai-btn`)[0];
+        $($aiBtn).hide();
         $($surrender1Btn).text(`Đầu hàng`);
         $($surrender2Btn).hide();
         $($colorBtn).hide();
