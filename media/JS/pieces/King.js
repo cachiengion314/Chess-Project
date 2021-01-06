@@ -35,12 +35,19 @@ export default class King extends Piece {
         }
         this.possibleMovesScore = 0;
         this.guardians = [];
+        this.opponentKing = null;
+        this.isChecked = false;
+    }
+    getWeights() {
+        return this.weights;
     }
     getClone() {
         let clone = new King(this.color, this.currentPos);
         clone.hasMoved = this.hasMoved;
         clone.posToCastleRook = this.posToCastleRook;
         clone.posToCastle = this.posToCastle;
+        clone.opponentKing = this.opponentKing;
+        clone.isChecked = this.isChecked;
         return clone;
     }
     getId() {

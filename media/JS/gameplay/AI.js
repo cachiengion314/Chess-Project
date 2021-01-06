@@ -12,6 +12,17 @@ let _aiDifficultArray = [{ title: `easy`, maxEvaluatedTurn: 3 }, { title: `norma
 
 export default class AI {
     constructor(chessBoard, controllingColor) {
+        if (AssignedVar.wKing.isChecked || AssignedVar.bKing.isChecked) {
+            if (AssignedVar.wKing.isChecked) {
+
+            } else if (AssignedVar.bKing.isChecked) {
+
+            }
+            console.log(`wKing:`, AssignedVar.wKing);
+            console.log(`bKing:`, AssignedVar.bKing);
+            // return;
+        }
+
         this.evaluating_chessBoardInfo = null;
         this.evaluating_boardScore = 0;
         let cloneChessBoard = AI.cloneChessBoard(chessBoard);
@@ -70,7 +81,7 @@ export default class AI {
         if (countTurn == 1) {
             this.evaluating_chessBoardInfo = optimizedChessBoardInfo;
             this.evaluating_boardScore = optimizedScore;
-            // console.log(`turn 1 - friends_allPossibleMoves`, friends_allPossibleMoves);
+            console.log(`turn 1 - friends_allPossibleMoves`, friends_allPossibleMoves);
         }
         return optimizedScore;
     }
@@ -95,7 +106,8 @@ export default class AI {
     log() {
         console.log(`----------AI optimized move info----------`);
         Visualize.logInfo(this.evaluating_chessBoardInfo.chessBoard);
-        console.log(`The board score AI expected when chosen that move:`, this.evaluating_boardScore);
+        console.log(`The balance score AI expected when chosen that move:`, this.evaluating_boardScore);
+        console.log(`Reality current balance score:`, AI.evaluating(this.evaluating_chessBoardInfo));
         console.log(`------------------------------------------`);
     }
     static isOn = false;
@@ -106,13 +118,13 @@ export default class AI {
         for (let x = 0; x < 8; ++x) {
             for (let y = 0; y < 8; ++y) {
                 let selectedPiece = chessBoardInfo.chessBoard[x][y];
-                if (selectedPiece.weights > 0) {
+                if (selectedPiece.getWeights() > 0) {
                     if (selectedPiece.color == AssignedVar.WHITE) {
-                        sumWeights += selectedPiece.weights;
+                        sumWeights += selectedPiece.getWeights();
                         sumPos += selectedPiece.positions[y][x];
                         sumPossibleMoveScore += selectedPiece.getPossibleMovesScore();
                     } else {
-                        sumWeights -= selectedPiece.weights;
+                        sumWeights -= selectedPiece.getWeights();
                         sumPos -= selectedPiece.positions[y][x];
                         sumPossibleMoveScore -= selectedPiece.getPossibleMovesScore();
                     }

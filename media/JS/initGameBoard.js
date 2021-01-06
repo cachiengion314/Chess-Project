@@ -46,6 +46,9 @@ function initLogicPieces() {
         let wPawn = new Pawn(AssignedVar.WHITE, new Vector(i, 6));
         AssignedVar.wPawns.push(wPawn);
     }
+    AssignedVar.wKing.opponentKing = AssignedVar.bKing;
+    AssignedVar.bKing.opponentKing = AssignedVar.wKing;
+
     Game.blackPlayer.alivePieces.push(AssignedVar.bRook, AssignedVar.bKnight, AssignedVar.bBishop, AssignedVar.bKing, AssignedVar.bQueen,
         AssignedVar.bBishop2, AssignedVar.bKnight2, AssignedVar.bRook2, ...AssignedVar.bPawns);
     Game.whitePlayer.alivePieces.push(AssignedVar.wRook, AssignedVar.wKnight, AssignedVar.wBishop, AssignedVar.wKing, AssignedVar.wQueen,
@@ -152,7 +155,7 @@ export function mimicOnclickMovePieceAt(pos) {
             checkDestroyKingEvent(pieceAtPos);
             mimicEnemyLogicMovePieceTo(pos);
             checkPromotePawnEvent(AssignedVar.selectedPiece);
-            showCheckKing(AssignedVar.selectedPiece);
+            showCheckKing();
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
@@ -165,7 +168,7 @@ export function mimicOnclickMovePieceAt(pos) {
             checkCastleEvent(AssignedVar.selectedPiece, pos);
             mimicEnemyLogicMovePieceTo(pos);
             checkPromotePawnEvent(AssignedVar.selectedPiece);
-            showCheckKing(AssignedVar.selectedPiece);
+            showCheckKing();
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
@@ -190,7 +193,7 @@ export function setupOnClickCallbackAt(pos) {
                 let isKingDead = checkDestroyKingEvent(pieceAtPos);
                 logicMovePieceTo(pos);
                 checkPromotePawnEvent(AssignedVar.selectedPiece);
-                showCheckKing(AssignedVar.selectedPiece);
+                showCheckKing();
 
                 unSubscribeSelectedPiece();
                 changePlayerTurn();
@@ -207,7 +210,7 @@ export function setupOnClickCallbackAt(pos) {
             checkCastleEvent(AssignedVar.selectedPiece, pos);
             logicMovePieceTo(pos);
             checkPromotePawnEvent(AssignedVar.selectedPiece);
-            showCheckKing(AssignedVar.selectedPiece);
+            showCheckKing();
 
             unSubscribeSelectedPiece();
             changePlayerTurn();
@@ -223,21 +226,37 @@ export function setupOnClickCallbackAt(pos) {
     }
 }
 
-function showCheckKing(selectedPiece) {
-    let pieceAllAtkPos = selectedPiece.getAtkPosOnly();
-    for (let pos of pieceAllAtkPos) {
-        let potentialEnemyKing = AssignedVar.currentGame.chessBoard[pos.x][pos.y];
-        if (potentialEnemyKing.weights == 60000) {
-            if (AssignedVar.currentGame.currentPlayer.color != potentialEnemyKing.color) {
-                if (User.isOwnerPiece(potentialEnemyKing)) {
-                    ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `Chiếu tướng!`);
-                } else {
-                    ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `Chiếu tướng!`);
+function showCheckKing() {
+    let chessBoard = AssignedVar.currentGame.chessBoard;
+    let isW_KingChecked = false;
+    let isB_KingChecked = false;
+    let isNeedSearch = true;
+    for (let x = 0; x < chessBoard.length && isNeedSearch; ++x) {
+        for (let y = 0; y < chessBoard[x].length && isNeedSearch; ++y) {
+            let selectedPiece = chessBoard[x][y];
+            if (selectedPiece.getWeights() > 0) {
+                if (selectedPiece.color == AssignedVar.currentGame.currentPlayer.color) {
+                    let friends_atkPosOnlyArr = selectedPiece.getAtkPosOnly();
+                    for (let f_pos of friends_atkPosOnlyArr) {
+                        let potentialEnemyKing = AssignedVar.currentGame.chessBoard[f_pos.x][f_pos.y];
+                        if (potentialEnemyKing.getWeights() == 60000) {
+                            if (potentialEnemyKing.color == AssignedVar.BLACK) {
+                                ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `Chiếu tướng đen!`);
+                                isB_KingChecked = true;
+                            } else {
+                                ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `Chiếu tướng trắng!`);
+                                isW_KingChecked = true;
+                            }
+                            isNeedSearch = false;
+                            break;
+                        }
+                    }
                 }
-                break;
             }
         }
     }
+    AssignedVar.wKing.isChecked = isW_KingChecked;
+    AssignedVar.bKing.isChecked = isB_KingChecked;
 }
 
 export function logicDestroyEnemyPiece(logicEnemyPiece) {

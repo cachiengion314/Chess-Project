@@ -19,6 +19,9 @@ export default class Piece extends ChessBlock {
         }
         return this.possibleMovesScore;
     }
+    getWeights() {
+        return this.weights;
+    }
     getAtkPosOnly(chessBoard = AssignedVar.currentGame.chessBoard, controllingColor = AssignedVar.currentGame.currentPlayer.color) {
         return this.getAllPossibleMoves(chessBoard, controllingColor);
     }
