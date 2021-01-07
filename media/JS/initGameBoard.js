@@ -46,8 +46,6 @@ function initLogicPieces() {
         let wPawn = new Pawn(AssignedVar.WHITE, new Vector(i, 6));
         AssignedVar.wPawns.push(wPawn);
     }
-    AssignedVar.wKing.opponentKing = AssignedVar.bKing;
-    AssignedVar.bKing.opponentKing = AssignedVar.wKing;
 
     Game.blackPlayer.alivePieces.push(AssignedVar.bRook, AssignedVar.bKnight, AssignedVar.bBishop, AssignedVar.bKing, AssignedVar.bQueen,
         AssignedVar.bBishop2, AssignedVar.bKnight2, AssignedVar.bRook2, ...AssignedVar.bPawns);
@@ -241,10 +239,10 @@ function showCheckKing() {
                         let potentialEnemyKing = AssignedVar.currentGame.chessBoard[f_pos.x][f_pos.y];
                         if (potentialEnemyKing.getWeights() == 60000) {
                             if (potentialEnemyKing.color == AssignedVar.BLACK) {
-                                ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `Chiếu tướng đen!`);
+                                ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `Cẩn thận! Chiếu tướng đấy!`);
                                 isB_KingChecked = true;
                             } else {
-                                ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `Chiếu tướng trắng!`);
+                                ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `Cẩn thận! Chiếu tướng đấy!`);
                                 isW_KingChecked = true;
                             }
                             isNeedSearch = false;

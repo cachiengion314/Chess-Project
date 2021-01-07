@@ -33,6 +33,7 @@ export default class Bishop extends Piece {
     }
     getClone() {
         let clone = new Bishop(this.color, this.currentPos);
+        clone.possibleMovesScore = this.possibleMovesScore;
         return clone;
     }
     getId() {

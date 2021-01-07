@@ -100,23 +100,15 @@ export default class Vector {
         }
         return true;
     }
-    findDangerousPiece(chessBoard, selectedPiece, friends_allPossibleMoves, enemies_atkPosOnly) {
-        let dangerousEnemies = [];
+    calculateBonusScore(chessBoard, selectedPiece, friends_allPossibleMoves) {
         let protectedFriends = [];
         let selectedPieceCurrentPos = selectedPiece.currentPos;
 
-        for (let eMoveObj of enemies_atkPosOnly) {
-            if (eMoveObj.nextPos.isEqualTo(this)) {
-                dangerousEnemies.push(eMoveObj.selectedPiece);
-                break;
-            }
-        }
         for (let fMoveObj of friends_allPossibleMoves) {
             if (fMoveObj.nextPos.isEqualTo(this)) {
                 if (!fMoveObj.currentPos.isEqualTo(selectedPieceCurrentPos)) {
                     if (fMoveObj.selectedPiece.checkCapturedPositionAt(this)) {
                         protectedFriends.push(fMoveObj.selectedPiece);
-                        break;
                     }
                 }
             }
@@ -149,12 +141,7 @@ export default class Vector {
             }
         }
 
-        let foundData = {
-            "dangerousEnemies": dangerousEnemies,
-            "protectedFriends": protectedFriends,
-            "bonusScore": bonusGuardiansPossibleMoveScore + selectedPiece.guardians.length,
-        }
-        return foundData;
+        return protectedFriends.length + bonusGuardiansPossibleMoveScore;
     }
     static createRandomDirection() {
         let rX = Utility.randomFromAToMax(-1, 2);

@@ -37,7 +37,7 @@ export default class Pawn extends Piece {
         if (this.color == AssignedVar.BLACK) {
             this.positions = this.positions.reverse();
         }
-        this.possibleMovesScore = 1;
+        this.possibleMovesScore = 0;
         this.guardians = [];
     }
     checkCapturedPositionAt(pos) {
@@ -52,6 +52,7 @@ export default class Pawn extends Piece {
     getClone() {
         let clone = new Pawn(this.color, this.currentPos);
         clone.hasMoved = this.hasMoved;
+        
         return clone;
     }
     getId() {

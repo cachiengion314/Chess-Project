@@ -35,6 +35,7 @@ export default class Rook extends Piece {
     getClone() {
         let clone = new Rook(this.color, this.currentPos);
         clone.hasMoved = this.hasMoved;
+        clone.possibleMovesScore = this.possibleMovesScore;
         return clone;
     }
     getId() {

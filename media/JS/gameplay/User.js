@@ -23,6 +23,12 @@ export default class User {
         let d = new Date();
         this.accDateCreated = d.toLocaleDateString() + "_" + `${d.getHours()}:${d.getMinutes()}`;
     }
+    static isKingChecked() {
+        if (AssignedVar.bKing.isChecked || AssignedVar.wKing.isChecked) {
+            return true;
+        }
+        return false;
+    }
     static isOwnerTurn() {
         if (AssignedVar.currentGame.currentPlayer.color == AssignedVar.currentTable.owner.controllingColor) {
             return true;

@@ -34,6 +34,7 @@ export default class Queen extends Piece {
     }
     getClone() {
         let clone = new Queen(this.color, this.currentPos);
+        clone.possibleMovesScore = this.possibleMovesScore;
         return clone;
     }
     getId() {

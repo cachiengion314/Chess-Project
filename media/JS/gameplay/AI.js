@@ -6,39 +6,61 @@ import Visualize from "../utility/Visualize.js";
 import PopUp from "../utility/PopUp.js";
 import User from "./User.js";
 import Utility from "../utility/Utility.js";
+import ChatBox from "../utility/ChatBox.js";
 
 let _aiDifficultArray = [{ title: `easy`, maxEvaluatedTurn: 3 }, { title: `normal`, maxEvaluatedTurn: 4 },
 { title: `hard`, maxEvaluatedTurn: 5 }, { title: `crazy`, maxEvaluatedTurn: 6 }];
 
 export default class AI {
     constructor(chessBoard, controllingColor) {
-        if (AssignedVar.wKing.isChecked || AssignedVar.bKing.isChecked) {
-            if (AssignedVar.wKing.isChecked) {
-
-            } else if (AssignedVar.bKing.isChecked) {
-
-            }
-            console.log(`wKing:`, AssignedVar.wKing);
-            console.log(`bKing:`, AssignedVar.bKing);
-            // return;
-        }
-
         this.evaluating_chessBoardInfo = null;
         this.evaluating_boardScore = 0;
+        this.preEvaluating_movesObj = [];
+
         let cloneChessBoard = AI.cloneChessBoard(chessBoard);
         let chessBoardInfo = new ChessBoardInfo(cloneChessBoard, null, null, controllingColor);
 
         let _maxEvaluatedTurn = _aiDifficultArray[AI.getCurrentAI_difficultIndex()].maxEvaluatedTurn;
 
         let timeConsume = Utility.measureExecutionTime(() => {
-            this.minimax_evaluating(chessBoardInfo, controllingColor, 0, undefined, undefined, _maxEvaluatedTurn);
+            this.minimax_preEvaluating(chessBoardInfo, controllingColor, 0, -Infinity, Infinity);
+            this.preEvaluating_movesObj.sort((objA, objB) => {
+                if (objB.preEvaluatedScore == objA.preEvaluatedScore) {
+                    if (Utility.randomFromAToMax(0, 2)) {
+                        return -1;
+                    }
+                    return 1;
+                }
+                if (controllingColor == AssignedVar.BLACK) {
+                    return objA.preEvaluatedScore - objB.preEvaluatedScore;
+                }
+                return objB.preEvaluatedScore - objA.preEvaluatedScore;
+            });
+            if (User.isKingChecked()) {
+                this.preEvaluating_movesObj = this.preEvaluating_movesObj.filter((moveObj) => {
+                    if (controllingColor == AssignedVar.BLACK) {
+                        return moveObj.preEvaluatedScore < 50000;
+                    }
+                    return moveObj.preEvaluatedScore > -50000;
+                });
+                if (this.preEvaluating_movesObj.length == 0) {
+                    if (controllingColor == AssignedVar.BLACK) {
+                        ChatBox.show(ChatBox.OPPONENT_CHATBOX_ID, `Rất tốt, tui đã hết đường để đi rồi!`);
+                    } else {
+                        ChatBox.show(ChatBox.OWNER_CHATBOX_ID, `Rất tốt, tui đã hết đường để đi rồi!`);
+                    }
+                    this.minimax_preEvaluating(chessBoardInfo, controllingColor, 0, -Infinity, Infinity);
+                }
+            }
+            // console.log(`preEvaluating_movesObj:`, this.preEvaluating_movesObj);
+            this.minimax_evaluating(chessBoardInfo, controllingColor, 0, -Infinity, Infinity, _maxEvaluatedTurn);
         });
         console.log(`timeConsume:`, timeConsume);
     }
-    minimax_evaluating(lastChessBoardInfo, controllingColor, countTurn, alpha, beta, maxEvaluatedTurn) {
+    minimax_preEvaluating(lastChessBoardInfo, controllingColor, countTurn, alpha, beta) {
         countTurn++;
         lastChessBoardInfo.isAtTurn = countTurn;
-        if (countTurn == maxEvaluatedTurn) {
+        if (countTurn == 3) {
             return AI.evaluating(lastChessBoardInfo);
         }
         let friends_allPossibleMoves = lastChessBoardInfo.getFriends_allPossibleMoves();
@@ -46,44 +68,103 @@ export default class AI {
             return AI.evaluating(lastChessBoardInfo);
         }
 
-        let optimizedChessBoardInfo, optimizedScore;
+        let optimisticScore;
         if (controllingColor == AssignedVar.WHITE) {
             controllingColor = AI.changeControllingColor(controllingColor);
-            optimizedScore = -Infinity;
+            optimisticScore = -Infinity;
             for (let moveObj of friends_allPossibleMoves) {
                 let currentChessBoardInfo = this.movePiece(lastChessBoardInfo, moveObj);
-                let moveScore = this.minimax_evaluating(currentChessBoardInfo, controllingColor, countTurn, alpha, beta, maxEvaluatedTurn);
-                if (moveScore > optimizedScore) {
-                    optimizedScore = moveScore;
-                    optimizedChessBoardInfo = currentChessBoardInfo;
-                    alpha = optimizedScore;
+                let moveScore = this.minimax_preEvaluating(currentChessBoardInfo, controllingColor, countTurn, alpha, beta);
+                if (countTurn == 1) {
+                    moveObj.preEvaluatedScore = moveScore;
                 }
-                if (beta && moveScore >= beta) {
+                if (moveScore > optimisticScore) {
+                    optimisticScore = moveScore;
+                    alpha = optimisticScore;
+                }
+                if (moveScore >= beta) {
                     break;
                 }
             }
         } else {
             controllingColor = AI.changeControllingColor(controllingColor);
-            optimizedScore = Infinity;
+            optimisticScore = Infinity;
+            for (let moveObj of friends_allPossibleMoves) {
+                let currentChessBoardInfo = this.movePiece(lastChessBoardInfo, moveObj);
+                let moveScore = this.minimax_preEvaluating(currentChessBoardInfo, controllingColor, countTurn, alpha, beta);
+                if (countTurn == 1) {
+                    moveObj.preEvaluatedScore = moveScore;
+                }
+                if (moveScore < optimisticScore) {
+                    optimisticScore = moveScore;
+                    beta = optimisticScore;
+                }
+                if (moveScore <= alpha) {
+                    break;
+                }
+            }
+        }
+        if (countTurn == 1) {
+            this.preEvaluating_movesObj = friends_allPossibleMoves;
+        }
+        return optimisticScore;
+    }
+
+    minimax_evaluating(lastChessBoardInfo, controllingColor, countTurn, alpha, beta, maxEvaluatedTurn) {
+        countTurn++;
+        lastChessBoardInfo.isAtTurn = countTurn;
+        if (countTurn == maxEvaluatedTurn) {
+            return AI.evaluating(lastChessBoardInfo);
+        }
+
+        let friends_allPossibleMoves;
+        if (countTurn == 1) {
+            friends_allPossibleMoves = this.preEvaluating_movesObj;
+        } else {
+            friends_allPossibleMoves = lastChessBoardInfo.getFriends_allPossibleMoves();
+        }
+
+        if (friends_allPossibleMoves.length == 0) {
+            return AI.evaluating(lastChessBoardInfo);
+        }
+
+        let optimizedChessBoardInfo, optimisticScore;
+        if (controllingColor == AssignedVar.WHITE) {
+            controllingColor = AI.changeControllingColor(controllingColor);
+            optimisticScore = -Infinity;
             for (let moveObj of friends_allPossibleMoves) {
                 let currentChessBoardInfo = this.movePiece(lastChessBoardInfo, moveObj);
                 let moveScore = this.minimax_evaluating(currentChessBoardInfo, controllingColor, countTurn, alpha, beta, maxEvaluatedTurn);
-                if (moveScore < optimizedScore) {
-                    optimizedScore = moveScore;
+                if (moveScore > optimisticScore) {
+                    optimisticScore = moveScore;
                     optimizedChessBoardInfo = currentChessBoardInfo;
-                    beta = optimizedScore;
+                    alpha = optimisticScore;
                 }
-                if (alpha && moveScore <= alpha) {
+                if (moveScore >= beta) {
+                    break;
+                }
+            }
+        } else {
+            controllingColor = AI.changeControllingColor(controllingColor);
+            optimisticScore = Infinity;
+            for (let moveObj of friends_allPossibleMoves) {
+                let currentChessBoardInfo = this.movePiece(lastChessBoardInfo, moveObj);
+                let moveScore = this.minimax_evaluating(currentChessBoardInfo, controllingColor, countTurn, alpha, beta, maxEvaluatedTurn);
+                if (moveScore < optimisticScore) {
+                    optimisticScore = moveScore;
+                    optimizedChessBoardInfo = currentChessBoardInfo;
+                    beta = optimisticScore;
+                }
+                if (moveScore <= alpha) {
                     break;
                 }
             }
         }
         if (countTurn == 1) {
             this.evaluating_chessBoardInfo = optimizedChessBoardInfo;
-            this.evaluating_boardScore = optimizedScore;
-            console.log(`turn 1 - friends_allPossibleMoves`, friends_allPossibleMoves);
+            this.evaluating_boardScore = optimisticScore;
         }
-        return optimizedScore;
+        return optimisticScore;
     }
     movePiece(chessBoardInfo, moveObj) {
         let originChessBoard = AI.cloneChessBoard(chessBoardInfo.chessBoard);
@@ -96,7 +177,7 @@ export default class AI {
         chessBoard[nextPos.x][nextPos.y] = movedPiece;
         chessBoard[nextPos.x][nextPos.y].currentPos = nextPos;
         chessBoard[nextPos.x][nextPos.y].id = movedPiece.getId();
-        chessBoard[nextPos.x][nextPos.y].possibleMovesScore = Math.floor(moveObj.moveScore * .01) + moveObj.bonusScore;
+        chessBoard[nextPos.x][nextPos.y].possibleMovesScore = Math.floor(moveObj.capturedScore * .01) + moveObj.bonusScore;
 
         let controllingColor = AI.changeControllingColor(chessBoardInfo.controllingColor);
 

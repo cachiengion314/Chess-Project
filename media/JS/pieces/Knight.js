@@ -36,6 +36,7 @@ export default class Knight extends Piece {
     }
     getClone() {
         let clone = new Knight(this.color, this.currentPos);
+        clone.possibleMovesScore = this.possibleMovesScore;
         return clone;
     }
     getId() {
